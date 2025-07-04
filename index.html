@@ -66,8 +66,9 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             width: 90%;
-            max-width: 600px;
+            max-width: 600px; /* Aumentado para melhor visualização dos detalhes */
             text-align: left;
+            position: relative; /* Para posicionar o botão de fechar */
         }
         .close-button {
             color: #aaa;
@@ -75,6 +76,9 @@
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
         }
         .close-button:hover,
         .close-button:focus {
@@ -176,6 +180,10 @@
             <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Produtos serão carregados dinamicamente aqui pelo JavaScript -->
             </div>
+            <!-- Controles de Paginação -->
+            <div id="paginationControls" class="flex justify-center items-center space-x-2 mt-8">
+                <!-- Botões de paginação serão renderizados aqui pelo JavaScript -->
+            </div>
         </section>
     </main>
 
@@ -210,12 +218,17 @@
         <p class="mt-8 text-sm">Fazemos pedidos e tiramos dúvidas via Email e WhatsApp.</p>
     </section>
 
-    <!-- Modal Customizado para Mensagens (geral) -->
-    <div id="customModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="modal-content bg-white rounded-lg p-6 shadow-xl w-full max-w-sm">
-            <h4 id="modalTitle" class="text-xl font-bold text-gray-800 mb-3">Mensagem</h4>
-            <p id="modalMessage" class="text-gray-700 mb-5"></p>
-            <button onclick="hideModal()" class="bg-[#E63946] text-white px-5 py-2 rounded-md hover:bg-[#c9303c] transition duration-300">OK</button>
+    <!-- Modal para Detalhes do Produto -->
+    <div id="productDetailsModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="modal-content bg-white rounded-lg p-6 shadow-xl w-full max-w-md">
+            <button class="close-button" onclick="closeProductDetailsModal()">&times;</button>
+            <img id="modalProductImage" src="" alt="Imagem do Produto" class="w-full max-h-[70vh] object-contain rounded-lg mb-4">
+            <h4 id="modalProductName" class="text-2xl font-bold text-gray-800 mb-2"></h4>
+            <p id="modalProductDescription" class="text-gray-700 mb-3"></p>
+            <p id="modalProductWeight" class="text-gray-600 text-sm mb-1"></p>
+            <p id="modalProductRetailPrice" class="text-xl font-bold text-red-700 mb-1"></p> <!-- Preço de Varejo -->
+            <p id="modalProductWholesalePrice" class="text-lg text-gray-700 mb-4"></p> <!-- Preço de Atacado -->
+            <button onclick="closeProductDetailsModal()" class="bg-[#E63946] text-white px-5 py-2 rounded-md hover:bg-[#c9303c] transition duration-300 w-full">Fechar</button>
         </div>
     </div>
 
@@ -239,7 +252,6 @@
         </div>
     </footer>
 
-
     <script>
         // Neste cenário real, os produtos seriam carregados de um banco de dados (ex: Firebase Firestore).
         // Para demonstração, mantemos um array local.
@@ -250,7 +262,8 @@
                 category: "Pimentas",
                 description: "Uma pimenta ardente e saborosa, perfeita para dar um toque especial aos seus pratos.",
                 weight: "150g",
-                price: 25.50,
+                retailPrice: 25.50,
+                wholesalePrice: 20.40, // 80% do varejo
                 image: "assets/pimenta-caseira-temperada.jpeg" // Imagem local
             },
             {
@@ -259,7 +272,8 @@
                 category: "Pimentas",
                 description: "Uma pimenta caseira com um toque extra de picância, perfeita para quem gosta de mais sabor.",
                 weight: "300g",
-                price: 18.90,
+                retailPrice: 18.90,
+                wholesalePrice: 15.12,
                 image: "assets/pimenta-caseira-picante.jpeg" // Imagem local
             },
             {
@@ -268,7 +282,8 @@
                 category: "Conservas",
                 description: "Jilós pequenos e tenros, conservados em óleo, ideais para petiscos.",
                 weight: "300g",
-                price: 35.00,
+                retailPrice: 35.00,
+                wholesalePrice: 28.00,
                 image: "assets/mini-jilo.jpeg" // Imagem local
             },
             {
@@ -277,7 +292,8 @@
                 category: "Conservas",
                 description: "Repolho fermentado com especiarias, perfeito para acompanhar pratos diversos.",
                 weight: "300g",
-                price: 28.00,
+                retailPrice: 28.00,
+                wholesalePrice: 22.40,
                 image: "assets/repolho-azedo.jpeg" // Imagem local
             },
             {
@@ -286,7 +302,8 @@
                 category: "Conservas",
                 description: "Espetinhos de legumes variados, marinados em vinagre e especiarias.",
                 weight: "300g",
-                price: 22.50,
+                retailPrice: 22.50,
+                wholesalePrice: 18.00,
                 image: "assets/espetinho-misto.jpeg" // Imagem local
             },
              {
@@ -295,29 +312,182 @@
                 category: "Conservas",
                 description: "Broto de bambu em conserva, crocante e saboroso, ideal para saladas e pratos asiáticos.",
                 weight: "250g",
-                price: 16.00,
+                retailPrice: 16.00,
+                wholesalePrice: 12.80,
                 image: "assets/broto-de-bambu.jpeg" // Imagem local
             },
+            {
+                id: 7,
+                name: "Azeitonas Temperadas",
+                category: "Conservas",
+                description: "Azeitonas verdes e pretas marinadas em azeite com ervas finas.",
+                weight: "200g",
+                retailPrice: 19.90,
+                wholesalePrice: 15.92,
+                image: "https://placehold.co/400x300/cceeff/000000?text=Azeitonas"
+            },
+            {
+                id: 8,
+                name: "Pimenta Biquinho Doce",
+                category: "Pimentas",
+                description: "Pimentas biquinho em conserva, com sabor suave e adocicado, ideais para saladas.",
+                weight: "180g",
+                retailPrice: 23.00,
+                wholesalePrice: 18.40,
+                image: "https://placehold.co/400x300/ffccdd/000000?text=Pimenta+Biquinho"
+            },
+            {
+                id: 9,
+                name: "Alho Confitado",
+                category: "Conservas",
+                description: "Dentes de alho cozidos lentamente em azeite, macios e saborosos.",
+                weight: "150g",
+                retailPrice: 29.50,
+                wholesalePrice: 23.60,
+                image: "https://placehold.co/400x300/ddccff/000000?text=Alho+Confitado"
+            },
+            {
+                id: 10,
+                name: "Picles de Cenoura e Couve-flor",
+                category: "Conservas",
+                description: "Legumes crocantes em conserva agridoce, um acompanhamento versátil.",
+                weight: "350g",
+                retailPrice: 21.00,
+                wholesalePrice: 16.80,
+                image: "https://placehold.co/400x300/ffeebb/000000?text=Picles+Legumes"
+            },
+            {
+                id: 11,
+                name: "Geleia de Morango com Pimenta",
+                category: "Pimentas",
+                description: "Combinação inusitada de doçura do morango com o toque picante da pimenta.",
+                weight: "200g",
+                retailPrice: 32.00,
+                wholesalePrice: 25.60,
+                image: "https://placehold.co/400x300/ffbbcc/000000?text=Geleia+Morango"
+            },
+            {
+                id: 12,
+                name: "Cogumelos Marinados",
+                category: "Conservas",
+                description: "Cogumelos frescos marinados em temperos especiais, perfeitos para entradas.",
+                weight: "250g",
+                retailPrice: 27.00,
+                wholesalePrice: 21.60,
+                image: "https://placehold.co/400x300/bbffaa/000000?text=Cogumelos"
+            },
+            {
+                id: 13,
+                name: "Molho de Pimenta Habanero",
+                category: "Pimentas",
+                description: "Molho de pimenta extremamente picante, para os amantes de emoções fortes.",
+                weight: "100ml",
+                retailPrice: 38.00,
+                wholesalePrice: 30.40,
+                image: "https://placehold.co/400x300/ffaaaa/000000?text=Habanero"
+            },
+            {
+                id: 14,
+                name: "Picles de Cebola Roxa",
+                category: "Conservas",
+                description: "Cebolas roxas em conserva, com sabor agridoce e cor vibrante, ótimas para hambúrgueres.",
+                weight: "200g",
+                retailPrice: 17.50,
+                wholesalePrice: 14.00,
+                image: "https://placehold.co/400x300/ffddff/000000?text=Cebola+Roxa+Picles"
+            },
+            {
+                id: 15,
+                name: "Pepino em Conserva Doce",
+                category: "Conservas",
+                description: "Fatias de pepino em conserva com um toque adocicado, ideal para lanches.",
+                weight: "300g",
+                retailPrice: 19.00,
+                wholesalePrice: 15.20,
+                image: "https://placehold.co/400x300/aaffaa/000000?text=Pepino+Doce"
+            },
+            {
+                id: 16,
+                name: "Pimenta Dedo-de-Moça",
+                category: "Pimentas",
+                description: "Pimenta fresca em conserva, com ardência média, para uso culinário diário.",
+                weight: "150g",
+                retailPrice: 26.00,
+                wholesalePrice: 20.80,
+                image: "https://placehold.co/400x300/ffccaa/000000?text=Dedo+de+Moca"
+            },
+            {
+                id: 17,
+                name: "Chutney de Manga Picante",
+                category: "Conservas",
+                description: "Chutney exótico de manga com especiarias e um toque de pimenta.",
+                weight: "220g",
+                retailPrice: 31.00,
+                wholesalePrice: 24.80,
+                image: "https://placehold.co/400x300/ffeedd/000000?text=Chutney+Manga"
+            },
+            {
+                id: 18,
+                name: "Pasta de Alho com Ervas",
+                category: "Conservas",
+                description: "Pasta cremosa de alho com ervas frescas, excelente para torradas e molhos.",
+                weight: "180g",
+                retailPrice: 24.00,
+                wholesalePrice: 19.20,
+                image: "https://placehold.co/400x300/eeccff/000000?text=Pasta+Alho"
+            },
+            {
+                id: 19,
+                name: "Pimenta Caiena em Pó",
+                category: "Pimentas",
+                description: "Pimenta caiena moída, para adicionar calor e sabor a qualquer prato.",
+                weight: "50g",
+                retailPrice: 15.00,
+                wholesalePrice: 12.00,
+                image: "https://placehold.co/400x300/ffbbbb/000000?text=Caiena"
+            },
+            {
+                id: 20,
+                name: "Tomate Cereja Confitado",
+                category: "Conservas",
+                description: "Tomates cereja cozidos lentamente em azeite e ervas, perfeitos para massas.",
+                weight: "250g",
+                retailPrice: 33.00,
+                wholesalePrice: 26.40,
+                image: "https://placehold.co/400x300/ffcc99/000000?text=Tomate+Cereja"
+            }
         ];
+
+        const itemsPerPage = 15; // 3 colunas * 5 linhas
+        let currentPage = 1;
 
         let currentFilterText = '';
         let currentFilterCategory = 'all'; // Categoria inicial para 'Todas as Categorias'
         let categories = []; // Array para armazenar as categorias únicas
 
-        const productGrid = document.getElementById('productGrid');
-        const productSearch = document.getElementById('productSearch');
-        const categoryFilterButtonsContainer = document.getElementById('categoryFilterButtons'); // Novo ID para o container de botões de categoria
-        const backToTopBtn = document.getElementById('backToTopBtn'); // Referência para o botão Voltar ao Topo
+        let productGrid;
+        let productSearch;
+        let categoryFilterButtonsContainer;
+        let backToTopBtn;
+        let paginationControls;
 
-        // --- Funções do Modal Customizado (geral) ---
-        function showModal(title, message) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalMessage').innerText = message;
-            document.getElementById('customModal').classList.remove('hidden');
+        // --- Funções da Modal de Detalhes do Produto ---
+        function openProductDetailsModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('modalProductImage').src = product.image;
+                document.getElementById('modalProductName').innerText = product.name;
+                document.getElementById('modalProductDescription').innerText = product.description;
+                document.getElementById('modalProductWeight').innerText = `Peso: ${product.weight}`;
+                document.getElementById('modalProductRetailPrice').innerText = `Preço Varejo: R$ ${product.retailPrice.toFixed(2).replace('.', ',')}`;
+                // Adicionando a informação de quantidade mínima para atacado
+                document.getElementById('modalProductWholesalePrice').innerText = `Preço Atacado: R$ ${product.wholesalePrice.toFixed(2).replace('.', ',')} (a partir de 6 itens)`;
+                document.getElementById('productDetailsModal').classList.remove('hidden');
+            }
         }
 
-        function hideModal() {
-            document.getElementById('customModal').classList.add('hidden');
+        function closeProductDetailsModal() {
+            document.getElementById('productDetailsModal').classList.add('hidden');
         }
 
         // --- Função para extrair categorias únicas dos produtos ---
@@ -357,7 +527,7 @@
         // --- Lógica para o clique nos botões de filtro de categoria ---
         function handleCategoryFilterClick(event) {
             currentFilterCategory = event.target.dataset.category;
-            updateCategoryButtonActiveState();
+            currentPage = 1; // Reseta para a primeira página ao mudar o filtro de categoria
             displayProducts();
         }
 
@@ -379,15 +549,17 @@
         }
 
         // --- Lógica para o filtro de texto ---
-        productSearch.addEventListener('input', (event) => {
+        function handleProductSearchInput(event) {
             currentFilterText = event.target.value;
+            currentPage = 1; // Reseta para a primeira página ao mudar o filtro de texto
             displayProducts();
-        });
+        }
 
         // --- Função principal para exibir os produtos ---
         function displayProducts() {
             productGrid.innerHTML = ''; // Limpa os produtos existentes
 
+            // Primeiro, filtra todos os produtos com base nos critérios de busca e categoria
             const filteredProducts = products.filter(product => {
                 const matchesText = currentFilterText === '' || product.name.toLowerCase().includes(currentFilterText.toLowerCase()) ||
                                     product.description.toLowerCase().includes(currentFilterText.toLowerCase());
@@ -395,25 +567,91 @@
                 return matchesText && matchesCategory;
             });
 
-            if (filteredProducts.length === 0) {
-                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Nenhum produto encontrado com os filtros aplicados.</p>';
-                return;
+            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+            // Garante que currentPage não esteja fora dos limites após filtrar
+            if (currentPage > totalPages && totalPages > 0) {
+                currentPage = totalPages;
+            } else if (totalPages === 0) {
+                currentPage = 1; // Reseta para a página 1 se não houver produtos
             }
 
-            filteredProducts.forEach(product => {
-                const productCard = `
-                    <div class="product-card rounded-xl overflow-hidden shadow-lg p-6 flex flex-col items-center text-center border border-gray-200">
-                        <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-48 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
-                        <h3 class="text-xl font-bold text-black mb-2">${product.name}</h3> <!-- Título do produto em preto -->
-                        <p class="text-sm text-gray-600 mb-1">${product.weight}</p>
-                        <p class="text-md text-gray-700 mb-3 flex-grow">${product.description}</p>
-                        <p class="text-2xl font-bold text-red-700 mb-4">R$ ${product.price.toFixed(2).replace('.', ',')}</p>
-                        <button class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button> <!-- Botão pequeno amarelo -->
-                    </div>
-                `;
-                productGrid.insertAdjacentHTML('beforeend', productCard);
-            });
-            initializeLazyLoad(); // Inicializa o lazy load após renderizar os produtos
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const productsToDisplay = filteredProducts.slice(startIndex, endIndex);
+
+            if (productsToDisplay.length === 0) {
+                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Nenhum produto encontrado com os filtros aplicados.</p>';
+            } else {
+                productsToDisplay.forEach(product => {
+                    const productCard = `
+                        <div class="product-card rounded-xl overflow-hidden shadow-lg p-6 flex flex-col items-center text-center border border-gray-200">
+                            <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-48 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
+                            <h3 class="text-xl font-bold text-black mb-2 flex-grow">${product.name} - ${product.weight}</h3> <!-- Título do produto com peso -->
+                            <button onclick="openProductDetailsModal(${product.id})" class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button> <!-- Botão pequeno amarelo -->
+                        </div>
+                    `;
+                    productGrid.insertAdjacentHTML('beforeend', productCard);
+                });
+                initializeLazyLoad();
+            }
+
+            renderPagination(totalPages);
+        }
+
+        // --- Função para renderizar os controles de paginação ---
+        function renderPagination(totalPages) {
+            paginationControls.innerHTML = ''; // Limpa os controles existentes
+
+            if (totalPages <= 1) {
+                return; // Não mostra paginação se houver apenas uma página ou nenhuma
+            }
+
+            // Botão Anterior
+            const prevButton = document.createElement('button');
+            prevButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${currentPage === 1 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#E63946] text-white hover:bg-[#c9303c]'}`;
+            prevButton.textContent = 'Anterior';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => goToPage(currentPage - 1));
+            paginationControls.appendChild(prevButton);
+
+            // Números das páginas
+            // Exibir um intervalo limitado de páginas para evitar poluição visual
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+
+            if (currentPage <= 3 && totalPages > 5) { // Se perto do início e mais de 5 páginas, mostra as 5 primeiras
+                startPage = 1;
+                endPage = 5;
+            } else if (currentPage >= totalPages - 2 && totalPages > 5) { // Se perto do fim e mais de 5 páginas, mostra as 5 últimas
+                startPage = totalPages - 4;
+                endPage = totalPages;
+            }
+
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${i === currentPage ? 'bg-[#2A9D8F] text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`;
+                pageButton.textContent = i;
+                pageButton.addEventListener('click', () => goToPage(i));
+                paginationControls.appendChild(pageButton);
+            }
+
+            // Botão Próximo
+            const nextButton = document.createElement('button');
+            nextButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${currentPage === totalPages ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#E63946] text-white hover:bg-[#c9303c]'}`;
+            nextButton.textContent = 'Próximo';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => goToPage(currentPage + 1));
+            paginationControls.appendChild(nextButton);
+        }
+
+        // --- Função para mudar de página ---
+        function goToPage(pageNumber) {
+            currentPage = pageNumber;
+            displayProducts(); // Re-exibe os produtos para a nova página
+            // Rola para o topo da seção de produtos para que o usuário veja os novos itens
+            window.scrollTo({ top: document.getElementById('produtos').offsetTop - 100, behavior: 'smooth' });
         }
 
         // --- Lazy Load de Imagens ---
@@ -455,9 +693,17 @@
 
         // Inicialização: extrai categorias, renderiza os botões de filtro e exibe os produtos
         document.addEventListener('DOMContentLoaded', () => {
+            productGrid = document.getElementById('productGrid');
+            productSearch = document.getElementById('productSearch');
+            categoryFilterButtonsContainer = document.getElementById('categoryFilterButtons');
+            backToTopBtn = document.getElementById('backToTopBtn');
+            paginationControls = document.getElementById('paginationControls');
+
+            productSearch.addEventListener('input', handleProductSearchInput);
+
             categories = getUniqueCategories();
             renderCategoryFilterButtons();
-            displayProducts(); // displayProducts chamará initializeLazyLoad
+            displayProducts(); // displayProducts chamará initializeLazyLoad e renderPagination
         });
     </script>
 </body>
