@@ -1,0 +1,10 @@
+{
+  "id": 6,
+  "name": "Repolho Azedo",
+  "description": "Repolho azedo em conserva, perfeito para acompanhar pratos e sanduíches.",
+  "category": "Vegetais",
+  "weight": "250g",
+  "PrecoVarejo": 14.00,
+  "PrecoAtacado": 11.00,
+  "image": "/assets/uploads/repolho-azedo.jpeg"
+}

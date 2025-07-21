@@ -1,0 +1,24 @@
+backend:
+  name: git-gateway
+  branch: main # ou master, dependendo do nome da sua branch principal
+
+publish_mode: editorial_workflow # Opcional: permite rascunhos e revisão antes de publicar
+media_folder: "assets/uploads" # Onde as imagens serão salvas (crie esta pasta)
+public_folder: "/assets/uploads" # O caminho público para acessar as imagens
+
+collections:
+  - name: "products" # Um nome de identificação para a coleção
+    label: "Produtos" # Nome visível no CMS
+    folder: "src/data/products" # Onde os arquivos de produto serão armazenados (você precisará criar esta pasta)
+    create: true # Permite criar novos itens
+    slug: "{{name}}" # O nome do arquivo será baseado no nome do produto
+    format: "json" # Formato dos arquivos
+    fields: # Campos para cada item (produto)
+      - {label: "ID (Gerado Automaticamente)", name: "id", widget: "number", default: 0, min: 0, value_type: "int", required: false, hidden: false}
+      - {label: "Nome do Produto", name: "name", widget: "string", required: true}
+      - {label: "Descrição", name: "description", widget: "text", required: true}
+      - {label: "Categoria", name: "category", widget: "select", options: ["Pimentas", "Conservas", "Geleias", "Molhos", "Picles"], default: "Conservas", required: true}
+      - {label: "Peso/Volume (Ex: 150g, 100ml)", name: "weight", widget: "string", required: true}
+      - {label: "Preço de Varejo (R$)", name: "PrecoVarejo", widget: "number", value_type: "float", min: 0, step: 0.01, required: true}
+      - {label: "Preço de Atacado (R$)", name: "PrecoAtacado", widget: "number", value_type: "float", min: 0, step: 0.01, required: true}
+      - {label: "Imagem do Produto", name: "image", widget: "image", required: true}

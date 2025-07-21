@@ -1,0 +1,10 @@
+{
+  "id": 4,
+  "name": "Mini Jiló em Conserva",
+  "description": "Mini jilós crocantes em conserva, ideais para petiscos e acompanhamentos.",
+  "category": "Vegetais",
+  "weight": "150g",
+  "PrecoVarejo": 12.00,
+  "PrecoAtacado": 10.00,
+  "image": "/assets/uploads/mini-jilo-em-conserva.jpeg"
+}

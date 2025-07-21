@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "name": "Pimenta Caseira Temperada",
+  "description": "Uma pimenta ardente e saborosa, perfeita para dar um toque especial aos seus pratos.",
+  "category": "Pimentas",
+  "weight": "150g",
+  "PrecoVarejo": 25.50,
+  "PrecoAtacado": 20.40,
+  "image": "/assets/uploads/pimenta-caseira-temperada.jpeg"
+}

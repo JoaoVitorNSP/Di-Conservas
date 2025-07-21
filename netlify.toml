@@ -1,0 +1,8 @@
+[build]
+  command = "node ./build-products.js && cp index.html dist/index.html && cp -r assets dist/assets && cp -r admin dist/admin"
+  publish = "dist"
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/:splat"
+  status = 200

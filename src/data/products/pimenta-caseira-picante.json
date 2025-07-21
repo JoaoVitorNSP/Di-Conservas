@@ -1,0 +1,10 @@
+{
+  "id": 5,
+  "name": "Pimenta Caseira Picante",
+  "description": "Uma pimenta caseira com um toque extra de picância, perfeita para quem ama sabores intensos.",
+  "category": "Pimentas",
+  "weight": "150g",
+  "PrecoVarejo": 27.50,
+  "PrecoAtacado": 22.00,
+  "image": "/assets/uploads/pimenta-caseira-picante.jpeg"
+}

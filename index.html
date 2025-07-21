@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Di Conservas - Catálogo</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Seu CSS existente aqui */
         body {
             font-family: 'Palatino Linotype', 'Palatino', serif; /* Fonte Palatino para o corpo */
             background-color: #F5F5F5; /* Fundo principal Off-white */
@@ -66,8 +65,9 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             width: 90%;
-            max-width: 600px;
+            max-width: 600px; /* Aumentado para melhor visualização dos detalhes */
             text-align: left;
+            position: relative; /* Para posicionar o botão de fechar */
         }
         .close-button {
             color: #aaa;
@@ -75,6 +75,9 @@
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
         }
         .close-button:hover,
         .close-button:focus {
@@ -108,15 +111,12 @@
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
-    <!-- Cabeçalho -->
     <header class="bg-[#99cd85] text-black p-6 shadow-lg rounded-b-xl fixed top-0 left-0 right-0 z-50">
         <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
             <div class="flex items-center mb-4 md:mb-0 w-full md:w-auto justify-center md:justify-start">
-                <!-- Logo da Empresa - Centralizada -->
                 <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-4 shadow-md overflow-hidden">
                     <img src="https://thumb-cdn.soluall.net/prod/adv_ads/ad300box/5e6b9e93-194c-4c83-af4e-2618ac1e06ca/60198ac6-b0fc-46dd-a9f5-1c16ac1e03ae.png" alt="Logo da Di Conservas" class="w-full h-full object-cover">
                 </div>
-                <!-- Nome da Empresa -->
                 <h1 class="text-3xl font-bold text-black">Di Conservas</h1>
             </div>
             <nav class="flex space-x-6 text-lg items-center mt-4 md:mt-0">
@@ -126,17 +126,17 @@
                 <a href="#contato" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
                     <i class="fas fa-envelope mr-2"></i>Contato
                 </a>
-                <!-- Ícone de Busca -->
                 <a href="#" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center" onclick="document.getElementById('productSearch').focus(); return false;">
                     <i class="fas fa-search"></i>
+                </a>
+                <a href="/admin/" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
+                    <i class="fas fa-user-cog mr-2"></i>Admin
                 </a>
             </nav>
         </div>
     </header>
 
-    <!-- Seção Hero/Banner -->
     <section id="hero-banner" class="relative bg-cover bg-center h-90 md:h-96 flex items-center justify-center text-white text-center shadow-lg pt-24" style="background-image: url('https://images.unsplash.com/photo-1444858291040-58f756a3bdd6?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmF6ZW5kYXxlbnwwfHwwfHx8MA%3D%3D');">
-        <!-- Overlay com gradiente verde escuro transparente -->
         <div class="absolute inset-0 bg-gradient-to-t from-transparent to-transparent via-[#2A9D8F] opacity-60"></div>
         <div class="relative z-10 p-4">
             <h2 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg text-[#FFD60A]">Sabores Que Transformam</h2>
@@ -145,61 +145,51 @@
         </div>
     </section>
 
-    <!-- Área de Conteúdo Principal (Catálogo) -->
     <main class="mx-auto p-6 flex-grow w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12 flex flex-col lg:flex-row gap-6">
 
-        <!-- Barra Lateral de Filtros -->
         <aside class="lg:w-1/4 bg-white p-6 rounded-xl shadow-xl flex-shrink-0">
             <h3 class="text-2xl font-bold text-gray-800 mb-6">Filtrar Produtos</h3>
 
-            <!-- Filtro de Texto -->
             <div class="mb-6">
                 <label for="productSearch" class="block text-gray-700 text-sm font-medium mb-2">Pesquisar por Nome/Descrição:</label>
                 <input type="text" id="productSearch" placeholder="Ex: Malagueta, Tomate"
                        class="p-3 border border-gray-300 rounded-lg w-full focus:ring-[#E63946] focus:border-[#E63946] shadow-sm text-gray-800">
             </div>
 
-            <!-- Filtros de Categoria -->
             <div>
                 <label class="block text-gray-700 text-sm font-medium mb-2">Categorias:</label>
                 <div id="categoryFilterButtons" class="flex flex-col space-y-2">
-                    <!-- Botões de categoria serão renderizados aqui pelo JavaScript -->
-                </div>
+                    </div>
             </div>
         </aside>
 
-        <!-- Seção de Produtos (Conteúdo Principal do Catálogo) -->
         <section id="produtos" class="lg:w-3/4 bg-white p-8 rounded-xl shadow-xl">
             <h2 class="text-4xl font-bold text-center text-gray-800 mb-8">Nossos Produtos</h2>
 
-            <!-- Grade de Produtos -->
             <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Produtos serão carregados dinamicamente aqui pelo JavaScript -->
-            </div>
+                </div>
+            <div id="paginationControls" class="flex justify-center items-center space-x-2 mt-8">
+                </div>
         </section>
     </main>
 
-    <!-- Seção de Contato -->
     <section id="contato" class="my-10 bg-[#facb4b] text-gray-800 p-8 rounded-xl shadow-lg text-center mx-auto w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12">
         <h2 class="text-4xl font-bold text-black mb-6">Fale Conosco</h2>
         <p class="text-lg mb-8">Entre em contato conosco para fazer seu pedido ou tirar dúvidas.</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
-            <!-- Contato por Email -->
             <a href="mailto:seucorreo@email.com" class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fas fa-envelope text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">Email</span>
                 <span class="text-sm text-gray-800">diconservas@email.com</span>
             </a>
 
-            <!-- Contato por WhatsApp -->
             <a href="https://wa.me/+55XXYYYYYYYYY" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fab fa-whatsapp text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">WhatsApp</span>
                 <span class="text-sm text-gray-800">+55 (41) 99612-2750</span>
             </a>
 
-            <!-- Localização -->
             <a href="https://g.co/kgs/xqMpF4w" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fas fa-map-marker-alt text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">Localização</span>
@@ -210,21 +200,21 @@
         <p class="mt-8 text-sm">Fazemos pedidos e tiramos dúvidas via Email e WhatsApp.</p>
     </section>
 
-    <!-- Modal Customizado para Mensagens (geral) -->
-    <div id="customModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="modal-content bg-white rounded-lg p-6 shadow-xl w-full max-w-sm">
-            <h4 id="modalTitle" class="text-xl font-bold text-gray-800 mb-3">Mensagem</h4>
-            <p id="modalMessage" class="text-gray-700 mb-5"></p>
-            <button onclick="hideModal()" class="bg-[#E63946] text-white px-5 py-2 rounded-md hover:bg-[#c9303c] transition duration-300">OK</button>
+    <div id="productDetailsModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="modal-content bg-white rounded-lg p-6 shadow-xl w-full max-w-md">
+            <button class="close-button" onclick="closeProductDetailsModal()">&times;</button>
+            <img id="modalProductImage" src="" alt="Imagem do Produto" class="w-full max-h-80 md:max-h-[70vh] object-contain rounded-lg mb-4">
+            <h4 id="modalProductName" class="text-2xl font-bold text-gray-800 mb-2"></h4>
+            <p id="modalProductDescription" class="text-gray-700 mb-3"></p>
+            <p id="modalProductWeight" class="text-gray-600 text-sm mb-1"></p>
+            <p id="modalProductPrecoVarejo" class="text-xl font-bold text-red-700 mb-1"></p> <p id="modalProductWholesalePrice" class="text-lg text-gray-700 mb-4"></p> <button onclick="closeProductDetailsModal()" class="bg-[#E63946] text-white px-5 py-2 rounded-md hover:bg-[#c9303c] transition duration-300 w-full">Fechar</button>
         </div>
     </div>
 
-    <!-- Botão Voltar ao Topo -->
     <button id="backToTopBtn" onclick="scrollToTop()">
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Rodapé -->
     <footer class="bg-[#99cd85] text-[#000000] p-8 mt-10 rounded-t-xl shadow-inner">
         <div class="container mx-auto flex flex-col md:flex-row items-center justify-between text-center md:text-left">
             <div class="mb-4 md:mb-0">
@@ -239,85 +229,38 @@
         </div>
     </footer>
 
-
+    <script src="/products.js"></script>
     <script>
-        // Neste cenário real, os produtos seriam carregados de um banco de dados (ex: Firebase Firestore).
-        // Para demonstração, mantemos um array local.
-        let products = [
-            {
-                id: 1,
-                name: "Pimenta Caseira Temperada",
-                category: "Pimentas",
-                description: "Uma pimenta ardente e saborosa, perfeita para dar um toque especial aos seus pratos.",
-                weight: "150g",
-                price: 25.50,
-                image: "assets/pimenta-caseira-temperada.jpeg" // Imagem local
-            },
-            {
-                id: 2,
-                name: "Pimenta Caseira Picante",
-                category: "Pimentas",
-                description: "Uma pimenta caseira com um toque extra de picância, perfeita para quem gosta de mais sabor.",
-                weight: "300g",
-                price: 18.90,
-                image: "assets/pimenta-caseira-picante.jpeg" // Imagem local
-            },
-            {
-                id: 3,
-                name: "Mini Jiló",
-                category: "Conservas no vinagre",
-                description: "Jilós pequenos e tenros, conservados em azeite de oliva, ideais para petiscos.",
-                weight: "300g",
-                price: 35.00,
-                image: "assets/mini-jilo.jpeg" // Imagem local
-            },
-            {
-                id: 4,
-                name: "Repolho Azedo",
-                category: "Conservas no vinagre",
-                description: "Repolho fermentado com especiarias, perfeito para acompanhar pratos diversos.",
-                weight: "300g",
-                price: 28.00,
-                image: "assets/repolho-azedo.jpeg" // Imagem local
-            },
-            {
-                id: 5,
-                name: "Espetinho Misto",
-                category: "Conservas no vinagre",
-                description: "Espetinhos de legumes variados, marinados em vinagre e especiarias.",
-                weight: "300g",
-                price: 22.50,
-                image: "assets/espetinho-misto.jpeg" // Imagem local
-            },
-             {
-                id: 6,
-                name: "Broto de bambu",
-                category: "Conservas no vinagre",
-                description: "Broto de bambu em conserva, crocante e saboroso, ideal para saladas e pratos asiáticos.",
-                weight: "250g",
-                price: 16.00,
-                image: "assets/broto-de-bambu.jpeg" // Imagem local
-            },
-        ];
+        const itemsPerPage = 15; // 3 colunas * 5 linhas
+        let currentPage = 1;
 
         let currentFilterText = '';
         let currentFilterCategory = 'all'; // Categoria inicial para 'Todas as Categorias'
         let categories = []; // Array para armazenar as categorias únicas
 
-        const productGrid = document.getElementById('productGrid');
-        const productSearch = document.getElementById('productSearch');
-        const categoryFilterButtonsContainer = document.getElementById('categoryFilterButtons'); // Novo ID para o container de botões de categoria
-        const backToTopBtn = document.getElementById('backToTopBtn'); // Referência para o botão Voltar ao Topo
+        let productGrid;
+        let productSearch;
+        let categoryFilterButtonsContainer;
+        let backToTopBtn;
+        let paginationControls;
 
-        // --- Funções do Modal Customizado (geral) ---
-        function showModal(title, message) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalMessage').innerText = message;
-            document.getElementById('customModal').classList.remove('hidden');
+        // --- Funções da Modal de Detalhes do Produto ---
+        function openProductDetailsModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('modalProductImage').src = product.image;
+                document.getElementById('modalProductName').innerText = product.name;
+                document.getElementById('modalProductDescription').innerText = product.description;
+                document.getElementById('modalProductWeight').innerText = `Peso: ${product.weight}`;
+                document.getElementById('modalProductPrecoVarejo').innerText = `Preço Varejo: R$ ${product.PrecoVarejo.toFixed(2).replace('.', ',')}`;
+                // Adicionando a informação de quantidade mínima para atacado
+                document.getElementById('modalProductPrecoAtacado').innerText = `Preço Atacado: R$ ${product.PrecoAtacado.toFixed(2).replace('.', ',')} (a partir de 6 itens)`;
+                document.getElementById('productDetailsModal').classList.remove('hidden');
+            }
         }
 
-        function hideModal() {
-            document.getElementById('customModal').classList.add('hidden');
+        function closeProductDetailsModal() {
+            document.getElementById('productDetailsModal').classList.add('hidden');
         }
 
         // --- Função para extrair categorias únicas dos produtos ---
@@ -357,7 +300,7 @@
         // --- Lógica para o clique nos botões de filtro de categoria ---
         function handleCategoryFilterClick(event) {
             currentFilterCategory = event.target.dataset.category;
-            updateCategoryButtonActiveState();
+            currentPage = 1; // Reseta para a primeira página ao mudar o filtro de categoria
             displayProducts();
         }
 
@@ -379,15 +322,17 @@
         }
 
         // --- Lógica para o filtro de texto ---
-        productSearch.addEventListener('input', (event) => {
+        function handleProductSearchInput(event) {
             currentFilterText = event.target.value;
+            currentPage = 1; // Reseta para a primeira página ao mudar o filtro de texto
             displayProducts();
-        });
+        }
 
         // --- Função principal para exibir os produtos ---
         function displayProducts() {
             productGrid.innerHTML = ''; // Limpa os produtos existentes
 
+            // Primeiro, filtra todos os produtos com base nos critérios de busca e categoria
             const filteredProducts = products.filter(product => {
                 const matchesText = currentFilterText === '' || product.name.toLowerCase().includes(currentFilterText.toLowerCase()) ||
                                     product.description.toLowerCase().includes(currentFilterText.toLowerCase());
@@ -395,25 +340,89 @@
                 return matchesText && matchesCategory;
             });
 
-            if (filteredProducts.length === 0) {
-                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Nenhum produto encontrado com os filtros aplicados.</p>';
-                return;
+            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+            // Garante que currentPage não esteja fora dos limites após filtrar
+            if (currentPage > totalPages && totalPages > 0) {
+                currentPage = totalPages;
+            } else if (totalPages === 0) {
+                currentPage = 1; // Reseta para a página 1 se não houver produtos
             }
 
-            filteredProducts.forEach(product => {
-                const productCard = `
-                    <div class="product-card rounded-xl overflow-hidden shadow-lg p-6 flex flex-col items-center text-center border border-gray-200">
-                        <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-48 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
-                        <h3 class="text-xl font-bold text-black mb-2">${product.name}</h3> <!-- Título do produto em preto -->
-                        <p class="text-sm text-gray-600 mb-1">${product.weight}</p>
-                        <p class="text-md text-gray-700 mb-3 flex-grow">${product.description}</p>
-                        <p class="text-2xl font-bold text-red-700 mb-4">R$ ${product.price.toFixed(2).replace('.', ',')}</p>
-                        <button class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button> <!-- Botão pequeno amarelo -->
-                    </div>
-                `;
-                productGrid.insertAdjacentHTML('beforeend', productCard);
-            });
-            initializeLazyLoad(); // Inicializa o lazy load após renderizar os produtos
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const productsToDisplay = filteredProducts.slice(startIndex, endIndex);
+
+            if (productsToDisplay.length === 0) {
+                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Nenhum produto encontrado com os filtros aplicados.</p>';
+            } else {
+                productsToDisplay.forEach(product => {
+                    const productCard = `
+                        <div class="product-card rounded-xl overflow-hidden shadow-lg p-6 flex flex-col items-center text-center border border-gray-200">
+                            <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-48 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
+                            <h3 class="text-xl font-bold text-black mb-2 flex-grow">${product.name} - ${product.weight}</h3> <button onclick="openProductDetailsModal(${product.id})" class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button> </div>
+                    `;
+                    productGrid.insertAdjacentHTML('beforeend', productCard);
+                });
+                initializeLazyLoad();
+            }
+
+            renderPagination(totalPages);
+        }
+
+        // --- Função para renderizar os controles de paginação ---
+        function renderPagination(totalPages) {
+            paginationControls.innerHTML = ''; // Limpa os controles existentes
+
+            if (totalPages <= 1) {
+                return; // Não mostra paginação se houver apenas uma página ou nenhuma
+            }
+
+            // Botão Anterior
+            const prevButton = document.createElement('button');
+            prevButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${currentPage === 1 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#E63946] text-white hover:bg-[#c9303c]'}`;
+            prevButton.textContent = 'Anterior';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => goToPage(currentPage - 1));
+            paginationControls.appendChild(prevButton);
+
+            // Números das páginas
+            // Exibir um intervalo limitado de páginas para evitar poluição visual
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+
+            if (currentPage <= 3 && totalPages > 5) { // Se perto do início e mais de 5 páginas, mostra as 5 primeiras
+                startPage = 1;
+                endPage = 5;
+            } else if (currentPage >= totalPages - 2 && totalPages > 5) { // Se perto do fim e mais de 5 páginas, mostra as 5 últimas
+                startPage = totalPages - 4;
+                endPage = totalPages;
+            }
+
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${i === currentPage ? 'bg-[#2A9D8F] text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`;
+                pageButton.textContent = i;
+                pageButton.addEventListener('click', () => goToPage(i));
+                paginationControls.appendChild(pageButton);
+            }
+
+            // Botão Próximo
+            const nextButton = document.createElement('button');
+            nextButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${currentPage === totalPages ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#E63946] text-white hover:bg-[#c9303c]'}`;
+            nextButton.textContent = 'Próximo';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => goToPage(currentPage + 1));
+            paginationControls.appendChild(nextButton);
+        }
+
+        // --- Função para mudar de página ---
+        function goToPage(pageNumber) {
+            currentPage = pageNumber;
+            displayProducts(); // Re-exibe os produtos para a nova página
+            // Rola para o topo da seção de produtos para que o usuário veja os novos itens
+            window.scrollTo({ top: document.getElementById('produtos').offsetTop - 100, behavior: 'smooth' });
         }
 
         // --- Lazy Load de Imagens ---
@@ -455,9 +464,21 @@
 
         // Inicialização: extrai categorias, renderiza os botões de filtro e exibe os produtos
         document.addEventListener('DOMContentLoaded', () => {
+            productGrid = document.getElementById('productGrid');
+            productSearch = document.getElementById('productSearch');
+            categoryFilterButtonsContainer = document.getElementById('categoryFilterButtons');
+            backToTopBtn = document.getElementById('backToTopBtn');
+            paginationControls = document.getElementById('paginationControls');
+
+            productSearch.addEventListener('input', handleProductSearchInput);
+
+            // A função getUniqueCategories e renderCategoryFilterButtons e displayProducts
+            // precisam ser chamadas APÓS products ter sido carregado.
+            // Em um cenário real com fetch, seria dentro de um .then()
+            // Como estamos usando um script gerado, ele será carregado antes.
             categories = getUniqueCategories();
             renderCategoryFilterButtons();
-            displayProducts(); // displayProducts chamará initializeLazyLoad
+            displayProducts(); // displayProducts chamará initializeLazyLoad e renderPagination
         });
     </script>
 </body>

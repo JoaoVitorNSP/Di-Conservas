@@ -1,0 +1,10 @@
+{
+  "id": 3,
+  "name": "Espetinho Misto",
+  "description": "Uma deliciosa combinação de carnes nobres, perfeita para churrascos.",
+  "category": "Carnes",
+  "weight": "300g",
+  "PrecoVarejo": 35.00,
+  "PrecoAtacado": 30.00,
+  "image": "/assets/uploads/espetinho-misto.jpeg"
+}
