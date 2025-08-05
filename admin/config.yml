@@ -1,24 +1,32 @@
+# Arquivo de configuração do Netlify CMS
+# Este arquivo define como o painel de administração irá funcionar.
+
+# Configuração do backend, que se conecta ao seu repositório GitHub via Netlify
 backend:
   name: git-gateway
-  branch: main # ou master, dependendo do nome da sua branch principal
+  branch: main # O branch que o CMS irá alterar. Use 'main' ou 'master'.
 
-publish_mode: editorial_workflow # Opcional: permite rascunhos e revisão antes de publicar
-media_folder: "assets/uploads" # Onde as imagens serão salvas (crie esta pasta)
-public_folder: "/assets/uploads" # O caminho público para acessar as imagens
+# Local onde as imagens enviadas pelo painel serão salvas no repositório
+media_folder: "assets/img/products"
+# Como o site irá acessar essas imagens publicamente
+public_folder: "/assets/img/products"
 
+# Coleções de conteúdo gerenciáveis. Teremos apenas uma: "Produtos".
 collections:
-  - name: "products" # Um nome de identificação para a coleção
-    label: "Produtos" # Nome visível no CMS
-    folder: "src/data/products" # Onde os arquivos de produto serão armazenados (você precisará criar esta pasta)
-    create: true # Permite criar novos itens
-    slug: "{{name}}" # O nome do arquivo será baseado no nome do produto
-    format: "json" # Formato dos arquivos
-    fields: # Campos para cada item (produto)
-      - {label: "ID (Gerado Automaticamente)", name: "id", widget: "number", default: 0, min: 0, value_type: "int", required: false, hidden: false}
-      - {label: "Nome do Produto", name: "name", widget: "string", required: true}
-      - {label: "Descrição", name: "description", widget: "text", required: true}
-      - {label: "Categoria", name: "category", widget: "select", options: ["Pimentas", "Conservas", "Geleias", "Molhos", "Picles"], default: "Conservas", required: true}
-      - {label: "Peso/Volume (Ex: 150g, 100ml)", name: "weight", widget: "string", required: true}
-      - {label: "Preço de Varejo (R$)", name: "PrecoVarejo", widget: "number", value_type: "float", min: 0, step: 0.01, required: true}
-      - {label: "Preço de Atacado (R$)", name: "PrecoAtacado", widget: "number", value_type: "float", min: 0, step: 0.01, required: true}
-      - {label: "Imagem do Produto", name: "image", widget: "image", required: true}
+  - name: "products" # Identificador da coleção (não mude)
+    label: "Produtos" # Nome que aparece no menu do painel
+    label_singular: "Produto" # Nome para um único item
+    description: "Aqui você pode cadastrar, editar e excluir os produtos do site."
+    folder: "_data/products" # Pasta onde os arquivos de cada produto serão salvos
+    create: true # Permite a criação de novos produtos
+    slug: "{{slug}}" # Gera o nome do arquivo a partir do nome do produto (ex: "conserva-de-pimentao.json")
+    extension: "json" # Salva cada produto como um arquivo JSON individual
+    fields: # Define os campos para cada produto
+      - { label: "ID", name: "id", widget: "uuid", hint: "Este ID é gerado automaticamente e não deve ser alterado." }
+      - { label: "Nome do Produto", name: "nome", widget: "string", hint: "Ex: Conserva de Pimentão" }
+      - { label: "Categoria", name: "categoria", widget: "string", hint: "Ex: Pimentas, Antepastos, Geleias" }
+      - { label: "Descrição", name: "descricao", widget: "markdown", hint: "Detalhes sobre o produto. Você pode usar formatação como negrito." }
+      - { label: "Peso", name: "peso", widget: "string", hint: "Ex: 250g, 500ml" }
+      - { label: "Preço Varejo", name: "preco_varejo", widget: "number", value_type: "float", min: 0, step: 0.01, hint: "Use ponto para decimais. Ex: 25.50" }
+      - { label: "Preço Atacado", name: "preco_atacado", widget: "number", value_type: "float", min: 0, step: 0.01, hint: "Use ponto para decimais. Ex: 18.90" }
+      - { label: "Imagem do Produto", name: "imagem", widget: "image" }
