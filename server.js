@@ -37,11 +37,17 @@ app.post('/admin/login', (req, res) => {
     const { username, password } = req.body;
     // Usuário e senha fixos para exemplo
     if (username === 'admin' && password === '1234') {
-        // Redireciona para página protegida (pode criar /admin/dashboard)
-        res.send('Login realizado com sucesso!');
+        // Redireciona para admin-login.html
+        res.redirect('/admin-login');
     } else {
-        res.status(401).send('Usuário ou senha inválidos!');
+        // Redireciona de volta para a página de login
+        res.redirect('/admin');
     }
+});
+
+// Servir página de área administrativa após login
+app.get('/admin-login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-login.html'));
 });
 
 // Rota para receber formulário POST
