@@ -38,7 +38,7 @@ app.post('/admin/login', (req, res) => {
     // Usuário e senha fixos para exemplo
     if (username === 'admin' && password === '1234') {
         // Redireciona para admin-login.html
-        res.redirect('/admin-login');
+        res.sendFile(path.join(__dirname, 'admin-login.html'));
     } else {
         // Redireciona de volta para a página de login
         res.redirect('/admin');
