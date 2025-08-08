@@ -8,6 +8,7 @@ services:
     volumes:
       - ./assets:/usr/src/app/assets
       - ./index.html:/usr/src/app/index.html
+      - ./admin.html:/usr/src/app/admin.html
       - ./server.js:/usr/src/app/server.js
       - ./products.json:/usr/src/app/products.json
     environment:

@@ -4,14 +4,11 @@ FROM node:20.11.1
 # Define o diretório de trabalho dentro do container
 WORKDIR /usr/src/app
 
-# Copia os arquivos package.json e package-lock.json (se existirem)
-COPY package*.json ./
+# Copia o restante dos arquivos da aplicação
+COPY . .
 
 # Instala as dependências
 RUN npm install
-
-# Copia o restante dos arquivos da aplicação
-COPY . .
 
 # Expõe a porta usada pela aplicação
 EXPOSE 3000

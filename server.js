@@ -27,6 +27,23 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Servir página de login do admin
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// Rota de login do admin (simples, sem autenticação real)
+app.post('/admin/login', (req, res) => {
+    const { username, password } = req.body;
+    // Usuário e senha fixos para exemplo
+    if (username === 'admin' && password === '1234') {
+        // Redireciona para página protegida (pode criar /admin/dashboard)
+        res.send('Login realizado com sucesso!');
+    } else {
+        res.status(401).send('Usuário ou senha inválidos!');
+    }
+});
+
 // Rota para receber formulário POST
 app.post('/upload', upload.single('image'), (req, res) => {
     const { name, category, description, weight, retailPrice, wholesalePrice } = req.body;
