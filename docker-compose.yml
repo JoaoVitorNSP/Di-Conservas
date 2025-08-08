@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    container_name: di-conservas-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./assets:/usr/src/app/assets
+      - ./index.html:/usr/src/app/index.html
+      - ./server.js:/usr/src/app/server.js
+      - ./products.json:/usr/src/app/products.json
+    environment:
+      - NODE_ENV=development
+    command: node server.js
