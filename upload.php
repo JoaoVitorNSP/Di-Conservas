@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'weight' => $weight,
         'retailPrice' => (float)$retailPrice,
         'wholesalePrice' => (float)$wholesalePrice,
-        'image' => $imageName
+        'image' => $uploadDir . $imageName
     ];
     
     $products[] = $product;

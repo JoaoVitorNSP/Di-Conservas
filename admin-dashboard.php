@@ -35,7 +35,7 @@ checkAdminAuth();
     </div>
     
     <div class="actions">
-      <a href="cadastro.html" class="btn">📝 Cadastrar Produto</a>
+      <a href="cadastro.php" class="btn">📝 Cadastrar Produto</a>
       <a href="produtos.php" class="btn">📋 Listar Produtos</a>
       <a href="logout.php" class="btn btn-danger">🚪 Sair</a>
     </div>
@@ -49,7 +49,7 @@ checkAdminAuth();
         .then(data => {
           if (data.includes('expired')) {
             alert('Sessão expirada! Redirecionando para login...');
-            window.location.href = 'admin.html';
+            window.location.href = 'admin.php';
           }
         });
     }, 300000); // 5 minutos

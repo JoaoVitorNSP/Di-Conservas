@@ -1,3 +1,22 @@
+<?php
+// admin.php - Página de login com verificação de sessão
+
+session_start();
+
+// Se já estiver logado e sessão válida, redireciona para dashboard
+if (isset($_SESSION['admin_logged']) && $_SESSION['admin_logged'] === true) {
+    // Verifica se a sessão não expirou (10 minutos = 600 segundos)
+    if (isset($_SESSION['admin_last_activity']) && (time() - $_SESSION['admin_last_activity'] <= 600)) {
+        // Atualiza o tempo de última atividade
+        $_SESSION['admin_last_activity'] = time();
+        header('Location: admin-dashboard.php');
+        exit;
+    } else {
+        // Sessão expirada, destroi e continua para o login
+        session_destroy();
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -59,11 +78,27 @@
             text-align: center;
             margin-bottom: 12px;
         }
+
+        .session-info {
+            background: #e8f5e8;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            color: #2d7a2d;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <?php if (isset($_GET['logout']) && $_GET['logout'] === 'success'): ?>
+            <div class="session-info">
+                Logout realizado com sucesso!
+            </div>
+        <?php endif; ?>
+        
         <h2>Login do Administrador</h2>
         <form method="POST" action="admin-login.php">
             <label for="username">Usuário</label>

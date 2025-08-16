@@ -11,9 +11,12 @@
 - `products.php` - API para listar produtos em formato JSON
 
 ### Páginas HTML atualizadas:
-- `admin.html` - Formulário de login aponta para `admin-login.php`
-- `admin-dashboard.html` - Página de sucesso após login
-- `cadastro.html` - Formulário para cadastro de produtos
+- `admin.php` - Página de login com verificação automática de sessão
+- `admin.html` - Versão estática da página de login (mantida para compatibilidade)
+- `admin-dashboard.php` - Dashboard administrativo protegido
+- `admin-dashboard.html` - Página de sucesso após login (estática)
+- `cadastro.php` - Formulário para cadastro de produtos (protegido)
+- `cadastro.html` - Versão estática do formulário
 - `admin-login.html` - Atualizado para usar links relativos
 
 ### Configuração do servidor:
@@ -59,8 +62,9 @@ docker-compose down
 
 4. **Acesso:**
    - Página principal: `http://localhost/`
-   - Admin: `http://localhost/admin.html`
-   - Cadastro: `http://localhost/cadastro.html`
+   - Admin: `http://localhost/admin.php` (redireciona automaticamente se logado)
+   - Dashboard: `http://localhost/admin-dashboard.php` (apenas se logado)
+   - Cadastro: `http://localhost/cadastro.php` (apenas se logado)
 
 ## Credenciais de admin:
 - Usuário: `admin`
@@ -71,6 +75,8 @@ docker-compose down
 - ✅ Cadastro de produtos em JSON com ID único
 - ✅ Carregamento dinâmico de produtos via JSON/API
 - ✅ Sistema de sessões com duração de 10 minutos
+- ✅ Login automático se sessão ativa
+- ✅ Redirecionamento inteligente para dashboard
 - ✅ Login de administrador protegido
 - ✅ Proteção de páginas administrativas
 - ✅ API REST para produtos

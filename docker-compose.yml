@@ -10,6 +10,7 @@ services:
       - ./products.json:/var/www/html/products.json
       - ./index.html:/var/www/html/index.html
       - ./admin.html:/var/www/html/admin.html
+      - ./admin.php:/var/www/html/admin.php
       - ./admin-login.html:/var/www/html/admin-login.html
       - ./admin-dashboard.html:/var/www/html/admin-dashboard.html
       - ./admin-dashboard.php:/var/www/html/admin-dashboard.php

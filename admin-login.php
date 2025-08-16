@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     } else {
         // Redireciona de volta para página de login com erro
-        header('Location: admin.html?error=1');
+        header('Location: admin.php?error=1');
         exit;
     }
 } else {
