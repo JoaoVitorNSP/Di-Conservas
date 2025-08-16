@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,66 +11,96 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            font-family: 'Palatino Linotype', 'Palatino', serif; /* Fonte Palatino para o corpo */
-            background-color: #F5F5F5; /* Fundo principal Off-white */
-            color: #000000; /* Texto principal Preto */
+            font-family: 'Palatino Linotype', 'Palatino', serif;
+            /* Fonte Palatino para o corpo */
+            background-color: #F5F5F5;
+            /* Fundo principal Off-white */
+            color: #000000;
+            /* Texto principal Preto */
         }
-        h1, h2, h3, h4 {
-            font-family: 'Palatino Linotype', 'Palatino', serif; /* Fonte Palatino para títulos */
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Palatino Linotype', 'Palatino', serif;
+            /* Fonte Palatino para títulos */
         }
+
         .product-card {
             background-color: #ffffff;
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             /* Sombreamento suave */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #2A9D8F; /* Borda verde para cards de produto */
+            border: 1px solid #2A9D8F;
+            /* Borda verde para cards de produto */
         }
+
         .product-card:hover {
-            transform: translateY(-8px); /* Aumentado o movimento */
-            box-shadow: 0 10px 15px rgba(0,0,0,0.15), 0 20px 25px rgba(0,0,0,0.1); /* Sombra mais intensa no hover */
+            transform: translateY(-8px);
+            /* Aumentado o movimento */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 0 20px 25px rgba(0, 0, 0, 0.1);
+            /* Sombra mais intensa no hover */
         }
+
         /* Barra de rolagem customizada para melhor estética */
         ::-webkit-scrollbar {
             width: 8px;
-            height: 8px; /* Para scroll horizontal */
+            height: 8px;
+            /* Para scroll horizontal */
         }
+
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #888;
             border-radius: 10px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+
         /* Estilo para modal customizado */
         .modal {
-            display: none; /* Escondido por padrão */
-            position: fixed; /* Fica no lugar */
-            z-index: 1000; /* Fica em cima */
+            display: none;
+            /* Escondido por padrão */
+            position: fixed;
+            /* Fica no lugar */
+            z-index: 1000;
+            /* Fica em cima */
             left: 0;
             top: 0;
-            width: 100%; /* Largura total */
-            height: 100%; /* Altura total */
-            overflow: auto; /* Habilita rolagem se necessário */
-            background-color: rgba(0,0,0,0.4); /* Preto com opacidade */
+            width: 100%;
+            /* Largura total */
+            height: 100%;
+            /* Altura total */
+            overflow: auto;
+            /* Habilita rolagem se necessário */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Preto com opacidade */
             display: flex;
             align-items: center;
             justify-content: center;
         }
+
         .modal-content {
             background-color: #fefefe;
             margin: auto;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 90%;
-            max-width: 600px; /* Aumentado para melhor visualização dos detalhes */
+            max-width: 600px;
+            /* Aumentado para melhor visualização dos detalhes */
             text-align: left;
-            position: relative; /* Para posicionar o botão de fechar */
+            position: relative;
+            /* Para posicionar o botão de fechar */
         }
+
         .close-button {
             color: #aaa;
             float: right;
@@ -80,20 +111,24 @@
             top: 10px;
             right: 20px;
         }
+
         .close-button:hover,
         .close-button:focus {
             color: black;
             text-decoration: none;
             cursor: pointer;
         }
+
         /* Estilo para o botão Voltar ao Topo */
         #backToTopBtn {
-            display: none; /* Escondido por padrão */
+            display: none;
+            /* Escondido por padrão */
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 99;
-            background-color: #E63946; /* Vermelho do esquema de cores */
+            background-color: #E63946;
+            /* Vermelho do esquema de cores */
             color: white;
             border: none;
             border-radius: 50%;
@@ -103,22 +138,27 @@
             line-height: 50px;
             text-align: center;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s, opacity 0.3s;
         }
+
         #backToTopBtn:hover {
-            background-color: #c9303c; /* Vermelho mais escuro no hover */
+            background-color: #c9303c;
+            /* Vermelho mais escuro no hover */
         }
     </style>
 </head>
+
 <body class="flex flex-col min-h-screen">
     <!-- Cabeçalho -->
     <header class="bg-[#99cd85] text-black p-6 shadow-lg rounded-b-xl fixed top-0 left-0 right-0 z-50">
         <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
             <div class="flex items-center mb-4 md:mb-0 w-full md:w-auto justify-center md:justify-start">
                 <!-- Logo da Empresa - Centralizada -->
-                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-4 shadow-md overflow-hidden">
-                    <img src="https://thumb-cdn.soluall.net/prod/adv_ads/ad300box/5e6b9e93-194c-4c83-af4e-2618ac1e06ca/60198ac6-b0fc-46dd-a9f5-1c16ac1e03ae.png" alt="Logo da Di Conservas" class="w-full h-full object-cover">
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-4 shadow-md overflow-hidden">
+                    <img src="https://thumb-cdn.soluall.net/prod/adv_ads/ad300box/5e6b9e93-194c-4c83-af4e-2618ac1e06ca/60198ac6-b0fc-46dd-a9f5-1c16ac1e03ae.png"
+                        alt="Logo da Di Conservas" class="w-full h-full object-cover">
                 </div>
                 <!-- Nome da Empresa -->
                 <h1 class="text-3xl font-bold text-black">Di Conservas</h1>
@@ -130,8 +170,12 @@
                 <a href="#contato" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
                     <i class="fas fa-envelope mr-2"></i>Contato
                 </a>
+                <a href="/admin.html" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
+                    <i class="fas fa-cogs mr-2"></i>Admin
+                </a>
                 <!-- Ícone de Busca -->
-                <a href="#" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center" onclick="document.getElementById('productSearch').focus(); return false;">
+                <a href="#" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center"
+                    onclick="document.getElementById('productSearch').focus(); return false;">
                     <i class="fas fa-search"></i>
                 </a>
             </nav>
@@ -139,18 +183,24 @@
     </header>
 
     <!-- Seção Hero/Banner -->
-    <section id="hero-banner" class="relative bg-cover bg-center h-90 md:h-96 flex items-center justify-center text-white text-center shadow-lg pt-24" style="background-image: url('https://images.unsplash.com/photo-1444858291040-58f756a3bdd6?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmF6ZW5kYXxlbnwwfHwwfHx8MA%3D%3D');">
+    <section id="hero-banner"
+        class="relative bg-cover bg-center h-90 md:h-96 flex items-center justify-center text-white text-center shadow-lg pt-24"
+        style="background-image: url('https://images.unsplash.com/photo-1444858291040-58f756a3bdd6?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmF6ZW5kYXxlbnwwfHwwfHx8MA%3D%3D');">
         <!-- Overlay com gradiente verde escuro transparente -->
         <div class="absolute inset-0 bg-gradient-to-t from-transparent to-transparent via-[#2A9D8F] opacity-60"></div>
         <div class="relative z-10 p-4">
             <h2 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg text-[#FFD60A]">Sabores Que Transformam</h2>
-            <p class="text-lg md:text-xl max-w-2xl mx-auto drop-shadow-md text-white">Explore nossa seleção artesanal de conservas e pimentas, feitas com paixão e os melhores ingredientes.</p>
-            <a href="#produtos" class="inline-block mt-8 bg-[#E63946] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#c9303c] transition duration-300 shadow-lg">Conheça nossos produtos!</a>
+            <p class="text-lg md:text-xl max-w-2xl mx-auto drop-shadow-md text-white">Explore nossa seleção artesanal de
+                conservas e pimentas, feitas com paixão e os melhores ingredientes.</p>
+            <a href="#produtos"
+                class="inline-block mt-8 bg-[#E63946] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#c9303c] transition duration-300 shadow-lg">Conheça
+                nossos produtos!</a>
         </div>
     </section>
 
     <!-- Área de Conteúdo Principal (Catálogo) -->
-    <main class="mx-auto p-6 flex-grow w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12 flex flex-col lg:flex-row gap-6">
+    <main
+        class="mx-auto p-6 flex-grow w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12 flex flex-col lg:flex-row gap-6">
 
         <!-- Barra Lateral de Filtros -->
         <aside class="lg:w-1/4 bg-white p-6 rounded-xl shadow-xl flex-shrink-0">
@@ -158,9 +208,10 @@
 
             <!-- Filtro de Texto -->
             <div class="mb-6">
-                <label for="productSearch" class="block text-gray-700 text-sm font-medium mb-2">Pesquisar por Nome/Descrição:</label>
+                <label for="productSearch" class="block text-gray-700 text-sm font-medium mb-2">Pesquisar por
+                    Nome/Descrição:</label>
                 <input type="text" id="productSearch" placeholder="Ex: Malagueta, Tomate"
-                       class="p-3 border border-gray-300 rounded-lg w-full focus:ring-[#E63946] focus:border-[#E63946] shadow-sm text-gray-800">
+                    class="p-3 border border-gray-300 rounded-lg w-full focus:ring-[#E63946] focus:border-[#E63946] shadow-sm text-gray-800">
             </div>
 
             <!-- Filtros de Categoria -->
@@ -188,27 +239,31 @@
     </main>
 
     <!-- Seção de Contato -->
-    <section id="contato" class="my-10 bg-[#facb4b] text-gray-800 p-8 rounded-xl shadow-lg text-center mx-auto w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12">
+    <section id="contato"
+        class="my-10 bg-[#facb4b] text-gray-800 p-8 rounded-xl shadow-lg text-center mx-auto w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12">
         <h2 class="text-4xl font-bold text-black mb-6">Fale Conosco</h2>
         <p class="text-lg mb-8">Entre em contato conosco para fazer seu pedido ou tirar dúvidas.</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
             <!-- Contato por Email -->
-            <a href="mailto:seucorreo@email.com" class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
+            <a href="mailto:seucorreo@email.com"
+                class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fas fa-envelope text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">Email</span>
                 <span class="text-sm text-gray-800">diconservas@email.com</span>
             </a>
 
             <!-- Contato por WhatsApp -->
-            <a href="https://wa.me/+55XXYYYYYYYYY" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
+            <a href="https://wa.me/+55XXYYYYYYYYY" target="_blank" rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fab fa-whatsapp text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">WhatsApp</span>
                 <span class="text-sm text-gray-800">+55 (41) 99612-2750</span>
             </a>
 
             <!-- Localização -->
-            <a href="https://g.co/kgs/xqMpF4w" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
+            <a href="https://g.co/kgs/xqMpF4w" target="_blank" rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fas fa-map-marker-alt text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">Localização</span>
                 <span class="text-sm text-gray-800">Ver no Mapa</span>
@@ -219,16 +274,19 @@
     </section>
 
     <!-- Modal para Detalhes do Produto -->
-    <div id="productDetailsModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+    <div id="productDetailsModal"
+        class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="modal-content bg-white rounded-lg p-6 shadow-xl w-full max-w-md">
             <button class="close-button" onclick="closeProductDetailsModal()">&times;</button>
-            <img id="modalProductImage" src="" alt="Imagem do Produto" class="w-full max-h-80 md:max-h-[70vh] object-contain rounded-lg mb-4">
+            <img id="modalProductImage" src="" alt="Imagem do Produto"
+                class="w-full max-h-80 md:max-h-[70vh] object-contain rounded-lg mb-4">
             <h4 id="modalProductName" class="text-2xl font-bold text-gray-800 mb-2"></h4>
             <p id="modalProductDescription" class="text-gray-700 mb-3"></p>
             <p id="modalProductWeight" class="text-gray-600 text-sm mb-1"></p>
             <p id="modalProductRetailPrice" class="text-xl font-bold text-red-700 mb-1"></p> <!-- Preço de Varejo -->
             <p id="modalProductWholesalePrice" class="text-lg text-gray-700 mb-4"></p> <!-- Preço de Atacado -->
-            <button onclick="closeProductDetailsModal()" class="bg-[#E63946] text-white px-5 py-2 rounded-md hover:bg-[#c9303c] transition duration-300 w-full">Fechar</button>
+            <button onclick="closeProductDetailsModal()"
+                class="bg-[#E63946] text-white px-5 py-2 rounded-md hover:bg-[#c9303c] transition duration-300 w-full">Fechar</button>
         </div>
     </div>
 
@@ -245,218 +303,19 @@
                 <p class="text-sm">&copy; 2024 Todos os direitos reservados.</p>
             </div>
             <div class="flex space-x-6">
-                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i class="fab fa-facebook"></i></a>
-                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i
+                        class="fab fa-facebook"></i></a>
+                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i
+                        class="fab fa-instagram"></i></a>
+                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i
+                        class="fab fa-whatsapp"></i></a>
             </div>
         </div>
     </footer>
 
     <script>
-        // Neste cenário real, os produtos seriam carregados de um banco de dados (ex: Firebase Firestore).
-        // Para demonstração, mantemos um array local.
-        let products = [
-            {
-                id: 1,
-                name: "Pimenta Caseira Temperada",
-                category: "Pimentas",
-                description: "Uma pimenta ardente e saborosa, perfeita para dar um toque especial aos seus pratos.",
-                weight: "150g",
-                retailPrice: 25.50,
-                wholesalePrice: 20.40, // 80% do varejo
-                image: "assets/pimenta-caseira-temperada.jpeg" // Imagem local
-            },
-            {
-                id: 2,
-                name: "Pimenta Caseira Picante",
-                category: "Pimentas",
-                description: "Uma pimenta caseira com um toque extra de picância, perfeita para quem gosta de mais sabor.",
-                weight: "300g",
-                retailPrice: 18.90,
-                wholesalePrice: 15.12,
-                image: "assets/pimenta-caseira-picante.jpeg" // Imagem local
-            },
-            {
-                id: 3,
-                name: "Mini Jiló",
-                category: "Conservas",
-                description: "Jilós pequenos e tenros, conservados em óleo, ideais para petiscos.",
-                weight: "300g",
-                retailPrice: 35.00,
-                wholesalePrice: 28.00,
-                image: "assets/mini-jilo.jpeg" // Imagem local
-            },
-            {
-                id: 4,
-                name: "Repolho Azedo",
-                category: "Conservas",
-                description: "Repolho fermentado com especiarias, perfeito para acompanhar pratos diversos.",
-                weight: "300g",
-                retailPrice: 28.00,
-                wholesalePrice: 22.40,
-                image: "assets/repolho-azedo.jpeg" // Imagem local
-            },
-            {
-                id: 5,
-                name: "Espetinho Misto",
-                category: "Conservas",
-                description: "Espetinhos de legumes variados, marinados em vinagre e especiarias.",
-                weight: "300g",
-                retailPrice: 22.50,
-                wholesalePrice: 18.00,
-                image: "assets/espetinho-misto.jpeg" // Imagem local
-            },
-             {
-                id: 6,
-                name: "Broto de bambu",
-                category: "Conservas",
-                description: "Broto de bambu em conserva, crocante e saboroso, ideal para saladas e pratos asiáticos.",
-                weight: "250g",
-                retailPrice: 16.00,
-                wholesalePrice: 12.80,
-                image: "assets/broto-de-bambu.jpeg" // Imagem local
-            },
-            {
-                id: 7,
-                name: "Azeitonas Temperadas",
-                category: "Conservas",
-                description: "Azeitonas verdes e pretas marinadas em azeite com ervas finas.",
-                weight: "200g",
-                retailPrice: 19.90,
-                wholesalePrice: 15.92,
-                image: "https://placehold.co/400x300/cceeff/000000?text=Azeitonas"
-            },
-            {
-                id: 8,
-                name: "Pimenta Biquinho Doce",
-                category: "Pimentas",
-                description: "Pimentas biquinho em conserva, com sabor suave e adocicado, ideais para saladas.",
-                weight: "180g",
-                retailPrice: 23.00,
-                wholesalePrice: 18.40,
-                image: "https://placehold.co/400x300/ffccdd/000000?text=Pimenta+Biquinho"
-            },
-            {
-                id: 9,
-                name: "Alho Confitado",
-                category: "Conservas",
-                description: "Dentes de alho cozidos lentamente em azeite, macios e saborosos.",
-                weight: "150g",
-                retailPrice: 29.50,
-                wholesalePrice: 23.60,
-                image: "https://placehold.co/400x300/ddccff/000000?text=Alho+Confitado"
-            },
-            {
-                id: 10,
-                name: "Picles de Cenoura e Couve-flor",
-                category: "Conservas",
-                description: "Legumes crocantes em conserva agridoce, um acompanhamento versátil.",
-                weight: "350g",
-                retailPrice: 21.00,
-                wholesalePrice: 16.80,
-                image: "https://placehold.co/400x300/ffeebb/000000?text=Picles+Legumes"
-            },
-            {
-                id: 11,
-                name: "Geleia de Morango com Pimenta",
-                category: "Pimentas",
-                description: "Combinação inusitada de doçura do morango com o toque picante da pimenta.",
-                weight: "200g",
-                retailPrice: 32.00,
-                wholesalePrice: 25.60,
-                image: "https://placehold.co/400x300/ffbbcc/000000?text=Geleia+Morango"
-            },
-            {
-                id: 12,
-                name: "Cogumelos Marinados",
-                category: "Conservas",
-                description: "Cogumelos frescos marinados em temperos especiais, perfeitos para entradas.",
-                weight: "250g",
-                retailPrice: 27.00,
-                wholesalePrice: 21.60,
-                image: "https://placehold.co/400x300/bbffaa/000000?text=Cogumelos"
-            },
-            {
-                id: 13,
-                name: "Molho de Pimenta Habanero",
-                category: "Pimentas",
-                description: "Molho de pimenta extremamente picante, para os amantes de emoções fortes.",
-                weight: "100ml",
-                retailPrice: 38.00,
-                wholesalePrice: 30.40,
-                image: "https://placehold.co/400x300/ffaaaa/000000?text=Habanero"
-            },
-            {
-                id: 14,
-                name: "Picles de Cebola Roxa",
-                category: "Conservas",
-                description: "Cebolas roxas em conserva, com sabor agridoce e cor vibrante, ótimas para hambúrgueres.",
-                weight: "200g",
-                retailPrice: 17.50,
-                wholesalePrice: 14.00,
-                image: "https://placehold.co/400x300/ffddff/000000?text=Cebola+Roxa+Picles"
-            },
-            {
-                id: 15,
-                name: "Pepino em Conserva Doce",
-                category: "Conservas",
-                description: "Fatias de pepino em conserva com um toque adocicado, ideal para lanches.",
-                weight: "300g",
-                retailPrice: 19.00,
-                wholesalePrice: 15.20,
-                image: "https://placehold.co/400x300/aaffaa/000000?text=Pepino+Doce"
-            },
-            {
-                id: 16,
-                name: "Pimenta Dedo-de-Moça",
-                category: "Pimentas",
-                description: "Pimenta fresca em conserva, com ardência média, para uso culinário diário.",
-                weight: "150g",
-                retailPrice: 26.00,
-                wholesalePrice: 20.80,
-                image: "https://placehold.co/400x300/ffccaa/000000?text=Dedo+de+Moca"
-            },
-            {
-                id: 17,
-                name: "Chutney de Manga Picante",
-                category: "Conservas",
-                description: "Chutney exótico de manga com especiarias e um toque de pimenta.",
-                weight: "220g",
-                retailPrice: 31.00,
-                wholesalePrice: 24.80,
-                image: "https://placehold.co/400x300/ffeedd/000000?text=Chutney+Manga"
-            },
-            {
-                id: 18,
-                name: "Pasta de Alho com Ervas",
-                category: "Conservas",
-                description: "Pasta cremosa de alho com ervas frescas, excelente para torradas e molhos.",
-                weight: "180g",
-                retailPrice: 24.00,
-                wholesalePrice: 19.20,
-                image: "https://placehold.co/400x300/eeccff/000000?text=Pasta+Alho"
-            },
-            {
-                id: 19,
-                name: "Pimenta Caiena em Pó",
-                category: "Pimentas",
-                description: "Pimenta caiena moída, para adicionar calor e sabor a qualquer prato.",
-                weight: "50g",
-                retailPrice: 15.00,
-                wholesalePrice: 12.00,
-                image: "https://placehold.co/400x300/ffbbbb/000000?text=Caiena"
-            },
-            {
-                id: 20,
-                name: "Tomate Cereja Confitado",
-                category: "Conservas",
-                description: "Tomates cereja cozidos lentamente em azeite e ervas, perfeitos para massas.",
-                weight: "250g",
-                retailPrice: 33.00,
-                wholesalePrice: 26.40,
-                image: "https://placehold.co/400x300/ffcc99/000000?text=Tomate+Cereja"
-            }
-        ];
+        // Carrega produtos dinamicamente do arquivo JSON
+        let products = [];
 
         const itemsPerPage = 15; // 3 colunas * 5 linhas
         let currentPage = 1;
@@ -470,6 +329,33 @@
         let categoryFilterButtonsContainer;
         let backToTopBtn;
         let paginationControls;
+
+        // --- Função para carregar produtos do JSON ---
+        async function loadProducts() {
+            try {
+                // Tenta carregar do arquivo JSON primeiro
+                let response = await fetch('products.json');
+
+                // Se não conseguir, tenta a API PHP
+                if (!response.ok) {
+                    response = await fetch('products.php');
+                }
+
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar produtos');
+                }
+
+                products = await response.json();
+
+                // Após carregar os produtos, inicializa a interface
+                categories = getUniqueCategories();
+                renderCategoryFilterButtons();
+                displayProducts();
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Erro ao carregar produtos. Tente novamente mais tarde.</p>';
+            }
+        }
 
         // --- Funções da Modal de Detalhes do Produto ---
         function openProductDetailsModal(productId) {
@@ -562,7 +448,7 @@
             // Primeiro, filtra todos os produtos com base nos critérios de busca e categoria
             const filteredProducts = products.filter(product => {
                 const matchesText = currentFilterText === '' || product.name.toLowerCase().includes(currentFilterText.toLowerCase()) ||
-                                    product.description.toLowerCase().includes(currentFilterText.toLowerCase());
+                    product.description.toLowerCase().includes(currentFilterText.toLowerCase());
                 const matchesCategory = currentFilterCategory === 'all' || product.category === currentFilterCategory;
                 return matchesText && matchesCategory;
             });
@@ -676,7 +562,7 @@
         }
 
         // --- Botão Voltar ao Topo ---
-        window.onscroll = function() {
+        window.onscroll = function () {
             if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
                 backToTopBtn.style.display = "block";
             } else {
@@ -684,14 +570,14 @@
             }
         };
 
-        window.scrollToTop = function() {
+        window.scrollToTop = function () {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
         };
 
-        // Inicialização: extrai categorias, renderiza os botões de filtro e exibe os produtos
+        // Inicialização: carrega produtos e inicializa a interface
         document.addEventListener('DOMContentLoaded', () => {
             productGrid = document.getElementById('productGrid');
             productSearch = document.getElementById('productSearch');
@@ -701,10 +587,10 @@
 
             productSearch.addEventListener('input', handleProductSearchInput);
 
-            categories = getUniqueCategories();
-            renderCategoryFilterButtons();
-            displayProducts(); // displayProducts chamará initializeLazyLoad e renderPagination
+            // Carrega produtos do JSON e inicializa a interface
+            loadProducts();
         });
     </script>
 </body>
+
 </html>

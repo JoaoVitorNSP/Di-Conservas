@@ -75,8 +75,13 @@
         <script>
             // Mostra mensagem de erro se houver
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('error') === '1') {
+            const error = urlParams.get('error');
+            if (error === '1') {
                 alert('Usuário ou senha inválidos!');
+            } else if (error === 'session') {
+                alert('Você precisa estar logado para acessar esta página!');
+            } else if (error === 'expired') {
+                alert('Sua sessão expirou! Faça login novamente.');
             }
         </script>
     </div>

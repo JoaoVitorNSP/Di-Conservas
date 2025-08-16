@@ -1,6 +1,10 @@
 <?php
 // upload.php - Processa o upload de imagens e cadastro de produtos
 
+// Verifica autenticação
+require_once 'auth.php';
+checkAdminAuth();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Dados do formulário
     $name = $_POST['name'] ?? '';
@@ -23,17 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // Cria objeto do produto
-    $product = [
-        'name' => $name,
-        'category' => $category,
-        'description' => $description,
-        'weight' => $weight,
-        'retailPrice' => $retailPrice,
-        'wholesalePrice' => $wholesalePrice,
-        'image' => $imageName
-    ];
-    
     // Salva em products.json
     $productsFile = 'products.json';
     $products = [];
@@ -42,10 +35,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $products = json_decode(file_get_contents($productsFile), true) ?? [];
     }
     
+    // Gera ID único para o novo produto
+    $maxId = 0;
+    foreach ($products as $existingProduct) {
+        if (isset($existingProduct['id']) && $existingProduct['id'] > $maxId) {
+            $maxId = $existingProduct['id'];
+        }
+    }
+    $newId = $maxId + 1;
+    
+    // Cria objeto do produto com ID
+    $product = [
+        'id' => $newId,
+        'name' => $name,
+        'category' => $category,
+        'description' => $description,
+        'weight' => $weight,
+        'retailPrice' => (float)$retailPrice,
+        'wholesalePrice' => (float)$wholesalePrice,
+        'image' => $imageName
+    ];
+    
     $products[] = $product;
     file_put_contents($productsFile, json_encode($products, JSON_PRETTY_PRINT));
     
-    echo 'Produto cadastrado com sucesso!';
+    echo '<script>alert("Produto cadastrado com sucesso!"); window.location.href="admin-dashboard.php";</script>';
 } else {
     http_response_code(405);
     echo 'Método não permitido';

@@ -12,9 +12,15 @@ services:
       - ./admin.html:/var/www/html/admin.html
       - ./admin-login.html:/var/www/html/admin-login.html
       - ./admin-dashboard.html:/var/www/html/admin-dashboard.html
+      - ./admin-dashboard.php:/var/www/html/admin-dashboard.php
       - ./cadastro.html:/var/www/html/cadastro.html
+      - ./cadastro.php:/var/www/html/cadastro.php
       - ./upload.php:/var/www/html/upload.php
       - ./admin-login.php:/var/www/html/admin-login.php
+      - ./auth.php:/var/www/html/auth.php
+      - ./logout.php:/var/www/html/logout.php
+      - ./session-refresh.php:/var/www/html/session-refresh.php
+      - ./products.php:/var/www/html/products.php
       - ./.htaccess:/var/www/html/.htaccess
     environment:
       - APACHE_DOCUMENT_ROOT=/var/www/html

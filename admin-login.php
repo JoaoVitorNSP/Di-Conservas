@@ -1,5 +1,7 @@
 <?php
-// admin-login.php - Processa o login do administrador
+// admin-login.php - Processa o login do administrador com sessões
+
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
@@ -7,8 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Usuário e senha fixos para exemplo
     if ($username === 'admin' && $password === '1234') {
-        // Redireciona para página de sucesso
-        header('Location: admin-dashboard.html');
+        // Inicia sessão do admin
+        $_SESSION['admin_logged'] = true;
+        $_SESSION['admin_last_activity'] = time();
+        $_SESSION['admin_username'] = $username;
+        
+        // Redireciona para página de dashboard
+        header('Location: admin-dashboard.php');
         exit;
     } else {
         // Redireciona de volta para página de login com erro

@@ -3,8 +3,12 @@
 ## Arquivos convertidos para PHP:
 
 ### Scripts PHP criados:
-- `upload.php` - Processa upload de imagens e cadastro de produtos
-- `admin-login.php` - Processa login do administrador
+- `upload.php` - Processa upload de imagens e cadastro de produtos (gera ID único)
+- `admin-login.php` - Processa login do administrador com sessões
+- `auth.php` - Sistema de autenticação e controle de sessões
+- `logout.php` - Logout seguro
+- `session-refresh.php` - Mantém sessão ativa via AJAX
+- `products.php` - API para listar produtos em formato JSON
 
 ### Páginas HTML atualizadas:
 - `admin.html` - Formulário de login aponta para `admin-login.php`
@@ -64,8 +68,12 @@ docker-compose down
 
 ## Funcionalidades:
 - ✅ Upload de imagens para pasta `assets/`
-- ✅ Cadastro de produtos em JSON
-- ✅ Login de administrador
+- ✅ Cadastro de produtos em JSON com ID único
+- ✅ Carregamento dinâmico de produtos via JSON/API
+- ✅ Sistema de sessões com duração de 10 minutos
+- ✅ Login de administrador protegido
+- ✅ Proteção de páginas administrativas
+- ✅ API REST para produtos
 - ✅ Proteção de arquivos sensíveis
 - ✅ Otimizações de performance
 - ✅ Container Docker pronto para deploy
