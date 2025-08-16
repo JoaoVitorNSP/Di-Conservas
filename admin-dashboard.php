@@ -36,7 +36,7 @@ checkAdminAuth();
     
     <div class="actions">
       <a href="cadastro.php" class="btn">📝 Cadastrar Produto</a>
-      <a href="produtos.php" class="btn">📋 Listar Produtos</a>
+      <a href="admin-products.php" class="btn">📋 Gerenciar Produtos</a>
       <a href="logout.php" class="btn btn-danger">🚪 Sair</a>
     </div>
   </div>

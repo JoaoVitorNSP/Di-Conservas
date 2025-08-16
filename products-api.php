@@ -1,5 +1,5 @@
 <?php
-// products.php - API para listar produtos
+// products-api.php - API para listar produtos
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');

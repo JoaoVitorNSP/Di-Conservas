@@ -8,7 +8,10 @@
 - `auth.php` - Sistema de autenticação e controle de sessões
 - `logout.php` - Logout seguro
 - `session-refresh.php` - Mantém sessão ativa via AJAX
-- `products.php` - API para listar produtos em formato JSON
+- `products-api.php` - API para listar produtos em formato JSON
+- `admin-products.php` - Lista todos os produtos em formato de tabela
+- `admin-product.php` - Edita produto individual
+- `delete-product.php` - Remove produtos via AJAX
 
 ### Páginas HTML atualizadas:
 - `admin.php` - Página de login com verificação automática de sessão
@@ -64,6 +67,8 @@ docker-compose down
    - Página principal: `http://localhost/`
    - Admin: `http://localhost/admin.php` (redireciona automaticamente se logado)
    - Dashboard: `http://localhost/admin-dashboard.php` (apenas se logado)
+   - Gerenciar Produtos: `http://localhost/admin-products.php` (apenas se logado)
+   - Editar Produto: `http://localhost/admin-product.php?id=X` (apenas se logado)
    - Cadastro: `http://localhost/cadastro.php` (apenas se logado)
 
 ## Credenciais de admin:
@@ -73,6 +78,10 @@ docker-compose down
 ## Funcionalidades:
 - ✅ Upload de imagens para pasta `assets/`
 - ✅ Cadastro de produtos em JSON com ID único
+- ✅ **Gerenciamento completo de produtos (CRUD)**
+- ✅ **Listagem de produtos em tabela administrativa**
+- ✅ **Edição individual de produtos com preview**
+- ✅ **Exclusão de produtos com confirmação**
 - ✅ Carregamento dinâmico de produtos via JSON/API
 - ✅ Sistema de sessões com duração de 10 minutos
 - ✅ Login automático se sessão ativa
