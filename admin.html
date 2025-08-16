@@ -65,13 +65,20 @@
 <body>
     <div class="container">
         <h2>Login do Administrador</h2>
-        <form method="POST" action="/admin/login">
+        <form method="POST" action="admin-login.php">
             <label for="username">Usuário</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Senha</label>
             <input type="password" id="password" name="password" required>
             <button type="submit">Entrar</button>
         </form>
+        <script>
+            // Mostra mensagem de erro se houver
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('error') === '1') {
+                alert('Usuário ou senha inválidos!');
+            }
+        </script>
     </div>
 </body>
 

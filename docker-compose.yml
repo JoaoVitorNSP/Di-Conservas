@@ -2,15 +2,19 @@ version: '3.8'
 services:
   app:
     build: .
-    container_name: di-conservas-app
+    container_name: di-conservas-php-app
     ports:
-      - "3000:3000"
+      - "80:80"
     volumes:
-      - ./assets:/usr/src/app/assets
-      - ./index.html:/usr/src/app/index.html
-      - ./admin.html:/usr/src/app/admin.html
-      - ./server.js:/usr/src/app/server.js
-      - ./products.json:/usr/src/app/products.json
+      - ./assets:/var/www/html/assets
+      - ./products.json:/var/www/html/products.json
+      - ./index.html:/var/www/html/index.html
+      - ./admin.html:/var/www/html/admin.html
+      - ./admin-login.html:/var/www/html/admin-login.html
+      - ./admin-dashboard.html:/var/www/html/admin-dashboard.html
+      - ./cadastro.html:/var/www/html/cadastro.html
+      - ./upload.php:/var/www/html/upload.php
+      - ./admin-login.php:/var/www/html/admin-login.php
+      - ./.htaccess:/var/www/html/.htaccess
     environment:
-      - NODE_ENV=development
-    command: node server.js
+      - APACHE_DOCUMENT_ROOT=/var/www/html
