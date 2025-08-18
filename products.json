@@ -7,7 +7,7 @@
         "weight": "150g",
         "retailPrice": 25.50,
         "wholesalePrice": 20.40,
-        "image": "assets/pimenta-caseira-temperada.jpeg"
+        "image": "/assets/pimenta-caseira-temperada.jpeg"
     },
     {
         "id": 2,
@@ -17,7 +17,7 @@
         "weight": "300g",
         "retailPrice": 18.90,
         "wholesalePrice": 15.12,
-        "image": "assets/pimenta-caseira-picante.jpeg"
+        "image": "/assets/pimenta-caseira-picante.jpeg"
     },
     {
         "id": 3,
@@ -27,7 +27,7 @@
         "weight": "300g",
         "retailPrice": 35.00,
         "wholesalePrice": 28.00,
-        "image": "assets/mini-jilo.jpeg"
+        "image": "/assets/mini-jilo.jpeg"
     },
     {
         "id": 4,
@@ -37,7 +37,7 @@
         "weight": "300g",
         "retailPrice": 28.00,
         "wholesalePrice": 22.40,
-        "image": "assets/repolho-azedo.jpeg"
+        "image": "/assets/repolho-azedo.jpeg"
     },
     {
         "id": 5,
@@ -47,7 +47,7 @@
         "weight": "300g",
         "retailPrice": 22.50,
         "wholesalePrice": 18.00,
-        "image": "assets/espetinho-misto.jpeg"
+        "image": "/assets/espetinho-misto.jpeg"
     },
     {
         "id": 6,
@@ -57,7 +57,7 @@
         "weight": "250g",
         "retailPrice": 16.00,
         "wholesalePrice": 12.80,
-        "image": "assets/broto-de-bambu.jpeg"
+        "image": "/assets/broto-de-bambu.jpeg"
     },
     {
         "id": 7,
