@@ -56,14 +56,14 @@ if (file_exists($productsFile)) {
         <h2>Gerenciar Produtos</h2>
         
         <div class="actions">
-            <a href="cadastro.php" class="btn">➕ Novo Produto</a>
-            <a href="admin-dashboard.php" class="btn">← Voltar ao Dashboard</a>
+            <a href="/cadastro" class="btn">➕ Novo Produto</a>
+            <a href="/admin/dashboard" class="btn">← Voltar ao Dashboard</a>
         </div>
         
         <?php if (empty($products)): ?>
             <div class="no-products">
                 <p>Nenhum produto cadastrado ainda.</p>
-                <a href="cadastro.php" class="btn">Cadastrar Primeiro Produto</a>
+                <a href="/cadastro" class="btn">Cadastrar Primeiro Produto</a>
             </div>
         <?php else: ?>
             <div class="table-container">
@@ -85,10 +85,17 @@ if (file_exists($productsFile)) {
                             <tr>
                                 <td><?php echo htmlspecialchars($product['id']); ?></td>
                                 <td>
-                                    <img src="<?php echo htmlspecialchars($product['image']); ?>" 
+                                    <?php 
+                                    $imagePath = $product['image'];
+                                    if (!empty($imagePath) && $imagePath[0] !== '/') {
+                                        $imagePath = '/' . $imagePath;
+                                    }
+                                    ?>
+                                    <img src="<?php echo htmlspecialchars($imagePath); ?>" 
                                          alt="<?php echo htmlspecialchars($product['name']); ?>" 
                                          class="product-image"
-                                         onerror="this.src='https://placehold.co/60x60/cccccc/ffffff?text=Sem+Imagem'">
+                                         onerror="this.src='https://placehold.co/60x60/cccccc/ffffff?text=Sem+Imagem'"
+                                         >
                                 </td>
                                 <td><?php echo htmlspecialchars($product['name']); ?></td>
                                 <td><?php echo htmlspecialchars($product['category']); ?></td>
@@ -97,7 +104,7 @@ if (file_exists($productsFile)) {
                                 <td>R$ <?php echo number_format($product['wholesalePrice'], 2, ',', '.'); ?></td>
                                 <td>
                                     <div class="product-actions">
-                                        <a href="admin-product.php?id=<?php echo $product['id']; ?>" class="btn btn-edit">✏️ Editar</a>
+                                        <a href="/admin/product/<?php echo $product['id']; ?>" class="btn btn-edit">✏️ Editar</a>
                                         <button onclick="deleteProduct(<?php echo $product['id']; ?>)" class="btn btn-danger">🗑️ Excluir</button>
                                     </div>
                                 </td>
@@ -117,7 +124,7 @@ if (file_exists($productsFile)) {
         
         function deleteProduct(productId) {
             if (confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.')) {
-                fetch('delete-product.php', {
+                fetch('/produto/delete', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

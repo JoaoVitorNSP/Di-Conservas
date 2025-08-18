@@ -6,7 +6,7 @@ checkAdminAuth();
 
 $productId = $_GET['id'] ?? null;
 if (!$productId) {
-    header('Location: admin-products.php');
+    header('Location: /admin/products');
     exit;
 }
 
@@ -28,7 +28,7 @@ if (file_exists($productsFile)) {
 }
 
 if (!$product) {
-    header('Location: admin-products.php?error=not_found');
+    header('Location: /admin/products?error=not_found');
     exit;
 }
 
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'weight' => $weight,
                 'retailPrice' => (float)$retailPrice,
                 'wholesalePrice' => (float)$wholesalePrice,
-                'image' => $imageName
+                'image' => '/' . $uploadDir . $imageName
             ];
             break;
         }
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Salva no arquivo
     file_put_contents($productsFile, json_encode($products, JSON_PRETTY_PRINT));
     
-    header('Location: admin-products.php?updated=' . $productId);
+    header('Location: /admin/products?updated=' . $productId);
     exit;
 }
 ?>
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <div class="actions">
                 <button type="submit" class="btn btn-primary">💾 Salvar Alterações</button>
-                <a href="admin-products.php" class="btn btn-secondary">❌ Cancelar</a>
+                <a href="/admin/products" class="btn btn-secondary">❌ Cancelar</a>
             </div>
         </form>
     </div>

@@ -15,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['admin_username'] = $username;
         
         // Redireciona para página de dashboard
-        header('Location: admin-dashboard.php');
+        header('Location: /admin/dashboard');
         exit;
     } else {
         // Redireciona de volta para página de login com erro
-        header('Location: admin.php?error=1');
+        header('Location: /admin?error=1');
         exit;
     }
 } else {

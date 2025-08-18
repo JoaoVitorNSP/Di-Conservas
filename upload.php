@@ -53,13 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'weight' => $weight,
         'retailPrice' => (float)$retailPrice,
         'wholesalePrice' => (float)$wholesalePrice,
-        'image' => $uploadDir . $imageName
+        'image' => '/' . $uploadDir . $imageName
     ];
     
     $products[] = $product;
     file_put_contents($productsFile, json_encode($products, JSON_PRETTY_PRINT));
     
-    echo '<script>alert("Produto cadastrado com sucesso!"); window.location.href="admin-dashboard.php";</script>';
+    echo '<script>alert("Produto cadastrado com sucesso!"); window.location.href="/admin/dashboard";</script>';
 } else {
     http_response_code(405);
     echo 'Método não permitido';

@@ -30,7 +30,7 @@ checkAdminAuth();
         </div>
         
         <h2>Cadastro de Produto</h2>
-        <form method="POST" action="upload.php" enctype="multipart/form-data">
+        <form method="POST" action="/upload" enctype="multipart/form-data">
             <label for="name">Nome do Produto</label>
             <input type="text" id="name" name="name" required>
             
@@ -54,7 +54,7 @@ checkAdminAuth();
             
             <button type="submit">Cadastrar Produto</button>
         </form>
-        <a href="admin-dashboard.php" class="back-link">← Voltar ao Dashboard</a>
+        <a href="/admin/dashboard" class="back-link">← Voltar ao Dashboard</a>
     </div>
     
     <script>

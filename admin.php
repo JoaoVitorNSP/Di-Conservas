@@ -9,7 +9,7 @@ if (isset($_SESSION['admin_logged']) && $_SESSION['admin_logged'] === true) {
     if (isset($_SESSION['admin_last_activity']) && (time() - $_SESSION['admin_last_activity'] <= 600)) {
         // Atualiza o tempo de última atividade
         $_SESSION['admin_last_activity'] = time();
-        header('Location: admin-dashboard.php');
+        header('Location: /admin/dashboard');
         exit;
     } else {
         // Sessão expirada, destroi e continua para o login
@@ -100,7 +100,7 @@ if (isset($_SESSION['admin_logged']) && $_SESSION['admin_logged'] === true) {
         <?php endif; ?>
         
         <h2>Login do Administrador</h2>
-        <form method="POST" action="admin-login.php">
+        <form method="POST" action="/admin/login">
             <label for="username">Usuário</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Senha</label>
