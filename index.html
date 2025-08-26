@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Di Conservas - Catálogo</title>
+    <title>Di Conservas</title>
+    <link rel="icon" type="image/png" href="https://thumb-cdn.soluall.net/prod/adv_ads/ad300box/5e6b9e93-194c-4c83-af4e-2618ac1e06ca/60198ac6-b0fc-46dd-a9f5-1c16ac1e03ae.png" >
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" >
     <style>
         body {
             font-family: 'Palatino Linotype', 'Palatino', serif;
@@ -243,15 +244,16 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
             <!-- Contato por Email -->
-            <a href="mailto:seucorreo@email.com"
+            <a id="emailContact"
+                href="mailto:conservasdi@gmail.com"
                 class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fas fa-envelope text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">Email</span>
-                <span class="text-sm text-gray-800">diconservas@email.com</span>
+                <span class="text-sm text-gray-800">conservasdi@gmail.com</span>
             </a>
 
             <!-- Contato por WhatsApp -->
-            <a href="https://wa.me/+55XXYYYYYYYYY" target="_blank" rel="noopener noreferrer"
+            <a href="https://wa.me/+5541996122750?text=Olá%20gostaria%20de%20mais%20informações" target="_blank" rel="noopener noreferrer"
                 class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fab fa-whatsapp text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">WhatsApp</span>
@@ -267,7 +269,7 @@
             </a>
         </div>
 
-        <p class="mt-8 text-sm">Fazemos pedidos e tiramos dúvidas via Email e WhatsApp.</p>
+        <!-- <p class="mt-8 text-sm">Fazemos pedidos e tiramos dúvidas via Email e WhatsApp.</p> -->
     </section>
 
     <!-- Modal para Detalhes do Produto -->
@@ -471,6 +473,10 @@
                         <div class="product-card rounded-xl overflow-hidden shadow-lg p-6 flex flex-col items-center text-center border border-gray-200">
                             <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-48 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
                             <h3 class="text-xl font-bold text-black mb-2 flex-grow">${product.name} - ${product.weight}</h3> <!-- Título do produto com peso -->
+                                        <div class="mb-2">
+                                            <span class="block text-red-700 font-bold text-lg">Varejo: R$ ${product.retailPrice.toFixed(2).replace('.', ',')}</span>
+                                            <span class="block text-gray-700 text-base">Atacado: R$ ${product.wholesalePrice.toFixed(2).replace('.', ',')} <span class="text-xs">(min. 6)</span></span>
+                                        </div>
                             <button onclick="openProductDetailsModal(${product.id})" class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button> <!-- Botão pequeno amarelo -->
                         </div>
                     `;
@@ -587,6 +593,23 @@
             // Carrega produtos do JSON e inicializa a interface
             loadProducts();
         });
+
+        // Redireciona para outra aba ao clicar para enviar email
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+        const emailContact = document.getElementById('emailContact');
+        if (emailContact) {
+            emailContact.addEventListener('click', function (e) {
+                e.preventDefault();
+                const mailto = 'mailto:conservasdi@gmail.com';
+                const win = window.open(mailto, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            });
+        }
+    });
     </script>
 </body>
 
