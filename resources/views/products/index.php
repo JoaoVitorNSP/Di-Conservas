@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($title); ?></title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Palatino Linotype', 'Palatino', serif;
+            background-color: #F5F5F5;
+            color: #000000;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Palatino Linotype', 'Palatino', serif;
+        }
+
+        .product-card {
+            background-color: #ffffff;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #2A9D8F;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 0 20px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: left;
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #backToTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
+            background-color: #E63946;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            line-height: 50px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        #backToTopBtn:hover {
+            background-color: #c9303c;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+    <!-- Cabeçalho -->
+    <header class="bg-[#99cd85] text-black p-6 shadow-lg rounded-b-xl fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center mb-4 md:mb-0 w-full md:w-auto justify-center md:justify-start">
+                <!-- Logo da Empresa -->
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-4 shadow-md overflow-hidden">
+                    <img src="https://thumb-cdn.soluall.net/prod/adv_ads/ad300box/5e6b9e93-194c-4c83-af4e-2618ac1e06ca/60198ac6-b0fc-46dd-a9f5-1c16ac1e03ae.png"
+                        alt="Logo da Di Conservas" class="w-full h-full object-cover">
+                </div>
+                <!-- Nome da Empresa -->
+                <h1 class="text-3xl font-bold text-black">Di Conservas</h1>
+            </div>
+            <nav class="flex space-x-6 text-lg items-center mt-4 md:mt-0">
+                <a href="#produtos" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
+                    <i class="fas fa-store mr-2"></i>Produtos
+                </a>
+                <a href="#contato" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
+                    <i class="fas fa-envelope mr-2"></i>Contato
+                </a>
+                <a href="/admin" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
+                    <i class="fas fa-cogs mr-2"></i>Admin
+                </a>
+                <a href="#" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center"
+                    onclick="document.getElementById('productSearch').focus(); return false;">
+                    <i class="fas fa-search"></i>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Seção Hero/Banner -->
+    <section id="hero-banner"
+        class="relative bg-cover bg-center h-90 md:h-96 flex items-center justify-center text-white text-center shadow-lg pt-24"
+        style="background-image: url('https://images.unsplash.com/photo-1444858291040-58f756a3bdd6?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmF6ZW5kYXxlbnwwfHwwfHx8MA%3D%3D');">
+        <div class="absolute inset-0 bg-gradient-to-t from-transparent to-transparent via-[#2A9D8F] opacity-60"></div>
+        <div class="relative z-10 p-4">
+            <h2 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg text-[#FFD60A]">Sabores Que Transformam</h2>
+            <p class="text-lg md:text-xl max-w-2xl mx-auto drop-shadow-md text-white">Explore nossa seleção artesanal de
+                conservas e pimentas, feitas com paixão e os melhores ingredientes.</p>
+            <a href="#produtos"
+                class="inline-block mt-8 bg-[#E63946] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#c9303c] transition duration-300 shadow-lg">Conheça
+                nossos produtos!</a>
+        </div>
+    </section>
+
+    <!-- Área de Conteúdo Principal -->
+    <main class="mx-auto p-6 flex-grow w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12 flex flex-col lg:flex-row gap-6">
+
+        <!-- Barra Lateral de Filtros -->
+        <aside class="lg:w-1/4 bg-white p-6 rounded-xl shadow-xl flex-shrink-0">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Filtrar Produtos</h3>
+
+            <!-- Filtro de Texto -->
+            <div class="mb-6">
+                <label for="productSearch" class="block text-gray-700 text-sm font-medium mb-2">Pesquisar por Nome/Descrição:</label>
+                <input type="text" id="productSearch" placeholder="Ex: Malagueta, Tomate"
+                    class="p-3 border border-gray-300 rounded-lg w-full focus:ring-[#E63946] focus:border-[#E63946] shadow-sm text-gray-800">
+            </div>
+
+            <!-- Filtros de Categoria -->
+            <div>
+                <label class="block text-gray-700 text-sm font-medium mb-2">Categorias:</label>
+                <div id="categoryFilterButtons" class="flex flex-col space-y-2">
+                    <!-- Botões de categoria serão renderizados aqui pelo JavaScript -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Seção de Produtos -->
+        <section id="produtos" class="lg:w-3/4 bg-white p-8 rounded-xl shadow-xl">
+            <h2 class="text-4xl font-bold text-center text-gray-800 mb-8">Nossos Produtos</h2>
+
+            <!-- Grade de Produtos -->
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Produtos serão carregados dinamicamente aqui pelo JavaScript -->
+            </div>
+            <!-- Controles de Paginação -->
+            <div id="paginationControls" class="flex justify-center items-center space-x-2 mt-8">
+                <!-- Botões de paginação serão renderizados aqui pelo JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Seção de Contato -->
+    <section id="contato"
+        class="my-10 bg-[#facb4b] text-gray-800 p-8 rounded-xl shadow-lg text-center mx-auto w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12">
+        <h2 class="text-4xl font-bold text-black mb-6">Fale Conosco</h2>
+        <p class="text-lg mb-8">Entre em contato conosco para fazer seu pedido ou tirar dúvidas.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
+            <!-- Contato por Email -->
+            <a href="mailto:diconservas@email.com"
+                class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
+                <i class="fas fa-envelope text-[#000000] text-5xl mb-3"></i>
+                <span class="text-xl font-semibold text-black">Email</span>
+                <span class="text-sm text-gray-800">diconservas@email.com</span>
+            </a>
+
+            <!-- Contato por WhatsApp -->
+            <a href="https://wa.me/+554196122750" target="_blank" rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
+                <i class="fab fa-whatsapp text-[#000000] text-5xl mb-3"></i>
+                <span class="text-xl font-semibold text-black">WhatsApp</span>
+                <span class="text-sm text-gray-800">+55 (41) 99612-2750</span>
+            </a>
+
+            <!-- Localização -->
+            <a href="https://g.co/kgs/xqMpF4w" target="_blank" rel="noopener noreferrer"
+                class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
+                <i class="fas fa-map-marker-alt text-[#000000] text-5xl mb-3"></i>
+                <span class="text-xl font-semibold text-black">Localização</span>
+                <span class="text-sm text-gray-800">Ver no Mapa</span>
+            </a>
+        </div>
+
+        <p class="mt-8 text-sm">Fazemos pedidos e tiramos dúvidas via Email e WhatsApp.</p>
+    </section>
+
+    <!-- Modal para Detalhes do Produto -->
+    <div id="productDetailsModal"
+        class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="modal-content bg-white rounded-lg p-6 shadow-xl w-full max-w-md">
+            <button class="close-button" onclick="closeProductDetailsModal()">&times;</button>
+            <img id="modalProductImage" src="" alt="Imagem do Produto"
+                class="w-full max-h-80 md:max-h-[70vh] object-contain rounded-lg mb-4">
+            <h4 id="modalProductName" class="text-2xl font-bold text-gray-800 mb-2"></h4>
+            <p id="modalProductDescription" class="text-gray-700 mb-3"></p>
+            <p id="modalProductWeight" class="text-gray-600 text-sm mb-1"></p>
+            <p id="modalProductRetailPrice" class="text-xl font-bold text-red-700 mb-1"></p>
+            <p id="modalProductWholesalePrice" class="text-lg text-gray-700 mb-4"></p>
+            <button onclick="closeProductDetailsModal()"
+                class="bg-[#E63946] text-white px-5 py-2 rounded-md hover:bg-[#c9303c] transition duration-300 w-full">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Botão Voltar ao Topo -->
+    <button id="backToTopBtn" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Rodapé -->
+    <footer class="bg-[#99cd85] text-[#000000] p-8 mt-10 rounded-t-xl shadow-inner">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between text-center md:text-left">
+            <div class="mb-4 md:mb-0">
+                <h3 class="text-2xl font-bold mb-2">Di Conservas</h3>
+                <p class="text-sm">&copy; 2024 Todos os direitos reservados.</p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Carrega produtos dinamicamente da API
+        let products = [];
+        const itemsPerPage = 15;
+        let currentPage = 1;
+        let currentFilterText = '';
+        let currentFilterCategory = 'all';
+        let categories = [];
+
+        let productGrid;
+        let productSearch;
+        let categoryFilterButtonsContainer;
+        let backToTopBtn;
+        let paginationControls;
+
+        // Função para carregar produtos da API
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar produtos');
+                }
+                
+                products = await response.json();
+                categories = getUniqueCategories();
+                renderCategoryFilterButtons();
+                displayProducts();
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Erro ao carregar produtos. Tente novamente mais tarde.</p>';
+            }
+        }
+
+        // Funções da Modal de Detalhes do Produto
+        function openProductDetailsModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('modalProductImage').src = product.image;
+                document.getElementById('modalProductName').innerText = product.name;
+                document.getElementById('modalProductDescription').innerText = product.description;
+                document.getElementById('modalProductWeight').innerText = `Peso: ${product.weight}`;
+                document.getElementById('modalProductRetailPrice').innerText = `Preço Varejo: R$ ${product.retailPrice.toFixed(2).replace('.', ',')}`;
+                document.getElementById('modalProductWholesalePrice').innerText = `Preço Atacado: R$ ${product.wholesalePrice.toFixed(2).replace('.', ',')} (a partir de 6 itens)`;
+                document.getElementById('productDetailsModal').classList.remove('hidden');
+            }
+        }
+
+        function closeProductDetailsModal() {
+            document.getElementById('productDetailsModal').classList.add('hidden');
+        }
+
+        // Função para extrair categorias únicas dos produtos
+        function getUniqueCategories() {
+            const unique = new Set();
+            products.forEach(p => unique.add(p.category));
+            return Array.from(unique);
+        }
+
+        // Função para renderizar os botões de categoria na barra lateral
+        function renderCategoryFilterButtons() {
+            categoryFilterButtonsContainer.innerHTML = '';
+
+            // Adiciona o botão 'Todas as Categorias'
+            const allButton = document.createElement('button');
+            allButton.className = 'filter-btn bg-green-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-[#FFD60A] hover:text-gray-900 transition duration-300 shadow-md text-left';
+            allButton.dataset.category = 'all';
+            allButton.textContent = 'Todas as Categorias';
+            allButton.addEventListener('click', handleCategoryFilterClick);
+            categoryFilterButtonsContainer.appendChild(allButton);
+
+            // Adiciona os botões para as categorias existentes
+            categories.filter(cat => cat !== 'all').forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'filter-btn bg-green-500 hover:bg-[#FFD60A] hover:text-gray-900 text-white px-5 py-2 rounded-lg font-semibold transition duration-300 shadow-md text-left';
+                button.dataset.category = category;
+                button.textContent = category;
+                button.addEventListener('click', handleCategoryFilterClick);
+                categoryFilterButtonsContainer.appendChild(button);
+            });
+
+            updateCategoryButtonActiveState();
+        }
+
+        // Lógica para o clique nos botões de filtro de categoria
+        function handleCategoryFilterClick(event) {
+            currentFilterCategory = event.target.dataset.category;
+            currentPage = 1;
+            displayProducts();
+        }
+
+        // Atualiza o estado ativo dos botões de categoria
+        function updateCategoryButtonActiveState() {
+            document.querySelectorAll('#categoryFilterButtons .filter-btn').forEach(btn => {
+                btn.classList.remove('bg-green-700', 'bg-green-800', 'bg-[#FFD60A]', 'text-gray-900');
+                btn.classList.add('bg-green-500', 'text-white');
+
+                if (btn.dataset.category === currentFilterCategory) {
+                    btn.classList.remove('bg-green-500');
+                    btn.classList.add('bg-green-700');
+                }
+            });
+        }
+
+        // Lógica para o filtro de texto
+        function handleProductSearchInput(event) {
+            currentFilterText = event.target.value;
+            currentPage = 1;
+            displayProducts();
+        }
+
+        // Função principal para exibir os produtos
+        function displayProducts() {
+            productGrid.innerHTML = '';
+
+            const filteredProducts = products.filter(product => {
+                const matchesText = currentFilterText === '' || 
+                    product.name.toLowerCase().includes(currentFilterText.toLowerCase()) ||
+                    product.description.toLowerCase().includes(currentFilterText.toLowerCase());
+                const matchesCategory = currentFilterCategory === 'all' || product.category === currentFilterCategory;
+                return matchesText && matchesCategory;
+            });
+
+            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+            if (currentPage > totalPages && totalPages > 0) {
+                currentPage = totalPages;
+            } else if (totalPages === 0) {
+                currentPage = 1;
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const productsToDisplay = filteredProducts.slice(startIndex, endIndex);
+
+            if (productsToDisplay.length === 0) {
+                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Nenhum produto encontrado com os filtros aplicados.</p>';
+            } else {
+                productsToDisplay.forEach(product => {
+                    const productCard = `
+                        <div class="product-card rounded-xl overflow-hidden shadow-lg p-6 flex flex-col items-center text-center border border-gray-200">
+                            <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-48 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
+                            <h3 class="text-xl font-bold text-black mb-2 flex-grow">${product.name} - ${product.weight}</h3>
+                            <button onclick="openProductDetailsModal(${product.id})" class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button>
+                        </div>
+                    `;
+                    productGrid.insertAdjacentHTML('beforeend', productCard);
+                });
+                initializeLazyLoad();
+            }
+
+            renderPagination(totalPages);
+            updateCategoryButtonActiveState();
+        }
+
+        // Função para renderizar os controles de paginação
+        function renderPagination(totalPages) {
+            paginationControls.innerHTML = '';
+
+            if (totalPages <= 1) {
+                return;
+            }
+
+            // Botão Anterior
+            const prevButton = document.createElement('button');
+            prevButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${currentPage === 1 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#E63946] text-white hover:bg-[#c9303c]'}`;
+            prevButton.textContent = 'Anterior';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => goToPage(currentPage - 1));
+            paginationControls.appendChild(prevButton);
+
+            // Números das páginas
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+
+            if (currentPage <= 3 && totalPages > 5) {
+                startPage = 1;
+                endPage = 5;
+            } else if (currentPage >= totalPages - 2 && totalPages > 5) {
+                startPage = totalPages - 4;
+                endPage = totalPages;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${i === currentPage ? 'bg-[#2A9D8F] text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`;
+                pageButton.textContent = i;
+                pageButton.addEventListener('click', () => goToPage(i));
+                paginationControls.appendChild(pageButton);
+            }
+
+            // Botão Próximo
+            const nextButton = document.createElement('button');
+            nextButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${currentPage === totalPages ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#E63946] text-white hover:bg-[#c9303c]'}`;
+            nextButton.textContent = 'Próximo';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => goToPage(currentPage + 1));
+            paginationControls.appendChild(nextButton);
+        }
+
+        // Função para mudar de página
+        function goToPage(pageNumber) {
+            currentPage = pageNumber;
+            displayProducts();
+            window.scrollTo({ top: document.getElementById('produtos').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        // Lazy Load de Imagens
+        function initializeLazyLoad() {
+            const lazyImages = document.querySelectorAll('.lazy-load');
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy-load');
+                        observer.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '0px 0px 100px 0px'
+            });
+
+            lazyImages.forEach(img => {
+                observer.observe(img);
+            });
+        }
+
+        // Botão Voltar ao Topo
+        window.onscroll = function () {
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        };
+
+        window.scrollToTop = function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            productGrid = document.getElementById('productGrid');
+            productSearch = document.getElementById('productSearch');
+            categoryFilterButtonsContainer = document.getElementById('categoryFilterButtons');
+            backToTopBtn = document.getElementById('backToTopBtn');
+            paginationControls = document.getElementById('paginationControls');
+
+            productSearch.addEventListener('input', handleProductSearchInput);
+
+            loadProducts();
+        });
+    </script>
+</body>
+
+</html>

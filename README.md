@@ -47,3 +47,41 @@
 - ✅ Login de administrador
 - ✅ Proteção de arquivos sensíveis
 - ✅ Otimizações de performance
+- ✅ Suporte a MySQL
+- ✅ Framework Laravel (opcional)
+
+## Executando com Docker
+
+### Uso básico:
+```bash
+docker-compose up --build
+```
+
+### Instalando Laravel automaticamente:
+```bash
+# No Windows PowerShell:
+$env:INSTALL_LARAVEL="1"; docker-compose up --build
+
+# No Linux/Mac:
+INSTALL_LARAVEL=1 docker-compose up --build
+```
+
+### Configuração do banco:
+O sistema inclui um serviço MySQL configurado com:
+- **Host:** mysql
+- **Porta:** 3306
+- **Database:** di_conservas
+- **Usuário:** di_user
+- **Senha:** di_pass
+
+### Comandos úteis após instalação do Laravel:
+```bash
+# Gerar chave da aplicação
+docker exec -it di-conservas-php-app php laravel/artisan key:generate
+
+# Executar migrações
+docker exec -it di-conservas-php-app php laravel/artisan migrate
+
+# Acessar Laravel
+# http://localhost/laravel/public
+```
