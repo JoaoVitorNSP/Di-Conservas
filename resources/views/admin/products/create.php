@@ -1,3 +1,8 @@
+<?php
+use App\Controllers\BaseController;
+$successMessage = BaseController::getFlashMessage('success');
+$errorMessage = BaseController::getFlashMessage('error');
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -57,9 +62,8 @@
     
     <?php 
     // Exibe mensagens flash usando helper seguro
-    use App\Controllers\BaseController;
     
-    $successMessage = BaseController::getFlashMessage('success');
+    
     if ($successMessage): 
     ?>
       <div class="flash-message flash-success">
@@ -68,7 +72,6 @@
     <?php endif; ?>
     
     <?php 
-    $errorMessage = BaseController::getFlashMessage('error');
     if ($errorMessage): 
     ?>
       <div class="flash-message flash-error">
