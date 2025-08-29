@@ -58,6 +58,13 @@ class ProductController extends BaseController
         }
         
         $products = $this->productModel->all();
+        // Itera pelos produtos para substituir category_name por category
+        foreach ($products as &$product) {
+            if (isset($product['category_name'])) {
+                $product['category'] = $product['category_name'];
+                unset($product['category_name']);
+            }
+        }
         $this->json($products);
     }
     
@@ -196,7 +203,7 @@ class ProductController extends BaseController
         
         $categories = $this->productModel->getCategories();
         $units = $this->productModel->getMeasurementUnits();
-        
+
         $this->view('admin.products.edit', [
             'product' => $product,
             'categories' => $categories,
