@@ -315,14 +315,18 @@
 
         // Funções da Modal de Detalhes do Produto
         function openProductDetailsModal(productId) {
-            const product = products.find(p => p.id === productId);
+            const product = products.find(p => p.id == productId);
             if (product) {
+                // Converte preços para números
+                const retailPrice = parseFloat(product.retail_price) || 0;
+                const wholesalePrice = parseFloat(product.wholesale_price) || 0;
+                
                 document.getElementById('modalProductImage').src = product.image;
                 document.getElementById('modalProductName').innerText = product.name;
                 document.getElementById('modalProductDescription').innerText = product.description;
                 document.getElementById('modalProductWeight').innerText = `Peso: ${product.weight}`;
-                document.getElementById('modalProductRetailPrice').innerText = `Preço Varejo: R$ ${product.retail_price.toFixed(2).replace('.', ',')}`;
-                document.getElementById('modalProductWholesalePrice').innerText = `Preço Atacado: R$ ${product.wholesale_price.toFixed(2).replace('.', ',')} (a partir de 6 itens)`;
+                document.getElementById('modalProductRetailPrice').innerText = `Preço Varejo: R$ ${retailPrice.toFixed(2).replace('.', ',')}`;
+                document.getElementById('modalProductWholesalePrice').innerText = `Preço Atacado: R$ ${wholesalePrice.toFixed(2).replace('.', ',')} (a partir de 6 itens)`;
                 document.getElementById('productDetailsModal').classList.remove('hidden');
             }
         }
@@ -418,13 +422,17 @@
                 productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Nenhum produto encontrado com os filtros aplicados.</p>';
             } else {
                 productsToDisplay.forEach(product => {
+                    // Converte preços para números
+                    const retailPrice = parseFloat(product.retail_price) || 0;
+                    const wholesalePrice = parseFloat(product.wholesale_price) || 0;
+                    
                     const productCard = `
                         <div class="product-card rounded-xl overflow-hidden shadow-lg p-6 flex flex-col items-center text-center border border-gray-200">
                             <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-49 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
                             <h3 class="text-xl font-bold text-black mb-2 flex-grow">${product.name} - ${product.weight}</h3> <!-- Título do produto com peso -->
                                         <div class="mb-2">
-                                            <span class="block text-red-700 font-bold text-lg">Varejo: R$ ${product.retail_price.toFixed(2).replace('.', ',')}</span>
-                                            <span class="block text-gray-700 text-base">Atacado: R$ ${product.wholesale_price.toFixed(2).replace('.', ',')} <span class="text-xs">(min. 6)</span></span>
+                                            <span class="block text-red-700 font-bold text-lg">Varejo: R$ ${retailPrice.toFixed(2).replace('.', ',')}</span>
+                                            <span class="block text-gray-700 text-base">Atacado: R$ ${wholesalePrice.toFixed(2).replace('.', ',')} <span class="text-xs">(min. 6)</span></span>
                                         </div>
                             <button onclick="openProductDetailsModal(${product.id})" class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button> <!-- Botão pequeno amarelo -->
                         </div>
