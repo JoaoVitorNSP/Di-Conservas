@@ -51,7 +51,7 @@
       <div style="display: flex; flex-wrap: wrap; gap: 10px;">
         <?php foreach ($categories as $category): ?>
           <span style="background: #e8f5e8; padding: 5px 10px; border-radius: 15px; font-size: 14px;">
-            <?php echo htmlspecialchars($category); ?>
+            <?php echo htmlspecialchars($category["description"]); ?>
           </span>
         <?php endforeach; ?>
       </div>

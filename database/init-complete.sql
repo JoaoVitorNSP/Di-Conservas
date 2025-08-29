@@ -94,7 +94,7 @@ INSERT INTO products (uuid, name, category_id, description, weight, unit_id, ret
   (SELECT id FROM measurement_units WHERE description = 'kg' LIMIT 1),
   12.50,
   10.00,
-  'assets/broto-de-bambu.jpeg'
+  '/assets/broto-de-bambu.jpeg'
 ),
 (
   UUID(),
@@ -105,7 +105,7 @@ INSERT INTO products (uuid, name, category_id, description, weight, unit_id, ret
   (SELECT id FROM measurement_units WHERE description = 'kg' LIMIT 1),
   8.90,
   7.50,
-  'assets/espetinho-misto.jpeg'
+  '/assets/espetinho-misto.jpeg'
 ),
 (
   UUID(),
@@ -116,7 +116,7 @@ INSERT INTO products (uuid, name, category_id, description, weight, unit_id, ret
   (SELECT id FROM measurement_units WHERE description = 'kg' LIMIT 1),
   6.75,
   5.50,
-  'assets/mini-jilo.jpeg'
+  '/assets/mini-jilo.jpeg'
 ),
 (
   UUID(),
@@ -127,7 +127,7 @@ INSERT INTO products (uuid, name, category_id, description, weight, unit_id, ret
   (SELECT id FROM measurement_units WHERE description = 'kg' LIMIT 1),
   9.80,
   8.00,
-  'assets/pimenta-caseira-picante.jpeg'
+  '/assets/pimenta-caseira-picante.jpeg'
 ),
 (
   UUID(),
@@ -138,7 +138,7 @@ INSERT INTO products (uuid, name, category_id, description, weight, unit_id, ret
   (SELECT id FROM measurement_units WHERE description = 'kg' LIMIT 1),
   9.80,
   8.00,
-  'assets/pimenta-caseira-temperada.jpeg'
+  '/assets/pimenta-caseira-temperada.jpeg'
 ),
 (
   UUID(),
@@ -149,7 +149,7 @@ INSERT INTO products (uuid, name, category_id, description, weight, unit_id, ret
   (SELECT id FROM measurement_units WHERE description = 'kg' LIMIT 1),
   7.20,
   6.00,
-  'assets/repolho-azedo.jpeg'
+  '/assets/repolho-azedo.jpeg'
 )
 ON DUPLICATE KEY UPDATE 
   name = VALUES(name),

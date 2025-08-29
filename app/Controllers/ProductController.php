@@ -138,7 +138,8 @@ class ProductController extends BaseController
             'description' => 'max:1000',
             'weight' => 'numeric',
             'retail_price' => 'required|numeric|min:0',
-            'wholesale_price' => 'required|numeric|min:0'
+            'wholesale_price' => 'required|numeric|min:0',
+            'unit_id' => 'required'
         ]);
         
         if (!empty($errors)) {
@@ -194,10 +195,12 @@ class ProductController extends BaseController
         }
         
         $categories = $this->productModel->getCategories();
+        $units = $this->productModel->getMeasurementUnits();
         
         $this->view('admin.products.edit', [
             'product' => $product,
             'categories' => $categories,
+            'units' => $units,
             'title' => 'Editar Produto'
         ]);
     }
@@ -212,13 +215,13 @@ class ProductController extends BaseController
         // Validação
         $errors = $this->validate($data, [
             'name' => 'required|max:255',
-            'category' => 'required|max:100',
+            'category_id' => 'required',
             'description' => 'required',
             'weight' => 'required|max:50',
-            'retailPrice' => 'required',
-            'wholesalePrice' => 'required'
+            'retail_price' => 'required',
+            'wholesale_price' => 'required',
+            'unit_id' => 'required'
         ]);
-        
         if (!empty($errors)) {
             $product = $this->productModel->find($id);
             $this->setFlash('error', 'Erro de validação');
@@ -240,8 +243,8 @@ class ProductController extends BaseController
         }
         
         // Converte preços para float
-        $data['retailPrice'] = floatval($data['retailPrice']);
-        $data['wholesalePrice'] = floatval($data['wholesalePrice']);
+        $data['retail_price'] = floatval($data['retail_price']);
+        $data['wholesale_price'] = floatval($data['wholesale_price']);
         
         if ($this->productModel->update($id, $data)) {
             $this->setFlash('success', 'Produto atualizado com sucesso!');

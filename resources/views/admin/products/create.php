@@ -136,6 +136,7 @@ $errorMessage = BaseController::getFlashMessage('error');
               <label for="unit_id">Unidade</label>
               <select id="unit_id" name="unit_id">
                 <option value="">Selecione uma unidade</option>
+                <?php var_dump($units); ?>
                 <?php if (isset($units) && !empty($units)): ?>
                   <?php foreach ($units as $unit): ?>
                     <option value="<?php echo $unit['id']; ?>" 
@@ -153,31 +154,31 @@ $errorMessage = BaseController::getFlashMessage('error');
         </div>
         
         <div>
-          <div class="form-group <?php echo isset($errors['retailPrice']) ? 'field-error' : ''; ?>">
-            <label for="retailPrice">Preço Varejo (R$) *</label>
+          <div class="form-group <?php echo isset($errors['retail_price']) ? 'field-error' : ''; ?>">
+            <label for="retail_price">Preço Varejo (R$) *</label>
             <input type="number" 
-                   id="retailPrice" 
-                   name="retailPrice" 
+                   id="retail_price" 
+                   name="retail_price" 
                    step="0.01" 
                    min="0"
-                   value="<?php echo htmlspecialchars($currentData['retailPrice'] ?? ''); ?>" 
+                   value="<?php echo htmlspecialchars($currentData['retail_price'] ?? ''); ?>" 
                    required>
-            <?php if (isset($errors['retailPrice'])): ?>
-              <div class="error"><?php echo htmlspecialchars($errors['retailPrice']); ?></div>
+            <?php if (isset($errors['retail_price'])): ?>
+              <div class="error"><?php echo htmlspecialchars($errors['retail_price']); ?></div>
             <?php endif; ?>
           </div>
           
-          <div class="form-group <?php echo isset($errors['wholesalePrice']) ? 'field-error' : ''; ?>">
-            <label for="wholesalePrice">Preço Atacado (R$) *</label>
+          <div class="form-group <?php echo isset($errors['wholesale_price']) ? 'field-error' : ''; ?>">
+            <label for="wholesale_price">Preço Atacado (R$) *</label>
             <input type="number" 
-                   id="wholesalePrice" 
-                   name="wholesalePrice" 
+                   id="wholesale_price" 
+                   name="wholesale_price" 
                    step="0.01" 
                    min="0"
-                   value="<?php echo htmlspecialchars($currentData['wholesalePrice'] ?? ''); ?>" 
+                   value="<?php echo htmlspecialchars($currentData['wholesale_price'] ?? ''); ?>" 
                    required>
-            <?php if (isset($errors['wholesalePrice'])): ?>
-              <div class="error"><?php echo htmlspecialchars($errors['wholesalePrice']); ?></div>
+            <?php if (isset($errors['wholesale_price'])): ?>
+              <div class="error"><?php echo htmlspecialchars($errors['wholesale_price']); ?></div>
             <?php endif; ?>
           </div>
           

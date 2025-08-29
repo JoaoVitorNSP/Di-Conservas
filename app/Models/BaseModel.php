@@ -20,11 +20,18 @@ abstract class BaseModel
      */
     private function getConnection()
     {
-        $config = require_once __DIR__ . '/../../config/database.php';
+        $configPath = __DIR__ . '/../../config/database.php';
         
-        // Verifica se a configuração foi carregada corretamente
+        // Verifica se o arquivo existe
+        if (!file_exists($configPath)) {
+            throw new \Exception("Arquivo de configuração não encontrado: {$configPath}");
+        }
+        
+        $config = include $configPath;
+        
+        // Debug: mostra o tipo do que foi carregado
         if (!is_array($config)) {
-            throw new \Exception("Erro ao carregar configuração do banco de dados");
+            throw new \Exception("Erro ao carregar configuração do banco de dados. Retornou: " . gettype($config) . " - Valor: " . var_export($config, true));
         }
         
         // Valida os parâmetros obrigatórios

@@ -80,7 +80,6 @@ class BaseController
                 }
             }
         }
-        
         return $errors;
     }
     

@@ -321,8 +321,8 @@
                 document.getElementById('modalProductName').innerText = product.name;
                 document.getElementById('modalProductDescription').innerText = product.description;
                 document.getElementById('modalProductWeight').innerText = `Peso: ${product.weight}`;
-                document.getElementById('modalProductRetailPrice').innerText = `Preço Varejo: R$ ${product.retailPrice.toFixed(2).replace('.', ',')}`;
-                document.getElementById('modalProductWholesalePrice').innerText = `Preço Atacado: R$ ${product.wholesalePrice.toFixed(2).replace('.', ',')} (a partir de 6 itens)`;
+                document.getElementById('modalProductRetailPrice').innerText = `Preço Varejo: R$ ${product.retail_price.toFixed(2).replace('.', ',')}`;
+                document.getElementById('modalProductWholesalePrice').innerText = `Preço Atacado: R$ ${product.wholesale_price.toFixed(2).replace('.', ',')} (a partir de 6 itens)`;
                 document.getElementById('productDetailsModal').classList.remove('hidden');
             }
         }
@@ -423,8 +423,8 @@
                             <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-49 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
                             <h3 class="text-xl font-bold text-black mb-2 flex-grow">${product.name} - ${product.weight}</h3> <!-- Título do produto com peso -->
                                         <div class="mb-2">
-                                            <span class="block text-red-700 font-bold text-lg">Varejo: R$ ${product.retailPrice.toFixed(2).replace('.', ',')}</span>
-                                            <span class="block text-gray-700 text-base">Atacado: R$ ${product.wholesalePrice.toFixed(2).replace('.', ',')} <span class="text-xs">(min. 6)</span></span>
+                                            <span class="block text-red-700 font-bold text-lg">Varejo: R$ ${product.retail_price.toFixed(2).replace('.', ',')}</span>
+                                            <span class="block text-gray-700 text-base">Atacado: R$ ${product.wholesale_price.toFixed(2).replace('.', ',')} <span class="text-xs">(min. 6)</span></span>
                                         </div>
                             <button onclick="openProductDetailsModal(${product.id})" class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button> <!-- Botão pequeno amarelo -->
                         </div>
