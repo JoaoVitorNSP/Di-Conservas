@@ -244,7 +244,6 @@ class ProductController extends BaseController
         // Processa upload da imagem se houver
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = $this->handleImageUpload($_FILES['image']);
-            dd($imagePath);
             if ($imagePath !== false && $imagePath !== NULL) {
                 $data['image'] = $imagePath;
             }
