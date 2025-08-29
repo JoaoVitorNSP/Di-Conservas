@@ -121,17 +121,17 @@ class Product extends BaseModel
                     image = ?,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = ? AND status = 'active'";
-        
+        $product = $this->find($id);
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             $data['name'],
             $data['category_id'],
-            $data['description'] ?? null,
-            $data['weight'] ?? null,
-            $data['unit_id'] ?? null,
-            $data['retail_price'] ?? 0.00,
-            $data['wholesale_price'] ?? 0.00,
-            $data['image'] ?? null,
+            $data['description'] ?? $product['description'],
+            $data['weight'] ?? $product['weight'],
+            $data['unit_id'] ?? $product['unit_id'],
+            $data['retail_price'] ?? $product['retail_price'],
+            $data['wholesale_price'] ?? $product['wholesale_price'],
+            $data['image'] ?? $product['image'],
             $id
         ]);
     }
