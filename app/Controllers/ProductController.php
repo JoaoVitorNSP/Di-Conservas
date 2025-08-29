@@ -110,10 +110,15 @@ class ProductController extends BaseController
      */
     public function create()
     {
+        // Inicia sessão para mensagens flash
+        $this->startSession();
+        
         $categories = $this->productModel->getCategories();
+        $units = $this->productModel->getMeasurementUnits();
         
         $this->view('admin.products.create', [
             'categories' => $categories,
+            'units' => $units,
             'title' => 'Adicionar Produto'
         ]);
     }
@@ -123,42 +128,50 @@ class ProductController extends BaseController
      */
     public function store()
     {
+        $this->startSession();
         $data = $this->getPostData();
         
         // Validação
         $errors = $this->validate($data, [
             'name' => 'required|max:255',
-            'category' => 'required|max:100',
-            'description' => 'required',
-            'weight' => 'required|max:50',
-            'retailPrice' => 'required',
-            'wholesalePrice' => 'required'
+            'category_id' => 'required',
+            'description' => 'max:1000',
+            'weight' => 'numeric',
+            'retail_price' => 'required|numeric|min:0',
+            'wholesale_price' => 'required|numeric|min:0'
         ]);
         
         if (!empty($errors)) {
             $this->setFlash('error', 'Erro de validação');
             $this->view('admin.products.create', [
                 'errors' => $errors,
-                'data' => $data,
+                'currentData' => $data,
                 'categories' => $this->productModel->getCategories(),
+                'units' => $this->productModel->getMeasurementUnits(),
                 'title' => 'Adicionar Produto'
             ]);
             return;
         }
         
         // Processa upload da imagem se houver
+        $imagePath = null;
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = $this->handleImageUpload($_FILES['image']);
-            if ($imagePath) {
-                $data['image'] = $imagePath;
-            }
         }
         
-        // Converte preços para float
-        $data['retailPrice'] = floatval($data['retailPrice']);
-        $data['wholesalePrice'] = floatval($data['wholesalePrice']);
+        // Prepara dados para o banco
+        $productData = [
+            'name' => $data['name'],
+            'category_id' => $data['category_id'],
+            'description' => $data['description'] ?? null,
+            'weight' => !empty($data['weight']) ? floatval($data['weight']) : null,
+            'unit_id' => !empty($data['unit_id']) ? $data['unit_id'] : null,
+            'retail_price' => floatval($data['retail_price']),
+            'wholesale_price' => floatval($data['wholesale_price']),
+            'image' => $imagePath
+        ];
         
-        if ($this->productModel->create($data)) {
+        if ($this->productModel->create($productData)) {
             $this->setFlash('success', 'Produto adicionado com sucesso!');
             $this->redirect('/admin/products');
         } else {

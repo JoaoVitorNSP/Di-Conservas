@@ -100,37 +100,55 @@ $errorMessage = BaseController::getFlashMessage('error');
             <?php endif; ?>
           </div>
           
-          <div class="form-group <?php echo isset($errors['category']) ? 'field-error' : ''; ?>">
-            <label for="category">Categoria *</label>
-            <select id="category" name="category" required>
+          <div class="form-group <?php echo isset($errors['category_id']) ? 'field-error' : ''; ?>">
+            <label for="category_id">Categoria *</label>
+            <select id="category_id" name="category_id" required>
               <option value="">Selecione uma categoria</option>
               <?php if (isset($categories) && !empty($categories)): ?>
                 <?php foreach ($categories as $cat): ?>
-                  <option value="<?php echo htmlspecialchars($cat); ?>" 
-                          <?php echo ($currentData['category'] ?? '') === $cat ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($cat); ?>
+                  <option value="<?php echo $cat['id']; ?>" 
+                          <?php echo ($currentData['category_id'] ?? '') == $cat['id'] ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($cat['description']); ?>
                   </option>
                 <?php endforeach; ?>
               <?php endif; ?>
-              <option value="Pimentas" <?php echo ($currentData['category'] ?? '') === 'Pimentas' ? 'selected' : ''; ?>>Pimentas</option>
-              <option value="Conservas" <?php echo ($currentData['category'] ?? '') === 'Conservas' ? 'selected' : ''; ?>>Conservas</option>
             </select>
-            <?php if (isset($errors['category'])): ?>
-              <div class="error"><?php echo htmlspecialchars($errors['category']); ?></div>
+            <?php if (isset($errors['category_id'])): ?>
+              <div class="error"><?php echo htmlspecialchars($errors['category_id']); ?></div>
             <?php endif; ?>
           </div>
           
-          <div class="form-group <?php echo isset($errors['weight']) ? 'field-error' : ''; ?>">
-            <label for="weight">Peso *</label>
-            <input type="text" 
-                   id="weight" 
-                   name="weight" 
-                   value="<?php echo htmlspecialchars($currentData['weight'] ?? ''); ?>" 
-                   placeholder="Ex: 300g"
-                   required>
-            <?php if (isset($errors['weight'])): ?>
-              <div class="error"><?php echo htmlspecialchars($errors['weight']); ?></div>
-            <?php endif; ?>
+          <div class="form-group-row">
+            <div class="form-group <?php echo isset($errors['weight']) ? 'field-error' : ''; ?>">
+              <label for="weight">Peso</label>
+              <input type="number" 
+                     id="weight" 
+                     name="weight" 
+                     step="0.001"
+                     value="<?php echo htmlspecialchars($currentData['weight'] ?? ''); ?>" 
+                     placeholder="0.300">
+              <?php if (isset($errors['weight'])): ?>
+                <div class="error"><?php echo htmlspecialchars($errors['weight']); ?></div>
+              <?php endif; ?>
+            </div>
+            
+            <div class="form-group <?php echo isset($errors['unit_id']) ? 'field-error' : ''; ?>">
+              <label for="unit_id">Unidade</label>
+              <select id="unit_id" name="unit_id">
+                <option value="">Selecione uma unidade</option>
+                <?php if (isset($units) && !empty($units)): ?>
+                  <?php foreach ($units as $unit): ?>
+                    <option value="<?php echo $unit['id']; ?>" 
+                            <?php echo ($currentData['unit_id'] ?? '') == $unit['id'] ? 'selected' : ''; ?>>
+                      <?php echo htmlspecialchars($unit['description']); ?>
+                    </option>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+              </select>
+              <?php if (isset($errors['unit_id'])): ?>
+                <div class="error"><?php echo htmlspecialchars($errors['unit_id']); ?></div>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
         

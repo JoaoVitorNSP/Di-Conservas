@@ -29,7 +29,7 @@ class Product extends BaseModel
                 WHERE p.status = 'active'
                 ORDER BY p.name";
         
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -48,7 +48,7 @@ class Product extends BaseModel
                 LEFT JOIN measurement_units u ON p.unit_id = u.id
                 WHERE p.id = ? AND p.status = 'active'";
         
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
@@ -67,7 +67,7 @@ class Product extends BaseModel
                 LEFT JOIN measurement_units u ON p.unit_id = u.id
                 WHERE p.uuid = ? AND p.status = 'active'";
         
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $stmt->execute([$uuid]);
         return $stmt->fetch();
     }
@@ -77,17 +77,11 @@ class Product extends BaseModel
      */
     public function create($data)
     {
-        // Gera UUID se não fornecido
-        if (empty($data['uuid'])) {
-            $data['uuid'] = $this->generateUuid();
-        }
+        $sql = "INSERT INTO products (name, category_id, description, weight, unit_id, retail_price, wholesale_price, image) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
-        $sql = "INSERT INTO products (uuid, name, category_id, description, weight, unit_id, retail_price, wholesale_price, image) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $result = $stmt->execute([
-            $data['uuid'],
             $data['name'],
             $data['category_id'],
             $data['description'] ?? null,
@@ -99,7 +93,7 @@ class Product extends BaseModel
         ]);
         
         if ($result) {
-            return $this->pdo->lastInsertId();
+            return $this->connection->lastInsertId();
         }
         
         return false;
@@ -122,7 +116,7 @@ class Product extends BaseModel
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = ? AND status = 'active'";
         
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         return $stmt->execute([
             $data['name'],
             $data['category_id'],
@@ -142,7 +136,7 @@ class Product extends BaseModel
     public function delete($id)
     {
         $sql = "UPDATE products SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         return $stmt->execute([$id]);
     }
     
@@ -161,7 +155,7 @@ class Product extends BaseModel
                 WHERE p.category_id = ? AND p.status = 'active'
                 ORDER BY p.name";
         
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $stmt->execute([$categoryId]);
         return $stmt->fetchAll();
     }
@@ -183,7 +177,7 @@ class Product extends BaseModel
                 ORDER BY p.name";
         
         $searchTerm = "%{$term}%";
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $stmt->execute([$searchTerm, $searchTerm, $searchTerm]);
         return $stmt->fetchAll();
     }
@@ -194,7 +188,7 @@ class Product extends BaseModel
     public function getCategories()
     {
         $sql = "SELECT * FROM categories WHERE status = 'active' ORDER BY description";
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -205,30 +199,8 @@ class Product extends BaseModel
     public function getMeasurementUnits()
     {
         $sql = "SELECT * FROM measurement_units WHERE status = 'active' ORDER BY description";
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
-    }
-    
-    /**
-     * Gera um UUID simples
-     */
-    protected function generateUuid()
-    {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            // 32 bits for "time_low"
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-            // 16 bits for "time_mid"
-            mt_rand(0, 0xffff),
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 4
-            mt_rand(0, 0x0fff) | 0x4000,
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand(0, 0x3fff) | 0x8000,
-            // 48 bits for "node"
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
     }
 }

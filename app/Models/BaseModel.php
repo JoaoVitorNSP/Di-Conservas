@@ -3,24 +3,37 @@
 namespace App\Models;
 
 /**
- * Classe base para acesso ao banco de dados
+ * Classe base para todos os modelos
  */
-class BaseModel
+abstract class BaseModel
 {
-    protected $connection;
+    protected $pdo;
     protected $table;
-    
+
     public function __construct()
     {
-        $this->connection = $this->getConnection();
+        $this->pdo = $this->getConnection();
     }
-    
+
     /**
-     * Estabelece conexão com o banco de dados
+     * Obtém a conexão com o banco de dados
      */
     private function getConnection()
     {
         $config = require_once __DIR__ . '/../../config/database.php';
+        
+        // Verifica se a configuração foi carregada corretamente
+        if (!is_array($config)) {
+            throw new \Exception("Erro ao carregar configuração do banco de dados");
+        }
+        
+        // Valida os parâmetros obrigatórios
+        $required = ['host', 'database', 'username', 'password'];
+        foreach ($required as $key) {
+            if (!isset($config[$key])) {
+                throw new \Exception("Parâmetro de configuração obrigatório não encontrado: {$key}");
+            }
+        }
         
         try {
             $dsn = "mysql:host={$config['host']};dbname={$config['database']};charset=utf8mb4";
@@ -40,85 +53,130 @@ class BaseModel
      */
     public function all()
     {
-        $sql = "SELECT * FROM {$this->table}";
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute();
+        $stmt = $this->pdo->query("SELECT * FROM {$this->table}");
         return $stmt->fetchAll();
     }
-    
+
     /**
      * Busca um registro por ID
      */
     public function find($id)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE id = :id";
-        $stmt = $this->connection->prepare($sql);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
+        $stmt = $this->pdo->prepare("SELECT * FROM {$this->table} WHERE id = ?");
+        $stmt->execute([$id]);
         return $stmt->fetch();
     }
-    
+
     /**
-     * Insere um novo registro
+     * Cria um novo registro
      */
     public function create($data)
     {
-        $fields = implode(',', array_keys($data));
+        $columns = implode(',', array_keys($data));
         $placeholders = ':' . implode(', :', array_keys($data));
         
-        $sql = "INSERT INTO {$this->table} ($fields) VALUES ($placeholders)";
-        $stmt = $this->connection->prepare($sql);
+        $sql = "INSERT INTO {$this->table} ({$columns}) VALUES ({$placeholders})";
+        $stmt = $this->pdo->prepare($sql);
         
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(":$key", $value);
-        }
-        
-        return $stmt->execute();
+        return $stmt->execute($data);
     }
-    
+
     /**
-     * Atualiza um registro por ID
+     * Atualiza um registro
      */
     public function update($id, $data)
     {
-        $setParts = [];
-        foreach ($data as $key => $value) {
-            $setParts[] = "$key = :$key";
+        $setClause = '';
+        foreach (array_keys($data) as $key) {
+            $setClause .= "{$key} = :{$key}, ";
         }
-        $setClause = implode(', ', $setParts);
+        $setClause = rtrim($setClause, ', ');
         
-        $sql = "UPDATE {$this->table} SET $setClause WHERE id = :id";
-        $stmt = $this->connection->prepare($sql);
+        $sql = "UPDATE {$this->table} SET {$setClause} WHERE id = :id";
+        $data['id'] = $id;
         
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(":$key", $value);
-        }
-        $stmt->bindValue(':id', $id);
-        
-        return $stmt->execute();
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($data);
     }
-    
+
     /**
-     * Remove um registro por ID
+     * Remove um registro
      */
     public function delete($id)
     {
-        $sql = "DELETE FROM {$this->table} WHERE id = :id";
-        $stmt = $this->connection->prepare($sql);
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
+        $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = ?");
+        return $stmt->execute([$id]);
     }
-    
+
     /**
-     * Executa uma query personalizada
+     * Executa uma query customizada
      */
     public function query($sql, $params = [])
     {
-        $stmt = $this->connection->prepare($sql);
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value);
-        }
-        $stmt->execute();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt;
+    }
+
+    /**
+     * Gera um UUID
+     */
+    protected function generateUuid()
+    {
+        $stmt = $this->pdo->query("SELECT UUID() as uuid");
+        $result = $stmt->fetch();
+        return $result['uuid'];
+    }
+
+    /**
+     * Inicia uma transação
+     */
+    public function beginTransaction()
+    {
+        return $this->pdo->beginTransaction();
+    }
+
+    /**
+     * Confirma uma transação
+     */
+    public function commit()
+    {
+        return $this->pdo->commit();
+    }
+
+    /**
+     * Desfaz uma transação
+     */
+    public function rollback()
+    {
+        return $this->pdo->rollback();
+    }
+
+    /**
+     * Retorna o último ID inserido
+     */
+    public function lastInsertId()
+    {
+        return $this->pdo->lastInsertId();
+    }
+
+    /**
+     * Busca registros com condições
+     */
+    public function where($column, $operator, $value)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM {$this->table} WHERE {$column} {$operator} ?");
+        $stmt->execute([$value]);
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Conta registros na tabela
+     */
+    public function count()
+    {
+        $stmt = $this->pdo->query("SELECT COUNT(*) as count FROM {$this->table}");
+        $result = $stmt->fetch();
+        return $result['count'];
     }
 }

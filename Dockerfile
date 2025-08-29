@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     default-mysql-client \
     nano \
     curl \
+    wait-for-it \
     && rm -rf /var/lib/apt/lists/*
 
 # Instala extensões PHP necessárias
@@ -27,6 +28,10 @@ WORKDIR /var/www/html
 
 # Copia arquivos de configuração do Apache
 COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
+
+# Copia scripts auxiliares
+COPY scripts/ /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh
 
 # Copia todos os arquivos da aplicação
 COPY . .
@@ -69,5 +74,5 @@ RUN echo "upload_max_filesize = 10M" >> /usr/local/etc/php/conf.d/uploads.ini &&
 # Expõe a porta 80 do Apache
 EXPOSE 80
 
-# Comando para iniciar o Apache
-CMD ["apache2-foreground"]
+# Comando para iniciar a aplicação (aguarda MySQL e inicia Apache)
+CMD ["/usr/local/bin/start-app.sh"]

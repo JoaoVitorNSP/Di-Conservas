@@ -298,7 +298,9 @@
             try {
                 const response = await fetch('/api/products');
                 if (!response.ok) {
-                    throw new Error('Erro ao carregar produtos');
+                    console.error('Response status:', response.status);
+                    console.error('Response text:', await response.text());
+                    throw new Error(`Erro HTTP: ${response.status}`);
                 }
                 
                 products = await response.json();

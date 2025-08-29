@@ -7,15 +7,21 @@
 // Define o diretório raiz da aplicação
 define('ROOT_PATH', dirname(__DIR__));
 
+// Carrega as variáveis de ambiente
+require_once ROOT_PATH . '/app/EnvLoader.php';
+EnvLoader::load(ROOT_PATH . '/.env');
+
 // Carrega o autoloader
 require_once ROOT_PATH . '/app/Autoloader.php';
 
+// Força o carregamento das classes base primeiro
+require_once ROOT_PATH . '/app/Models/BaseModel.php';
+
 // Carregamento manual das classes principais para garantir funcionamento
 $coreFiles = [
-    ROOT_PATH . '/app/Controllers/BaseController.php',
-    ROOT_PATH . '/app/Models/BaseModel.php',
     ROOT_PATH . '/app/Models/Product.php',
     ROOT_PATH . '/app/Models/Admin.php',
+    ROOT_PATH . '/app/Controllers/BaseController.php',
     ROOT_PATH . '/app/Controllers/ProductController.php',
     ROOT_PATH . '/app/Controllers/AdminController.php',
     ROOT_PATH . '/routes/Router.php'
