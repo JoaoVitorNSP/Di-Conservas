@@ -5,10 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($title); ?></title>
+    <link rel="icon" type="image/png" href="https://thumb-cdn.soluall.net/prod/adv_ads/ad300box/5e6b9e93-194c-4c83-af4e-2618ac1e06ca/60198ac6-b0fc-46dd-a9f5-1c16ac1e03ae.png" >
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" >
     <style>
         body {
             font-family: 'Palatino Linotype', 'Palatino', serif;
@@ -142,9 +143,6 @@
                 <a href="#contato" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
                     <i class="fas fa-envelope mr-2"></i>Contato
                 </a>
-                <a href="/admin" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
-                    <i class="fas fa-cogs mr-2"></i>Admin
-                </a>
                 <a href="#" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center"
                     onclick="document.getElementById('productSearch').focus(); return false;">
                     <i class="fas fa-search"></i>
@@ -155,15 +153,16 @@
 
     <!-- Seção Hero/Banner -->
     <section id="hero-banner"
-        class="relative bg-cover bg-center h-90 md:h-96 flex items-center justify-center text-white text-center shadow-lg pt-24"
-        style="background-image: url('https://images.unsplash.com/photo-1444858291040-58f756a3bdd6?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmF6ZW5kYXxlbnwwfHwwfHx8MA%3D%3D');">
+    class="relative bg-cover bg-center h-90 md:h-96 flex items-center justify-center text-white text-center shadow-lg pt-40 ms:pt-40 lg:pt-24"
+    style="background-image: url('https://images.unsplash.com/photo-1444858291040-58f756a3bdd6?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmF6ZW5kYXxlbnwwfHwwfHx8MA%3D%3D');">
+        <!-- Overlay com gradiente verde escuro transparente -->
         <div class="absolute inset-0 bg-gradient-to-t from-transparent to-transparent via-[#2A9D8F] opacity-60"></div>
         <div class="relative z-10 p-4">
-            <h2 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg text-[#FFD60A]">Sabores Que Transformam</h2>
+        <h2 class="text-4xl sm:text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg text-[#FFD60A] break-words leading-tight">Sabores Que<br class="block sm:hidden"> Transformam</h2>
             <p class="text-lg md:text-xl max-w-2xl mx-auto drop-shadow-md text-white">Explore nossa seleção artesanal de
                 conservas e pimentas, feitas com paixão e os melhores ingredientes.</p>
             <a href="#produtos"
-                class="inline-block mt-8 bg-[#E63946] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#c9303c] transition duration-300 shadow-lg">Conheça
+                class="inline-block mt-3 bg-[#E63946] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#c9303c] transition duration-300 shadow-lg">Conheça
                 nossos produtos!</a>
         </div>
     </section>
@@ -214,15 +213,16 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
             <!-- Contato por Email -->
-            <a href="mailto:diconservas@email.com"
+            <a id="emailContact"
+                href="mailto:conservasdi@gmail.com"
                 class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fas fa-envelope text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">Email</span>
-                <span class="text-sm text-gray-800">diconservas@email.com</span>
+                <span class="text-sm text-gray-800">conservasdi@gmail.com</span>
             </a>
 
             <!-- Contato por WhatsApp -->
-            <a href="https://wa.me/+554196122750" target="_blank" rel="noopener noreferrer"
+            <a href="https://wa.me/+5541996122750?text=Olá%20gostaria%20de%20mais%20informações" target="_blank" rel="noopener noreferrer"
                 class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
                 <i class="fab fa-whatsapp text-[#000000] text-5xl mb-3"></i>
                 <span class="text-xl font-semibold text-black">WhatsApp</span>
@@ -238,7 +238,7 @@
             </a>
         </div>
 
-        <p class="mt-8 text-sm">Fazemos pedidos e tiramos dúvidas via Email e WhatsApp.</p>
+        <!-- <p class="mt-8 text-sm">Fazemos pedidos e tiramos dúvidas via Email e WhatsApp.</p> -->
     </section>
 
     <!-- Modal para Detalhes do Produto -->
@@ -418,9 +418,13 @@
                 productsToDisplay.forEach(product => {
                     const productCard = `
                         <div class="product-card rounded-xl overflow-hidden shadow-lg p-6 flex flex-col items-center text-center border border-gray-200">
-                            <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-48 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
-                            <h3 class="text-xl font-bold text-black mb-2 flex-grow">${product.name} - ${product.weight}</h3>
-                            <button onclick="openProductDetailsModal(${product.id})" class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button>
+                            <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-49 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
+                            <h3 class="text-xl font-bold text-black mb-2 flex-grow">${product.name} - ${product.weight}</h3> <!-- Título do produto com peso -->
+                                        <div class="mb-2">
+                                            <span class="block text-red-700 font-bold text-lg">Varejo: R$ ${product.retailPrice.toFixed(2).replace('.', ',')}</span>
+                                            <span class="block text-gray-700 text-base">Atacado: R$ ${product.wholesalePrice.toFixed(2).replace('.', ',')} <span class="text-xs">(min. 6)</span></span>
+                                        </div>
+                            <button onclick="openProductDetailsModal(${product.id})" class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button> <!-- Botão pequeno amarelo -->
                         </div>
                     `;
                     productGrid.insertAdjacentHTML('beforeend', productCard);
@@ -533,7 +537,25 @@
 
             loadProducts();
         });
+
+        // Redireciona para outra aba ao clicar para enviar email
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+        const emailContact = document.getElementById('emailContact');
+        if (emailContact) {
+            emailContact.addEventListener('click', function (e) {
+                e.preventDefault();
+                const mailto = 'mailto:conservasdi@gmail.com';
+                const win = window.open(mailto, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            });
+        }
+    });
     </script>
 </body>
+
 
 </html>
