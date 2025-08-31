@@ -117,6 +117,9 @@ class ProductController extends BaseController
      */
     public function create()
     {
+        
+        $this->requireAuth();
+
         // Inicia sessão para mensagens flash
         $this->startSession();
         
@@ -135,6 +138,9 @@ class ProductController extends BaseController
      */
     public function store()
     {
+        
+        $this->requireAuth();
+        
         $this->startSession();
         $data = $this->getPostData();
         
@@ -193,6 +199,9 @@ class ProductController extends BaseController
      */
     public function edit($id)
     {
+        
+        $this->requireAuth();
+        
         $product = $this->productModel->find($id);
         
         if (!$product) {
@@ -217,6 +226,8 @@ class ProductController extends BaseController
      */
     public function update($id)
     {
+        $this->requireAuth();
+        
         $data = $this->getPostData();
         
         // Validação
@@ -267,6 +278,8 @@ class ProductController extends BaseController
      */
     public function destroy($id)
     {
+        $this->requireAuth();
+        
         if ($this->productModel->delete($id)) {
             $this->setFlash('success', 'Produto removido com sucesso!');
         } else {
