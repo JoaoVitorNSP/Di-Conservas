@@ -96,8 +96,10 @@ class AuthController extends BaseController
         // Limpa todas as variáveis de sessão
         $_SESSION = [];
         
-        // Destrói a sessão
-        session_destroy();
+        // Destrói a sessão somente se ela estiver ativa
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
         
         // Remove o cookie de sessão
         if (ini_get("session.use_cookies")) {
@@ -109,6 +111,6 @@ class AuthController extends BaseController
         }
         
         // Redireciona para a página inicial
-        $this->redirect('/');
+        $this->redirect('/admin');
     }
 }
