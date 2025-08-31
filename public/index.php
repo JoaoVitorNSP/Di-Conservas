@@ -20,10 +20,12 @@ require_once ROOT_PATH . '/app/Models/BaseModel.php';
 // Carregamento manual das classes principais para garantir funcionamento
 $coreFiles = [
     ROOT_PATH . '/app/Models/Product.php',
-    ROOT_PATH . '/app/Models/Admin.php',
+    ROOT_PATH . '/app/Models/User.php',
     ROOT_PATH . '/app/Controllers/BaseController.php',
     ROOT_PATH . '/app/Controllers/ProductController.php',
     ROOT_PATH . '/app/Controllers/AdminController.php',
+    ROOT_PATH . '/app/Controllers/AuthController.php',
+    ROOT_PATH . '/app/Controllers/UserController.php',
     ROOT_PATH . '/routes/Router.php'
 ];
 

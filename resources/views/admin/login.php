@@ -31,6 +31,7 @@
         }
 
         input[type="text"],
+        input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 8px;
@@ -95,6 +96,10 @@
         
         <h2>Login do Administrador</h2>
         
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="error"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></div>
+        <?php endif; ?>
+        
         <?php if (isset($error) && !empty($error)): ?>
             <div class="error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
@@ -108,8 +113,8 @@
         <?php endif; ?>
         
         <form method="POST" action="/admin/login">
-            <label for="username">Usuário</label>
-            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($data['username'] ?? ''); ?>" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($data['email'] ?? ''); ?>" required>
             
             <label for="password">Senha</label>
             <input type="password" id="password" name="password" required>

@@ -8,6 +8,14 @@ namespace App\Controllers;
 class BaseController
 {
     /**
+     * Construtor base
+     */
+    public function __construct()
+    {
+        // Construtor vazio - pode ser sobrescrito pelas classes filhas
+    }
+    
+    /**
      * Renderiza uma view
      */
     protected function view($viewName, $data = [])
@@ -151,5 +159,71 @@ class BaseController
             unset($_SESSION['flash'][$type]);
         }
         return $message;
+    }
+    
+    /**
+     * Verifica se o usuário está logado
+     */
+    protected function isLoggedIn()
+    {
+        $this->startSession();
+        return isset($_SESSION['user']) && !empty($_SESSION['user']['id']);
+    }
+    
+    /**
+     * Verifica se o usuário é administrador
+     */
+    protected function isAdmin()
+    {
+        if (!$this->isLoggedIn()) {
+            return false;
+        }
+        
+        return $_SESSION['user']['hole_id'] == 1; // ID do papel "Administrador"
+    }
+    
+    /**
+     * Verifica se o usuário tem permissão (admin ou gerente)
+     */
+    protected function hasPermission()
+    {
+        if (!$this->isLoggedIn()) {
+            return false;
+        }
+        
+        $holeId = $_SESSION['user']['hole_id'];
+        return in_array($holeId, [1, 2]); // Administrador ou Gerente
+    }
+    
+    /**
+     * Obtém dados do usuário logado
+     */
+    protected function getUser()
+    {
+        $this->startSession();
+        return $_SESSION['user'] ?? null;
+    }
+    
+    /**
+     * Verifica autenticação e redireciona se necessário
+     */
+    protected function requireAuth()
+    {
+        if (!$this->isLoggedIn()) {
+            $this->redirect('/admin');
+        }
+    }
+    
+    /**
+     * Verifica se é admin e redireciona se necessário
+     */
+    protected function requireAdmin()
+    {
+        $this->requireAuth();
+        
+        if (!$this->isAdmin()) {
+            $_SESSION['error'] = 'Acesso negado. Apenas administradores podem acessar esta área.';
+            $this->redirect('/admin/dashboard');
+        }
     }
 }
