@@ -39,11 +39,20 @@ class Autoloader
             return true;
         }
         
-        // Converte namespace para caminho de arquivo
-        $file = $this->baseDir . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
+        // PSR-4: converte namespace para caminho de arquivo
+        // App\Models\Product -> app/Models/Product.php
+        $file = $this->baseDir . DIRECTORY_SEPARATOR . str_replace(['\\', 'App/'], [DIRECTORY_SEPARATOR, 'app/'], $className) . '.php';
         
         if (file_exists($file)) {
             require_once $file;
+            return true;
+        }
+        
+        // Tentativa alternativa sem o prefixo App
+        $alternativeFile = $this->baseDir . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, str_replace('App\\', '', $className)) . '.php';
+        
+        if (file_exists($alternativeFile)) {
+            require_once $alternativeFile;
             return true;
         }
         

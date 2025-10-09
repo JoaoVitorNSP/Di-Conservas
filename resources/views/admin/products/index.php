@@ -106,10 +106,10 @@
                   <?php if (strlen($product['description']) > 50) echo '...'; ?>
                 </small>
               </td>
-              <td><?php echo htmlspecialchars($product['category']); ?></td>
+              <td><?php echo htmlspecialchars($product['category_name']); ?></td>
               <td><?php echo htmlspecialchars($product['weight']); ?></td>
-              <td>R$ <?php echo number_format($product['retailPrice'], 2, ',', '.'); ?></td>
-              <td>R$ <?php echo number_format($product['wholesalePrice'], 2, ',', '.'); ?></td>
+              <td>R$ <?php echo number_format($product['retail_price'], 2, ',', '.'); ?></td>
+              <td>R$ <?php echo number_format($product['wholesale_price'], 2, ',', '.'); ?></td>
               <td>
                 <div class="actions">
                   <a href="/admin/products/<?php echo $product['id']; ?>/edit" 

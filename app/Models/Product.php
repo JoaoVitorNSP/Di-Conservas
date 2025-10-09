@@ -3,32 +3,35 @@
 namespace App\Models;
 
 /**
- * Modelo para produtos - temporariamente usando products.json
+ * Modelo para produtos - usando banco de dados MySQL
  */
 class Product extends BaseModel
 {
     protected $table = 'products';
-    private $jsonFile;
     
     public function __construct()
     {
-        // Por enquanto, usando JSON até migrar para banco de dados
-        $this->jsonFile = __DIR__ . '/../../products.json';
+        parent::__construct();
     }
     
     /**
-     * Busca todos os produtos do arquivo JSON
+     * Busca todos os produtos ativos com suas categorias e unidades
      */
     public function all()
     {
-        if (!file_exists($this->jsonFile)) {
-            return [];
-        }
+        $sql = "SELECT 
+                    p.*,
+                    c.description as category_name,
+                    u.description as unit_name
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN measurement_units u ON p.unit_id = u.id
+                WHERE p.status = 'active'
+                ORDER BY p.name";
         
-        $jsonContent = file_get_contents($this->jsonFile);
-        $products = json_decode($jsonContent, true);
-        
-        return $products ?: [];
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
     
     /**
@@ -36,60 +39,70 @@ class Product extends BaseModel
      */
     public function find($id)
     {
-        $products = $this->all();
+        $sql = "SELECT 
+                    p.*,
+                    c.description as category_name,
+                    u.description as unit_name
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN measurement_units u ON p.unit_id = u.id
+                WHERE p.id = ? AND p.status = 'active'";
         
-        foreach ($products as $product) {
-            if ($product['id'] == $id) {
-                return $product;
-            }
-        }
-        
-        return null;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
     }
     
     /**
-     * Busca produtos por categoria
+     * Busca um produto por UUID
      */
-    public function getByCategory($category)
+    public function findByUuid($uuid)
     {
-        $products = $this->all();
+        $sql = "SELECT 
+                    p.*,
+                    c.description as category_name,
+                    u.description as unit_name
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN measurement_units u ON p.unit_id = u.id
+                WHERE p.uuid = ? AND p.status = 'active'";
         
-        return array_filter($products, function($product) use ($category) {
-            return $product['category'] === $category;
-        });
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$uuid]);
+        return $stmt->fetch();
     }
     
     /**
-     * Busca produtos por nome (busca parcial)
-     */
-    public function searchByName($name)
-    {
-        $products = $this->all();
-        
-        return array_filter($products, function($product) use ($name) {
-            return stripos($product['name'], $name) !== false;
-        });
-    }
-    
-    /**
-     * Adiciona um novo produto
+     * Cria um novo produto
      */
     public function create($data)
     {
-        $products = $this->all();
-        
-        // Gera novo ID
-        $maxId = 0;
-        foreach ($products as $product) {
-            if ($product['id'] > $maxId) {
-                $maxId = $product['id'];
-            }
+        // Gera UUID se não fornecido
+        if (empty($data['uuid'])) {
+            $data['uuid'] = $this->generateUuid();
         }
-        $data['id'] = $maxId + 1;
         
-        $products[] = $data;
+        $sql = "INSERT INTO products (uuid, name, category_id, description, weight, unit_id, retail_price, wholesale_price, image) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
-        return $this->saveToJson($products);
+        $stmt = $this->pdo->prepare($sql);
+        $result = $stmt->execute([
+            $data['uuid'],
+            $data['name'],
+            $data['category_id'],
+            $data['description'] ?? null,
+            $data['weight'] ?? null,
+            $data['unit_id'] ?? null,
+            $data['retail_price'] ?? 0.00,
+            $data['wholesale_price'] ?? 0.00,
+            $data['image'] ?? null
+        ]);
+        
+        if ($result) {
+            return $this->pdo->lastInsertId();
+        }
+        
+        return false;
     }
     
     /**
@@ -97,60 +110,125 @@ class Product extends BaseModel
      */
     public function update($id, $data)
     {
-        $products = $this->all();
-        
-        foreach ($products as $key => $product) {
-            if ($product['id'] == $id) {
-                $products[$key] = array_merge($product, $data);
-                $products[$key]['id'] = $id; // Mantém o ID original
-                return $this->saveToJson($products);
-            }
-        }
-        
-        return false;
+        $sql = "UPDATE products SET 
+                    name = ?, 
+                    category_id = ?, 
+                    description = ?, 
+                    weight = ?, 
+                    unit_id = ?, 
+                    retail_price = ?, 
+                    wholesale_price = ?, 
+                    image = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ? AND status = 'active'";
+        $product = $this->find($id);
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            $data['name'],
+            $data['category_id'],
+            $data['description'] ?? $product['description'],
+            $data['weight'] ?? $product['weight'],
+            $data['unit_id'] ?? $product['unit_id'],
+            $data['retail_price'] ?? $product['retail_price'],
+            $data['wholesale_price'] ?? $product['wholesale_price'],
+            $data['image'] ?? $product['image'],
+            $id
+        ]);
     }
     
     /**
-     * Remove um produto
+     * Remove um produto (soft delete)
      */
     public function delete($id)
     {
-        $products = $this->all();
-        
-        foreach ($products as $key => $product) {
-            if ($product['id'] == $id) {
-                unset($products[$key]);
-                $products = array_values($products); // Reindexar array
-                return $this->saveToJson($products);
-            }
-        }
-        
-        return false;
+        $sql = "UPDATE products SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$id]);
     }
     
     /**
-     * Obtém todas as categorias únicas
+     * Busca produtos por categoria
+     */
+    public function getByCategory($categoryId)
+    {
+        $sql = "SELECT 
+                    p.*,
+                    c.description as category_name,
+                    u.description as unit_name
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN measurement_units u ON p.unit_id = u.id
+                WHERE p.category_id = ? AND p.status = 'active'
+                ORDER BY p.name";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$categoryId]);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Busca produtos por termo de pesquisa
+     */
+    public function search($term)
+    {
+        $sql = "SELECT 
+                    p.*,
+                    c.description as category_name,
+                    u.description as unit_name
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN measurement_units u ON p.unit_id = u.id
+                WHERE (p.name LIKE ? OR p.description LIKE ? OR c.description LIKE ?) 
+                AND p.status = 'active'
+                ORDER BY p.name";
+        
+        $searchTerm = "%{$term}%";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$searchTerm, $searchTerm, $searchTerm]);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Obtém todas as categorias ativas
      */
     public function getCategories()
     {
-        $products = $this->all();
-        $categories = [];
-        
-        foreach ($products as $product) {
-            if (!in_array($product['category'], $categories)) {
-                $categories[] = $product['category'];
-            }
-        }
-        
-        return $categories;
+        $sql = "SELECT * FROM categories WHERE status = 'active' ORDER BY description";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
     
     /**
-     * Salva os produtos no arquivo JSON
+     * Obtém todas as unidades de medida ativas
      */
-    private function saveToJson($products)
+    public function getMeasurementUnits()
     {
-        $jsonContent = json_encode($products, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        return file_put_contents($this->jsonFile, $jsonContent) !== false;
+        $sql = "SELECT * FROM measurement_units WHERE status = 'active' ORDER BY description";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Gera um UUID simples
+     */
+    protected function generateUuid()
+    {
+        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            // 32 bits for "time_low"
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            // 16 bits for "time_mid"
+            mt_rand(0, 0xffff),
+            // 16 bits for "time_hi_and_version",
+            // four most significant bits holds version number 4
+            mt_rand(0, 0x0fff) | 0x4000,
+            // 16 bits, 8 bits for "clk_seq_hi_res",
+            // 8 bits for "clk_seq_low",
+            // two most significant bits holds zero and one for variant DCE1.1
+            mt_rand(0, 0x3fff) | 0x8000,
+            // 48 bits for "node"
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+        );
     }
 }

@@ -25,11 +25,13 @@
 <body>
   <div class="container">
     <h2>Área Administrativa</h2>
-    <div class="welcome">Bem-vindo, <?php echo htmlspecialchars($_SESSION['admin_username']); ?>!</div>
+    <div class="welcome">Bem-vindo, <?php echo htmlspecialchars($_SESSION['user']['name']); ?>!</div>
     
     <div class="session-info">
+      <strong>Papel:</strong> <?php echo htmlspecialchars($_SESSION['user']['hole_name']); ?><br>
+      <strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['user']['email']); ?><br>
       <strong>Sessão ativa:</strong> Expira em 10 minutos de inatividade<br>
-      <strong>Última atividade:</strong> <?php echo date('H:i:s', $_SESSION['admin_last_activity']); ?>
+      <strong>Última atividade:</strong> <?php echo date('H:i:s', $_SESSION['last_activity']); ?>
     </div>
     
     <!-- Estatísticas -->
@@ -51,7 +53,7 @@
       <div style="display: flex; flex-wrap: wrap; gap: 10px;">
         <?php foreach ($categories as $category): ?>
           <span style="background: #e8f5e8; padding: 5px 10px; border-radius: 15px; font-size: 14px;">
-            <?php echo htmlspecialchars($category); ?>
+            <?php echo htmlspecialchars($category["description"]); ?>
           </span>
         <?php endforeach; ?>
       </div>
@@ -61,6 +63,9 @@
     <div class="actions">
       <a href="/admin/products/create" class="btn">📝 Cadastrar Produto</a>
       <a href="/admin/products" class="btn">📋 Gerenciar Produtos</a>
+      <?php if ($_SESSION['user']['hole_id'] == 1): // Apenas administradores ?>
+        <a href="/admin/users" class="btn">👥 Gerenciar Usuários</a>
+      <?php endif; ?>
       <a href="/" class="btn" style="background: #666;">🏠 Ver Site</a>
       <a href="/admin/logout" class="btn btn-danger">🚪 Sair</a>
     </div>

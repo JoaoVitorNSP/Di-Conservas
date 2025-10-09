@@ -58,6 +58,13 @@ class ProductController extends BaseController
         }
         
         $products = $this->productModel->all();
+        // Itera pelos produtos para substituir category_name por category
+        foreach ($products as &$product) {
+            if (isset($product['category_name'])) {
+                $product['category'] = $product['category_name'];
+                unset($product['category_name']);
+            }
+        }
         $this->json($products);
     }
     
@@ -110,10 +117,18 @@ class ProductController extends BaseController
      */
     public function create()
     {
+        
+        $this->requireAuth();
+
+        // Inicia sessão para mensagens flash
+        $this->startSession();
+        
         $categories = $this->productModel->getCategories();
+        $units = $this->productModel->getMeasurementUnits();
         
         $this->view('admin.products.create', [
             'categories' => $categories,
+            'units' => $units,
             'title' => 'Adicionar Produto'
         ]);
     }
@@ -123,42 +138,54 @@ class ProductController extends BaseController
      */
     public function store()
     {
+        
+        $this->requireAuth();
+        
+        $this->startSession();
         $data = $this->getPostData();
         
         // Validação
         $errors = $this->validate($data, [
             'name' => 'required|max:255',
-            'category' => 'required|max:100',
-            'description' => 'required',
-            'weight' => 'required|max:50',
-            'retailPrice' => 'required',
-            'wholesalePrice' => 'required'
+            'category_id' => 'required',
+            'description' => 'max:1000',
+            'weight' => 'numeric',
+            'retail_price' => 'required|numeric|min:0',
+            'wholesale_price' => 'required|numeric|min:0',
+            'unit_id' => 'required'
         ]);
         
         if (!empty($errors)) {
             $this->setFlash('error', 'Erro de validação');
             $this->view('admin.products.create', [
                 'errors' => $errors,
-                'data' => $data,
+                'currentData' => $data,
                 'categories' => $this->productModel->getCategories(),
+                'units' => $this->productModel->getMeasurementUnits(),
                 'title' => 'Adicionar Produto'
             ]);
             return;
         }
         
         // Processa upload da imagem se houver
+        $imagePath = null;
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = $this->handleImageUpload($_FILES['image']);
-            if ($imagePath) {
-                $data['image'] = $imagePath;
-            }
         }
         
-        // Converte preços para float
-        $data['retailPrice'] = floatval($data['retailPrice']);
-        $data['wholesalePrice'] = floatval($data['wholesalePrice']);
+        // Prepara dados para o banco
+        $productData = [
+            'name' => $data['name'],
+            'category_id' => $data['category_id'],
+            'description' => $data['description'] ?? null,
+            'weight' => !empty($data['weight']) ? floatval($data['weight']) : null,
+            'unit_id' => !empty($data['unit_id']) ? $data['unit_id'] : null,
+            'retail_price' => floatval($data['retail_price']),
+            'wholesale_price' => floatval($data['wholesale_price']),
+            'image' => $imagePath
+        ];
         
-        if ($this->productModel->create($data)) {
+        if ($this->productModel->create($productData)) {
             $this->setFlash('success', 'Produto adicionado com sucesso!');
             $this->redirect('/admin/products');
         } else {
@@ -172,6 +199,9 @@ class ProductController extends BaseController
      */
     public function edit($id)
     {
+        
+        $this->requireAuth();
+        
         $product = $this->productModel->find($id);
         
         if (!$product) {
@@ -181,10 +211,12 @@ class ProductController extends BaseController
         }
         
         $categories = $this->productModel->getCategories();
-        
+        $units = $this->productModel->getMeasurementUnits();
+
         $this->view('admin.products.edit', [
             'product' => $product,
             'categories' => $categories,
+            'units' => $units,
             'title' => 'Editar Produto'
         ]);
     }
@@ -194,18 +226,20 @@ class ProductController extends BaseController
      */
     public function update($id)
     {
+        $this->requireAuth();
+        
         $data = $this->getPostData();
         
         // Validação
         $errors = $this->validate($data, [
             'name' => 'required|max:255',
-            'category' => 'required|max:100',
+            'category_id' => 'required',
             'description' => 'required',
             'weight' => 'required|max:50',
-            'retailPrice' => 'required',
-            'wholesalePrice' => 'required'
+            'retail_price' => 'required',
+            'wholesale_price' => 'required',
+            'unit_id' => 'required'
         ]);
-        
         if (!empty($errors)) {
             $product = $this->productModel->find($id);
             $this->setFlash('error', 'Erro de validação');
@@ -221,14 +255,14 @@ class ProductController extends BaseController
         // Processa upload da imagem se houver
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = $this->handleImageUpload($_FILES['image']);
-            if ($imagePath) {
+            if ($imagePath !== false && $imagePath !== NULL) {
                 $data['image'] = $imagePath;
             }
         }
         
         // Converte preços para float
-        $data['retailPrice'] = floatval($data['retailPrice']);
-        $data['wholesalePrice'] = floatval($data['wholesalePrice']);
+        $data['retail_price'] = floatval($data['retail_price']);
+        $data['wholesale_price'] = floatval($data['wholesale_price']);
         
         if ($this->productModel->update($id, $data)) {
             $this->setFlash('success', 'Produto atualizado com sucesso!');
@@ -244,6 +278,8 @@ class ProductController extends BaseController
      */
     public function destroy($id)
     {
+        $this->requireAuth();
+        
         if ($this->productModel->delete($id)) {
             $this->setFlash('success', 'Produto removido com sucesso!');
         } else {

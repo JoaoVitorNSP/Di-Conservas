@@ -74,11 +74,12 @@ class Router
      */
     private function matchRoute($pattern, $uri)
     {
-        // Converte padrões como {id} em expressões regulares
-        $pattern = preg_replace('/\{(\w+)\}/', '(\d+)', $pattern);
+        // Converte padrões específicos em expressões regulares
+        $pattern = preg_replace('/\{uuid\}/', '([a-f0-9\-]{36})', $pattern); // UUID pattern
+        $pattern = preg_replace('/\{id\}/', '(\d+)', $pattern); // Numeric ID pattern
+        $pattern = preg_replace('/\{(\w+)\}/', '([^/]+)', $pattern); // Generic parameter
         $pattern = str_replace('/', '\/', $pattern);
         $pattern = '/^' . $pattern . '$/';
-        
         if (preg_match($pattern, $uri, $matches)) {
             // Remove o primeiro elemento (string completa)
             array_shift($matches);
@@ -96,14 +97,11 @@ class Router
     {
         $controllerClass = "App\\Controllers\\{$controllerName}";
         
+        // Carrega todas as dependências necessárias
+        $this->loadDependencies();
+        
         // Tentativa de carregar manualmente se a classe não existir
         if (!class_exists($controllerClass)) {
-            // Primeiro, carrega o BaseController se necessário
-            $baseControllerFile = dirname(__DIR__) . "/app/Controllers/BaseController.php";
-            if (!class_exists('App\\Controllers\\BaseController') && file_exists($baseControllerFile)) {
-                require_once $baseControllerFile;
-            }
-            
             // Depois carrega o controller específico
             $controllerFile = dirname(__DIR__) . "/app/Controllers/{$controllerName}.php";
             
@@ -125,5 +123,54 @@ class Router
         
         // Chama a action com os parâmetros da URL
         call_user_func_array([$controller, $action], $this->params);
+    }
+    
+    /**
+     * Carrega todas as dependências necessárias
+     */
+    private function loadDependencies()
+    {
+        $rootPath = dirname(__DIR__);
+        
+        // Carrega o EnvLoader
+        if (!class_exists('EnvLoader')) {
+            $envFile = $rootPath . '/app/EnvLoader.php';
+            if (file_exists($envFile)) {
+                require_once $envFile;
+            }
+        }
+        
+        // Carrega e executa variáveis de ambiente
+        if (class_exists('EnvLoader')) {
+            EnvLoader::load($rootPath . '/.env');
+        }
+        
+        // Carrega BaseModel
+        if (!class_exists('App\\Models\\BaseModel')) {
+            $baseModelFile = $rootPath . '/app/Models/BaseModel.php';
+            if (file_exists($baseModelFile)) {
+                require_once $baseModelFile;
+            }
+        }
+        
+        // Carrega BaseController
+        if (!class_exists('App\\Controllers\\BaseController')) {
+            $baseControllerFile = $rootPath . '/app/Controllers/BaseController.php';
+            if (file_exists($baseControllerFile)) {
+                require_once $baseControllerFile;
+            }
+        }
+        
+        // Carrega Models necessários
+        $models = ['User', 'Product'];
+        foreach ($models as $model) {
+            $modelClass = "App\\Models\\{$model}";
+            if (!class_exists($modelClass)) {
+                $modelFile = $rootPath . "/app/Models/{$model}.php";
+                if (file_exists($modelFile)) {
+                    require_once $modelFile;
+                }
+            }
+        }
     }
 }

@@ -6,7 +6,8 @@ services:
         INSTALL_LARAVEL: ${INSTALL_LARAVEL:-0}
     container_name: di-conservas-mvc-app
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     ports:
       - "80:80"
     volumes:
@@ -16,7 +17,7 @@ services:
       - ./resources:/var/www/html/resources
       - ./routes:/var/www/html/routes
       - ./config:/var/www/html/config
-      - ./products.json:/var/www/html/products.json
+      - ./database:/var/www/html/database
       - ./.env:/var/www/html/.env
       
       # Assets e uploads
@@ -50,8 +51,15 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-di_pass}
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./database/init-complete.sql:/docker-entrypoint-initdb.d/001-init.sql
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 40s
 
 volumes:
   mysql_data:
