@@ -21,13 +21,13 @@ services:
       - ./.env:/var/www/html/.env
       
       # Assets e uploads
-      - ./public/assets:/var/www/html/public/assets
+      - ./assets:/var/www/html/assets
       
       # Logs e cache (para desenvolvimento)
       - ./storage/logs:/var/www/html/storage/logs
       
     environment:
-      - APACHE_DOCUMENT_ROOT=/var/www/html/public
+      - APACHE_DOCUMENT_ROOT=/var/www/html
       # Variáveis para conexão com MySQL
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
