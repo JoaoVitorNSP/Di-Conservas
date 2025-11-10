@@ -1,44 +1,17 @@
-# .htaccess para Di Conservas
+RewriteEngine On
 
 # Configurações de segurança
 Options -Indexes
-
-# Habilita RewriteEngine para URLs amigáveis
-RewriteEngine On
 
 # Configurações de upload e execução
 php_value upload_max_filesize 10M
 php_value post_max_size 10M
 php_value max_execution_time 300
 
-# Redireciona para index.html como página inicial
-DirectoryIndex index.html index.php
-
-# === ROTAS AMIGÁVEIS ===
-
-# Admin routes
-RewriteRule ^admin/?$ admin.php [L]
-RewriteRule ^admin/login/?$ admin-login.php [L]
-RewriteRule ^admin/dashboard/?$ admin-dashboard.php [L]
-RewriteRule ^admin/products/?$ admin-products.php [L]
-RewriteRule ^admin/product/([0-9]+)/?$ admin-product.php?id=$1 [L]
-RewriteRule ^admin/logout/?$ logout.php [L]
-
-# Public routes
-RewriteRule ^cadastro/?$ cadastro.php [L]
-RewriteRule ^produtos/?$ products.php [L]
-RewriteRule ^produto/delete/?$ delete-product.php [L]
-RewriteRule ^api/products/?$ products.php [L]
-
-# Upload e processos (mantém original para forms)
-RewriteRule ^upload/?$ upload.php [L]
-RewriteRule ^admin-login/?$ admin-login.php [L]
-
-# Proteção contra acesso direto a arquivos sensíveis
-<Files "products.json">
-    Order allow,deny
-    Deny from all
-</Files>
+# Redireciona tudo para index.php exceto arquivos estáticos
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]
 
 # Headers de cache para assets
 <IfModule mod_expires.c>
