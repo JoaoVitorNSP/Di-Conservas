@@ -309,7 +309,7 @@ class ProductController extends BaseController
         
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = uniqid() . '.' . $extension;
-        $uploadPath = __DIR__ . '/../../assets/' . $filename;
+        $uploadPath = __DIR__ . '/../../public/assets/' . $filename;
         
         if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
             return '/assets/' . $filename;

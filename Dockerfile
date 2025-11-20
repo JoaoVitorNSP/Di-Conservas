@@ -37,10 +37,10 @@ RUN chmod +x /usr/local/bin/*.sh
 COPY . .
 
 # Cria estrutura de diretórios necessária e define permissões
-RUN mkdir -p assets && \
+RUN mkdir -p public/assets && \
     mkdir -p storage/logs && \
     mkdir -p bootstrap/cache && \
-    chmod 755 assets && \
+    chmod 755 public/assets && \
     chmod 775 storage && \
     chmod 775 storage/logs && \
     chmod 775 bootstrap/cache && \
