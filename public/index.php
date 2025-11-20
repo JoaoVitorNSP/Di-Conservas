@@ -5,7 +5,7 @@
  */
 
 // Define o diretório raiz da aplicação
-define('ROOT_PATH', __DIR__);
+define('ROOT_PATH', dirname(__DIR__));
 
 // Carrega as variáveis de ambiente
 require_once ROOT_PATH . '/app/EnvLoader.php';
