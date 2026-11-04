@@ -1,321 +1,261 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
-// Carregamento manual das dependências para garantir funcionamento
-if (!class_exists('App\\Controllers\\BaseController')) {
-    require_once __DIR__ . '/BaseController.php';
-}
-
-if (!class_exists('App\\Models\\BaseModel')) {
-    require_once __DIR__ . '/../Models/BaseModel.php';
-}
-
-if (!class_exists('App\\Models\\Product')) {
-    require_once __DIR__ . '/../Models/Product.php';
-}
-
+use App\Models\Category;
 use App\Models\Product;
+use App\Services\ImageUploadError;
+use App\Services\ProductImage;
 
-/**
- * Controller para gerenciar produtos
- */
 class ProductController extends BaseController
 {
-    private $productModel;
-    
-    public function __construct()
+    // ---------- Site ----------
+
+    public function home(): void
     {
-        $this->productModel = new Product();
+        // A página não abre o banco: os produtos chegam por /api/products.
+        $this->view('products.index');
     }
-    
-    /**
-     * Exibe a página principal com todos os produtos
-     */
-    public function index()
+
+    public function api(): void
     {
-        $products = $this->productModel->all();
-        $categories = $this->productModel->getCategories();
-        
-        $this->view('products.index', [
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-cache');
+        header('X-Content-Type-Options: nosniff');
+
+        try {
+            $products = (new Product())->visible();
+        } catch (\PDOException $error) {
+            error_log((string) $error);
+            http_response_code(500);
+            echo json_encode(['error' => 'Catálogo indisponível']);
+            return;
+        }
+
+        echo json_encode(array_map(fn (array $p): array => [
+            'id' => (int) $p['id'],
+            'name' => $p['name'],
+            'category' => $p['category_name'],
+            'description' => (string) $p['description'],
+            'weight' => format_weight($p['weight'], $p['unit_name']),
+            'retailPrice' => (float) $p['retail_price'],
+            'wholesalePrice' => (float) $p['wholesale_price'],
+            'image' => (string) $p['image'],
+        ], $products), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    // ---------- Painel ----------
+
+    public function index(): void
+    {
+        $this->requireAdmin();
+        $products = (new Product())->all();
+        $this->view('admin.products.index', [
+            'title' => 'Produtos',
             'products' => $products,
-            'categories' => $categories,
-            'title' => 'Di Conservas - Catálogo'
+            'categories' => array_values(array_unique(array_column((new Category())->allWithCounts(), 'description'))),
         ]);
     }
-    
-    /**
-     * API para listar produtos (JSON)
-     */
-    public function api()
-    {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type');
-        
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            exit;
-        }
-        
-        $products = $this->productModel->all();
-        // Itera pelos produtos para substituir category_name por category
-        foreach ($products as &$product) {
-            if (isset($product['category_name'])) {
-                $product['category'] = $product['category_name'];
-                unset($product['category_name']);
-            }
-        }
-        $this->json($products);
-    }
-    
-    /**
-     * Busca produtos por categoria
-     */
-    public function getByCategory($category)
-    {
-        $products = $this->productModel->getByCategory($category);
-        $this->json($products);
-    }
-    
-    /**
-     * Busca produtos por nome
-     */
-    public function search()
-    {
-        $query = $this->getParam('q', '');
-        
-        if (empty($query)) {
-            $products = $this->productModel->all();
-        } else {
-            $products = $this->productModel->searchByName($query);
-        }
-        
-        $this->json($products);
-    }
-    
-    /**
-     * Exibe detalhes de um produto
-     */
-    public function show($id)
-    {
-        $product = $this->productModel->find($id);
-        
-        if (!$product) {
-            http_response_code(404);
-            $this->view('errors.404', ['title' => 'Produto não encontrado']);
-            return;
-        }
-        
-        $this->view('products.show', [
-            'product' => $product,
-            'title' => $product['name'] . ' - Di Conservas'
-        ]);
-    }
-    
-    /**
-     * Formulário para criar novo produto
-     */
-    public function create()
-    {
-        
-        $this->requireAuth();
 
-        // Inicia sessão para mensagens flash
-        $this->startSession();
-        
-        $categories = $this->productModel->getCategories();
-        $units = $this->productModel->getMeasurementUnits();
-        
-        $this->view('admin.products.create', [
-            'categories' => $categories,
-            'units' => $units,
-            'title' => 'Adicionar Produto'
-        ]);
-    }
-    
-    /**
-     * Salva um novo produto
-     */
-    public function store()
+    public function create(): void
     {
-        
-        $this->requireAuth();
-        
-        $this->startSession();
-        $data = $this->getPostData();
-        
-        // Validação
-        $errors = $this->validate($data, [
-            'name' => 'required|max:255',
-            'category_id' => 'required',
-            'description' => 'max:1000',
-            'weight' => 'numeric',
-            'retail_price' => 'required|numeric|min:0',
-            'wholesale_price' => 'required|numeric|min:0',
-            'unit_id' => 'required'
-        ]);
-        
-        if (!empty($errors)) {
-            $this->setFlash('error', 'Erro de validação');
-            $this->view('admin.products.create', [
-                'errors' => $errors,
-                'currentData' => $data,
-                'categories' => $this->productModel->getCategories(),
-                'units' => $this->productModel->getMeasurementUnits(),
-                'title' => 'Adicionar Produto'
-            ]);
-            return;
-        }
-        
-        // Processa upload da imagem se houver
-        $imagePath = null;
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $imagePath = $this->handleImageUpload($_FILES['image']);
-        }
-        
-        // Prepara dados para o banco
-        $productData = [
-            'name' => $data['name'],
-            'category_id' => $data['category_id'],
-            'description' => $data['description'] ?? null,
-            'weight' => !empty($data['weight']) ? floatval($data['weight']) : null,
-            'unit_id' => !empty($data['unit_id']) ? $data['unit_id'] : null,
-            'retail_price' => floatval($data['retail_price']),
-            'wholesale_price' => floatval($data['wholesale_price']),
-            'image' => $imagePath
-        ];
-        
-        if ($this->productModel->create($productData)) {
-            $this->setFlash('success', 'Produto adicionado com sucesso!');
-            $this->redirect('/admin/products');
-        } else {
-            $this->setFlash('error', 'Erro ao adicionar produto');
-            $this->redirect('/admin/products/create');
-        }
+        $this->requireAdmin();
+        $this->renderForm(null, ['status' => 'active']);
     }
-    
-    /**
-     * Formulário para editar produto
-     */
-    public function edit($id)
-    {
-        
-        $this->requireAuth();
-        
-        $product = $this->productModel->find($id);
-        
-        if (!$product) {
-            $this->setFlash('error', 'Produto não encontrado');
-            $this->redirect('/admin/products');
-            return;
-        }
-        
-        $categories = $this->productModel->getCategories();
-        $units = $this->productModel->getMeasurementUnits();
 
-        $this->view('admin.products.edit', [
-            'product' => $product,
-            'categories' => $categories,
-            'units' => $units,
-            'title' => 'Editar Produto'
-        ]);
-    }
-    
-    /**
-     * Atualiza um produto
-     */
-    public function update($id)
+    public function edit(int $id): void
     {
-        $this->requireAuth();
-        
-        $data = $this->getPostData();
-        
-        // Validação
-        $errors = $this->validate($data, [
-            'name' => 'required|max:255',
-            'category_id' => 'required',
-            'description' => 'required',
-            'weight' => 'required|max:50',
-            'retail_price' => 'required',
-            'wholesale_price' => 'required',
-            'unit_id' => 'required'
-        ]);
-        if (!empty($errors)) {
-            $product = $this->productModel->find($id);
-            $this->setFlash('error', 'Erro de validação');
-            $this->view('admin.products.edit', [
-                'errors' => $errors,
-                'product' => array_merge($product, $data),
-                'categories' => $this->productModel->getCategories(),
-                'title' => 'Editar Produto'
-            ]);
-            return;
+        $this->requireAdmin();
+        $product = (new Product())->find($id);
+        if (!$product) {
+            $this->notFound();
         }
-        
-        // Processa upload da imagem se houver
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $imagePath = $this->handleImageUpload($_FILES['image']);
-            if ($imagePath !== false && $imagePath !== NULL) {
-                $data['image'] = $imagePath;
-            }
-        }
-        
-        // Converte preços para float
-        $data['retail_price'] = floatval($data['retail_price']);
-        $data['wholesale_price'] = floatval($data['wholesale_price']);
-        
-        if ($this->productModel->update($id, $data)) {
-            $this->setFlash('success', 'Produto atualizado com sucesso!');
-            $this->redirect('/admin/products');
-        } else {
-            $this->setFlash('error', 'Erro ao atualizar produto');
-            $this->redirect("/admin/products/$id/edit");
-        }
+        $this->renderForm($product, $product);
     }
-    
-    /**
-     * Remove um produto
-     */
-    public function destroy($id)
+
+    public function store(): void
     {
-        $this->requireAuth();
-        
-        if ($this->productModel->delete($id)) {
-            $this->setFlash('success', 'Produto removido com sucesso!');
-        } else {
-            $this->setFlash('error', 'Erro ao remover produto');
+        $this->requireAdmin();
+        $this->save(null);
+    }
+
+    public function update(int $id): void
+    {
+        $this->requireAdmin();
+        $product = (new Product())->find($id);
+        if (!$product) {
+            $this->notFound();
         }
-        
+        $this->save($product);
+    }
+
+    public function toggle(int $id): void
+    {
+        $this->requireAdmin();
+        $this->requireValidCsrf();
+        $products = new Product();
+        $product = $products->find($id);
+        if (!$product) {
+            $this->notFound();
+        }
+        $status = $product['status'] === 'active' ? 'inactive' : 'active';
+        $products->setStatus($id, $status);
+        flash($status === 'active' ? "“{$product['name']}” voltou a aparecer no site." : "“{$product['name']}” não aparece mais no site.");
         $this->redirect('/admin/products');
     }
-    
-    /**
-     * Faz upload da imagem do produto
-     */
-    private function handleImageUpload($file)
+
+    public function destroy(int $id): void
     {
-        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-        $maxSize = 5 * 1024 * 1024; // 5MB
-        
-        if (!in_array($file['type'], $allowedTypes)) {
-            $this->setFlash('error', 'Tipo de arquivo não permitido');
-            return false;
+        $this->requireAdmin();
+        $this->requireValidCsrf();
+        $products = new Product();
+        $product = $products->find($id);
+        if (!$product) {
+            $this->notFound();
         }
-        
-        if ($file['size'] > $maxSize) {
-            $this->setFlash('error', 'Arquivo muito grande (máximo 5MB)');
-            return false;
+        $products->delete($id);
+        $this->deleteImageIfUnused($products, $product['image']);
+        flash("“{$product['name']}” foi excluído.");
+        $this->redirect('/admin/products');
+    }
+
+    private function save(?array $product): void
+    {
+        // Envio maior que o limite do PHP chega sem nenhum campo.
+        if (!$_POST && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+            flash('O envio passou do limite do servidor. Use uma foto menor.', 'error');
+            $this->redirect('/admin/products');
         }
-        
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = uniqid() . '.' . $extension;
-        $uploadPath = __DIR__ . '/../../public/assets/' . $filename;
-        
-        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-            return '/assets/' . $filename;
+        $this->requireValidCsrf();
+
+        [$data, $errors] = $this->validate($_POST);
+        $file = $_FILES['image'] ?? null;
+        $newImage = null;
+
+        if (!$errors && ProductImage::wasSent($file)) {
+            try {
+                $newImage = ProductImage::save($file);
+            } catch (ImageUploadError $error) {
+                $errors['image'] = $error->getMessage();
+            }
         }
-        
-        $this->setFlash('error', 'Erro ao fazer upload da imagem');
-        return false;
+
+        if ($errors) {
+            $form = $data + ['retail_input' => clean_line($_POST['retailPrice'] ?? ''), 'wholesale_input' => clean_line($_POST['wholesalePrice'] ?? ''), 'weight_input' => clean_line($_POST['weight'] ?? ''), 'category_name' => clean_line($_POST['category'] ?? ''), 'image' => $product['image'] ?? ''];
+            $this->renderForm($product, $form, $errors, ProductImage::wasSent($file));
+            return;
+        }
+
+        $products = new Product();
+        $data['category_id'] = (new Category())->firstOrCreate($data['category']);
+        unset($data['category']);
+
+        $oldImage = (string) ($product['image'] ?? '');
+        $data['image'] = $oldImage;
+        if ($newImage !== null) {
+            $data['image'] = $newImage;
+        } elseif (!empty($_POST['remove_image'])) {
+            $data['image'] = '';
+        }
+
+        try {
+            if ($product) {
+                $products->update((int) $product['id'], $data);
+            } else {
+                $products->create($data);
+            }
+        } catch (\Throwable $error) {
+            ProductImage::delete($newImage);
+            throw $error;
+        }
+
+        if ($oldImage !== '' && $oldImage !== $data['image']) {
+            $this->deleteImageIfUnused($products, $oldImage);
+        }
+
+        flash("“{$data['name']}” foi salvo.");
+        $this->redirect(($_POST['next'] ?? '') === 'another' ? '/admin/products/create' : '/admin/products');
+    }
+
+    private function deleteImageIfUnused(Product $products, ?string $image): void
+    {
+        if ($image && !$products->imageInUse($image)) {
+            ProductImage::delete($image);
+        }
+    }
+
+    // Valida o formulário. Retorna [dados, erros].
+    private function validate(array $input): array
+    {
+        $errors = [];
+        $name = clean_line($input['name'] ?? '');
+        $category = clean_line($input['category'] ?? '');
+        $description = is_string($input['description'] ?? null) ? trim($input['description']) : '';
+        $weightRaw = clean_line($input['weight'] ?? '');
+        $unitId = filter_var($input['unit_id'] ?? null, FILTER_VALIDATE_INT);
+        $retailRaw = clean_line($input['retailPrice'] ?? '');
+        $wholesaleRaw = clean_line($input['wholesalePrice'] ?? '');
+
+        if ($name === '' || mb_strlen($name) > 120) {
+            $errors['name'] = 'Informe o nome (até 120 caracteres).';
+        }
+        if ($category === '' || mb_strlen($category) > 60) {
+            $errors['category'] = 'Informe a categoria (até 60 caracteres).';
+        }
+        if (mb_strlen($description) > 1000) {
+            $errors['description'] = 'Use até 1000 caracteres.';
+        }
+
+        $weight = null;
+        if ($weightRaw !== '') {
+            $weight = parse_decimal($weightRaw, 3);
+            $validUnit = $unitId !== false && in_array($unitId, array_map('intval', array_column((new Product())->units(), 'id')), true);
+            if ($weight === null || $weight <= 0) {
+                $errors['weight'] = 'Informe só o número. Exemplos: 300 ou 1,8';
+            } elseif (!$validUnit) {
+                $errors['weight'] = 'Escolha a unidade.';
+            }
+        }
+
+        $retail = parse_decimal($retailRaw);
+        if ($retail === null || $retail <= 0) {
+            $errors['retailPrice'] = 'Informe um preço válido. Exemplo: 25,50';
+        }
+
+        $wholesale = 0.0;
+        if ($wholesaleRaw !== '') {
+            $wholesale = parse_decimal($wholesaleRaw);
+            if ($wholesale === null || $wholesale <= 0) {
+                $errors['wholesalePrice'] = 'Informe um preço válido ou deixe em branco.';
+                $wholesale = 0.0;
+            } elseif ($retail !== null && $wholesale > $retail) {
+                $errors['wholesalePrice'] = 'O preço de atacado não pode ser maior que o de varejo.';
+            }
+        }
+
+        return [[
+            'name' => $name,
+            'category' => $category,
+            'description' => $description,
+            'weight' => $weight,
+            'unit_id' => $weight !== null && $unitId !== false ? $unitId : null,
+            'retail_price' => $retail ?? 0.0,
+            'wholesale_price' => $wholesale,
+            'status' => empty($input['active']) ? 'inactive' : 'active',
+        ], $errors];
+    }
+
+    private function renderForm(?array $product, array $form, array $errors = [], bool $photoLost = false): void
+    {
+        $this->view('admin.products.form', [
+            'title' => $product ? 'Editar produto' : 'Novo produto',
+            'product' => $product,
+            'form' => $form,
+            'errors' => $errors,
+            'photoLost' => $photoLost,
+            'categories' => array_column((new Category())->allWithCounts(), 'description'),
+            'units' => (new Product())->units(),
+        ]);
     }
 }

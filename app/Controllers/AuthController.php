@@ -1,116 +1,126 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
+use App\Models\LoginAttempt;
 use App\Models\User;
 
-/**
- * Controlador de autenticação
- */
 class AuthController extends BaseController
 {
-    private $userModel;
-    
-    public function __construct()
+    private const MIN_SETUP_TOKEN_LENGTH = 16;
+
+    public function showLogin(): void
     {
-        parent::__construct();
-        $this->userModel = new \App\Models\User();
+        $this->startAdmin();
+        if ($this->currentUser !== null) {
+            $this->redirect('/admin/products');
+        }
+        $this->renderEntry();
     }
-    
-    /**
-     * Exibe página de login
-     */
-    public function showLogin()
+
+    public function login(): void
     {
-        // Se já está logado, redireciona para o painel
-        if ($this->isLoggedIn()) {
-            $this->redirect('/admin/dashboard');
+        $this->startAdmin();
+        $this->requireValidCsrf();
+        if ($this->currentUser !== null) {
+            $this->redirect('/admin/products');
+        }
+
+        $email = clean_line($_POST['email'] ?? '');
+        $password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
+        $attempts = new LoginAttempt();
+
+        $lock = $attempts->lockRemaining();
+        if ($lock > 0) {
+            $this->renderEntry(['error' => $this->lockMessage($lock), 'email' => $email]);
             return;
         }
-        
-        $this->view('admin.login', [
-            'title' => 'Login Admin'
-        ]);
-    }
-    
-    /**
-     * Processa o login
-     */
-    public function login()
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/admin');
+
+        $users = new User();
+        $user = $users->findByEmail($email);
+        // Sem usuário, o hash é gerado na hora: o tempo de resposta não revela se o e-mail existe.
+        $valid = password_verify($password, $user['password'] ?? password_hash($password, PASSWORD_DEFAULT));
+
+        if (!$user || !$valid) {
+            $attempts->registerFailure();
+            $this->renderEntry(['error' => 'E-mail ou senha incorretos.', 'email' => $email]);
             return;
         }
-        
-        $this->startSession(); // Garantir que a sessão esteja iniciada
-        
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
-        
-        if (empty($email) || empty($password)) {
-            $_SESSION['error'] = 'Email e senha são obrigatórios';
+
+        $attempts->clear();
+        $users->touchLastLogin((int) $user['id']);
+        $this->beginLogin($user);
+        $this->redirect('/admin/products');
+    }
+
+    // Cria o primeiro administrador. Só funciona enquanto não existe nenhum usuário.
+    public function setup(): void
+    {
+        $this->startAdmin();
+        $this->requireValidCsrf();
+
+        $users = new User();
+        if ($users->count() > 0) {
             $this->redirect('/admin');
+        }
+
+        $attempts = new LoginAttempt();
+        $lock = $attempts->lockRemaining();
+        if ($lock > 0) {
+            $this->renderEntry(['error' => $this->lockMessage($lock)]);
             return;
         }
-        
-        // Busca usuário por email
-        $user = $this->userModel->findByEmail($email);
-        
-        if ($user && $this->userModel->verifyPassword($password, $user['password'])) {
-            // Verifica se o usuário está ativo
-            if ($user['status'] !== 'active') {
-                $_SESSION['error'] = 'Sua conta está inativa. Entre em contato com o administrador.';
-                $this->redirect('/admin');
-                return;
-            }
-            
-            // Login bem-sucedido
-            $_SESSION['user'] = [
-                'id' => $user['id'],
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'hole_id' => $user['hole_id'],
-                'hole_name' => $user['hole_name']
-            ];
-            $_SESSION['last_activity'] = time();
-            $_SESSION['success'] = 'Login realizado com sucesso!';
-            
-            // Atualiza último login
-            $this->userModel->updateLastLogin($user['id']);
-            
-            $this->redirect('/admin/dashboard');
-        } else {
-            // Login falhou
-            $_SESSION['error'] = 'Email ou senha incorretos';
-            $this->redirect('/admin');
+
+        $token = (string) env('SETUP_TOKEN', '');
+        $sent = is_string($_POST['token'] ?? null) ? $_POST['token'] : '';
+        if (strlen($token) < self::MIN_SETUP_TOKEN_LENGTH || !hash_equals($token, $sent)) {
+            $attempts->registerFailure();
+            $this->renderEntry(['error' => 'Código de instalação incorreto.']);
+            return;
         }
+
+        $name = clean_line($_POST['name'] ?? '');
+        $email = clean_line($_POST['email'] ?? '');
+        $password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
+        $repeat = is_string($_POST['repeat'] ?? null) ? $_POST['repeat'] : '';
+
+        $error = match (true) {
+            $name === '' => 'Informe seu nome.',
+            !filter_var($email, FILTER_VALIDATE_EMAIL) => 'Informe um e-mail válido.',
+            $password !== $repeat => 'A confirmação não é igual à senha.',
+            default => User::passwordProblem($password),
+        };
+        if ($error !== null) {
+            $this->renderEntry(['error' => $error, 'email' => $email, 'name' => $name]);
+            return;
+        }
+
+        $id = $users->create($name, $email, $password);
+        $attempts->clear();
+        $this->beginLogin($users->find($id));
+        flash('Acesso criado. Agora você já pode apagar o SETUP_TOKEN do .env.');
+        $this->redirect('/admin/products');
     }
-    
-    /**
-     * Processa o logout
-     */
-    public function logout()
+
+    public function logout(): void
     {
-        // Limpa todas as variáveis de sessão
-        $_SESSION = [];
-        
-        // Destrói a sessão somente se ela estiver ativa
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            session_destroy();
-        }
-        
-        // Remove o cookie de sessão
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
-            );
-        }
-        
-        // Redireciona para a página inicial
+        $this->startAdmin();
+        $this->requireValidCsrf();
+        $this->endLogin();
+        session_destroy();
         $this->redirect('/admin');
+    }
+
+    private function renderEntry(array $data = []): void
+    {
+        $hasUsers = (new User())->count() > 0;
+        $canSetup = strlen((string) env('SETUP_TOKEN', '')) >= self::MIN_SETUP_TOKEN_LENGTH;
+        $this->view($hasUsers ? 'admin.login' : 'admin.setup', $data + ['canSetup' => $canSetup]);
+    }
+
+    private function lockMessage(int $seconds): string
+    {
+        return 'Muitas tentativas. Aguarde ' . max(1, (int) ceil($seconds / 60)) . ' minuto(s) e tente de novo.';
     }
 }

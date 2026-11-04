@@ -7,50 +7,21 @@ Dockerfile
 docker-compose.yml
 .dockerignore
 
-# Documentation
-README*.md
+# Documentação e editores
 *.md
-MIGRATION-*.md
-
-# Scripts
-*.sh
-*.ps1
-
-# IDE
+.copilot/
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# OS
+# Sistema
 .DS_Store
 Thumbs.db
 
-# Logs
-storage/logs/*.log
+# Logs e temporários
 *.log
-
-# Cache
-bootstrap/cache/*
-!bootstrap/cache/.gitkeep
-
-# Node modules (se houver)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Composer vendor (será instalado no container)
-vendor/
-
-# Environment files (locais)
-.env.local
-.env.production
-
-# Backup files
-*.bak
-*.backup
-
-# Arquivos temporários
 *.tmp
-*.temp
+
+# Configuração local nunca entra na imagem
+.env
+.env.*
+!.env.example

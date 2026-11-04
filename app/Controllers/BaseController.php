@@ -1,229 +1,123 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
-/**
- * Controller base com funcionalidades comuns
- */
-class BaseController
+use App\Models\User;
+
+abstract class BaseController
 {
-    /**
-     * Construtor base
-     */
-    public function __construct()
+    private const SESSION_IDLE_SECONDS = 3600; // sai sozinho após 1 hora parado
+
+    protected ?array $currentUser = null;
+
+    protected function view(string $viewName, array $viewData = []): void
     {
-        // Construtor vazio - pode ser sobrescrito pelas classes filhas
+        $viewFile = ROOT_PATH . '/resources/views/' . str_replace('.', '/', $viewName) . '.php';
+        // EXTR_SKIP: um campo como "name" não pode sobrescrever as variáveis acima.
+        extract($viewData, EXTR_SKIP);
+        $currentUser = $this->currentUser;
+        require $viewFile;
     }
-    
-    /**
-     * Renderiza uma view
-     */
-    protected function view($viewName, $data = [])
+
+    protected function redirect(string $path): never
     {
-        // Extrai as variáveis para o escopo da view
-        extract($data);
-        
-        // Caminho para o arquivo de view
-        $viewPath = __DIR__ . '/../../resources/views/' . str_replace('.', '/', $viewName) . '.php';
-        
-        if (!file_exists($viewPath)) {
-            throw new \Exception("View não encontrada: $viewName");
-        }
-        
-        // Inclui a view
-        include $viewPath;
-    }
-    
-    /**
-     * Retorna resposta JSON
-     */
-    protected function json($data, $statusCode = 200)
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        header('Location: ' . $path, true, 303);
         exit;
     }
-    
-    /**
-     * Redireciona para uma URL
-     */
-    protected function redirect($url, $statusCode = 302)
+
+    protected function notFound(): never
     {
-        http_response_code($statusCode);
-        header("Location: $url");
+        http_response_code(404);
+        $title = 'Página não encontrada';
+        include ROOT_PATH . '/resources/views/errors/404.php';
         exit;
     }
-    
-    /**
-     * Valida dados de entrada
-     */
-    protected function validate($data, $rules)
+
+    private function isHttps(): bool
     {
-        $errors = [];
-        
-        foreach ($rules as $field => $rule) {
-            $value = $data[$field] ?? null;
-            
-            if (strpos($rule, 'required') !== false && empty($value)) {
-                $errors[$field] = "O campo $field é obrigatório";
-                continue;
+        return ($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? '') !== 'off';
+    }
+
+    // Inicia a sessão e envia os cabeçalhos de segurança de toda página do painel.
+    protected function startAdmin(): void
+    {
+        header('X-Content-Type-Options: nosniff');
+        header('X-Frame-Options: DENY');
+        header('Referrer-Policy: same-origin');
+        header('X-Robots-Tag: noindex, nofollow');
+        header('Cache-Control: no-store');
+        header("Content-Security-Policy: default-src 'self'; img-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'");
+
+        ini_set('session.use_strict_mode', '1');
+        ini_set('session.use_only_cookies', '1');
+        session_name('dc_admin');
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => '/',
+            'secure' => $this->isHttps(),
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
+        session_start();
+
+        if (isset($_SESSION['user_id'])) {
+            if (time() - (int) ($_SESSION['last_activity'] ?? 0) > self::SESSION_IDLE_SECONDS) {
+                $this->endLogin();
+                flash('A sessão expirou por inatividade. Entre novamente.', 'error');
+                return;
             }
-            
-            if (strpos($rule, 'email') !== false && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                $errors[$field] = "O campo $field deve ser um email válido";
-            }
-            
-            if (preg_match('/min:(\d+)/', $rule, $matches)) {
-                $min = $matches[1];
-                if (strlen($value) < $min) {
-                    $errors[$field] = "O campo $field deve ter pelo menos $min caracteres";
-                }
-            }
-            
-            if (preg_match('/max:(\d+)/', $rule, $matches)) {
-                $max = $matches[1];
-                if (strlen($value) > $max) {
-                    $errors[$field] = "O campo $field deve ter no máximo $max caracteres";
-                }
-            }
-        }
-        return $errors;
-    }
-    
-    /**
-     * Obtém dados do POST
-     */
-    protected function getPostData()
-    {
-        return $_POST;
-    }
-    
-    /**
-     * Obtém dados do GET
-     */
-    protected function getGetData()
-    {
-        return $_GET;
-    }
-    
-    /**
-     * Obtém parâmetro da URL
-     */
-    protected function getParam($key, $default = null)
-    {
-        return $_GET[$key] ?? $default;
-    }
-    
-    /**
-     * Inicia sessão se não estiver iniciada
-     */
-    protected function startSession()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+            $_SESSION['last_activity'] = time();
+            $this->loadCurrentUser();
         }
     }
-    
-    /**
-     * Define uma mensagem flash
-     */
-    protected function setFlash($type, $message)
+
+    // A cada pedido confere se o usuário ainda existe e se a senha não mudou desde o login.
+    private function loadCurrentUser(): void
     {
-        $this->startSession();
-        $_SESSION['flash'][$type] = $message;
-    }
-    
-    /**
-     * Obtém e remove uma mensagem flash
-     */
-    protected function getFlash($type)
-    {
-        $this->startSession();
-        $message = $_SESSION['flash'][$type] ?? null;
-        unset($_SESSION['flash'][$type]);
-        return $message;
-    }
-    
-    /**
-     * Função helper para views acessarem mensagens flash com segurança
-     */
-    public static function getFlashMessage($type)
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        $user = (new User())->find((int) $_SESSION['user_id']);
+        if (!$user || !hash_equals((string) ($_SESSION['auth'] ?? ''), self::authFingerprint($user))) {
+            $this->endLogin();
+            return;
         }
-        
-        $message = $_SESSION['flash'][$type] ?? null;
-        if ($message) {
-            unset($_SESSION['flash'][$type]);
-        }
-        return $message;
+        $this->currentUser = $user;
     }
-    
-    /**
-     * Verifica se o usuário está logado
-     */
-    protected function isLoggedIn()
+
+    protected static function authFingerprint(array $user): string
     {
-        $this->startSession();
-        return isset($_SESSION['user']) && !empty($_SESSION['user']['id']);
+        return hash('sha256', $user['id'] . '|' . $user['password']);
     }
-    
-    /**
-     * Verifica se o usuário é administrador
-     */
-    protected function isAdmin()
+
+    protected function beginLogin(array $user): void
     {
-        if (!$this->isLoggedIn()) {
-            return false;
-        }
-        
-        return $_SESSION['user']['hole_id'] == 1; // ID do papel "Administrador"
+        session_regenerate_id(true);
+        unset($_SESSION['csrf']);
+        $_SESSION['user_id'] = (int) $user['id'];
+        $_SESSION['auth'] = self::authFingerprint($user);
+        $_SESSION['last_activity'] = time();
     }
-    
-    /**
-     * Verifica se o usuário tem permissão (admin ou gerente)
-     */
-    protected function hasPermission()
+
+    protected function endLogin(): void
     {
-        if (!$this->isLoggedIn()) {
-            return false;
-        }
-        
-        $holeId = $_SESSION['user']['hole_id'];
-        return in_array($holeId, [1, 2]); // Administrador ou Gerente
+        $_SESSION = [];
+        session_regenerate_id(true);
     }
-    
-    /**
-     * Obtém dados do usuário logado
-     */
-    protected function getUser()
+
+    protected function requireAdmin(): void
     {
-        $this->startSession();
-        return $_SESSION['user'] ?? null;
-    }
-    
-    /**
-     * Verifica autenticação e redireciona se necessário
-     */
-    protected function requireAuth()
-    {
-        if (!$this->isLoggedIn()) {
+        $this->startAdmin();
+        if ($this->currentUser === null) {
             $this->redirect('/admin');
         }
     }
-    
-    /**
-     * Verifica se é admin e redireciona se necessário
-     */
-    protected function requireAdmin()
+
+    // Bloqueia envios de formulário que não partiram do próprio painel.
+    protected function requireValidCsrf(): void
     {
-        $this->requireAuth();
-        
-        if (!$this->isAdmin()) {
-            $_SESSION['error'] = 'Acesso negado. Apenas administradores podem acessar esta área.';
-            $this->redirect('/admin/dashboard');
+        $sent = $_POST['csrf'] ?? '';
+        if (!is_string($sent) || empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $sent)) {
+            http_response_code(403);
+            exit('Sessão inválida. Volte, recarregue a página e tente de novo.');
         }
     }
 }

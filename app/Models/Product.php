@@ -1,234 +1,77 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
-/**
- * Modelo para produtos - usando banco de dados MySQL
- */
 class Product extends BaseModel
 {
-    protected $table = 'products';
-    
-    public function __construct()
+    private const SELECT = "SELECT p.*, c.description AS category_name, u.description AS unit_name
+        FROM products p
+        LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN measurement_units u ON p.unit_id = u.id";
+
+    // Só o que aparece no site, na ordem de cadastro.
+    public function visible(): array
     {
-        parent::__construct();
+        return $this->pdo->query(self::SELECT . " WHERE p.status = 'active' ORDER BY p.id")->fetchAll();
     }
-    
-    /**
-     * Busca todos os produtos ativos com suas categorias e unidades
-     */
-    public function all()
+
+    // Tudo, para o painel: os mais recentes primeiro.
+    public function all(): array
     {
-        $sql = "SELECT 
-                    p.*,
-                    c.description as category_name,
-                    u.description as unit_name
-                FROM products p
-                LEFT JOIN categories c ON p.category_id = c.id
-                LEFT JOIN measurement_units u ON p.unit_id = u.id
-                WHERE p.status = 'active'
-                ORDER BY p.name";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll();
+        return $this->pdo->query(self::SELECT . ' ORDER BY p.id DESC')->fetchAll();
     }
-    
-    /**
-     * Busca um produto por ID
-     */
-    public function find($id)
+
+    public function find(int $id): ?array
     {
-        $sql = "SELECT 
-                    p.*,
-                    c.description as category_name,
-                    u.description as unit_name
-                FROM products p
-                LEFT JOIN categories c ON p.category_id = c.id
-                LEFT JOIN measurement_units u ON p.unit_id = u.id
-                WHERE p.id = ? AND p.status = 'active'";
-        
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->pdo->prepare(self::SELECT . ' WHERE p.id = ?');
         $stmt->execute([$id]);
-        return $stmt->fetch();
+        return $stmt->fetch() ?: null;
     }
-    
-    /**
-     * Busca um produto por UUID
-     */
-    public function findByUuid($uuid)
+
+    public function create(array $data): int
     {
-        $sql = "SELECT 
-                    p.*,
-                    c.description as category_name,
-                    u.description as unit_name
-                FROM products p
-                LEFT JOIN categories c ON p.category_id = c.id
-                LEFT JOIN measurement_units u ON p.unit_id = u.id
-                WHERE p.uuid = ? AND p.status = 'active'";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$uuid]);
-        return $stmt->fetch();
-    }
-    
-    /**
-     * Cria um novo produto
-     */
-    public function create($data)
-    {
-        // Gera UUID se não fornecido
-        if (empty($data['uuid'])) {
-            $data['uuid'] = $this->generateUuid();
-        }
-        
-        $sql = "INSERT INTO products (uuid, name, category_id, description, weight, unit_id, retail_price, wholesale_price, image) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $result = $stmt->execute([
-            $data['uuid'],
-            $data['name'],
-            $data['category_id'],
-            $data['description'] ?? null,
-            $data['weight'] ?? null,
-            $data['unit_id'] ?? null,
-            $data['retail_price'] ?? 0.00,
-            $data['wholesale_price'] ?? 0.00,
-            $data['image'] ?? null
+        $stmt = $this->pdo->prepare('INSERT INTO products
+            (name, category_id, description, weight, unit_id, retail_price, wholesale_price, image, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([
+            $data['name'], $data['category_id'], $data['description'], $data['weight'], $data['unit_id'],
+            $data['retail_price'], $data['wholesale_price'], $data['image'], $data['status'],
         ]);
-        
-        if ($result) {
-            return $this->pdo->lastInsertId();
-        }
-        
-        return false;
+        return (int) $this->pdo->lastInsertId();
     }
-    
-    /**
-     * Atualiza um produto
-     */
-    public function update($id, $data)
+
+    public function update(int $id, array $data): void
     {
-        $sql = "UPDATE products SET 
-                    name = ?, 
-                    category_id = ?, 
-                    description = ?, 
-                    weight = ?, 
-                    unit_id = ?, 
-                    retail_price = ?, 
-                    wholesale_price = ?, 
-                    image = ?,
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE id = ? AND status = 'active'";
-        $product = $this->find($id);
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $data['name'],
-            $data['category_id'],
-            $data['description'] ?? $product['description'],
-            $data['weight'] ?? $product['weight'],
-            $data['unit_id'] ?? $product['unit_id'],
-            $data['retail_price'] ?? $product['retail_price'],
-            $data['wholesale_price'] ?? $product['wholesale_price'],
-            $data['image'] ?? $product['image'],
-            $id
+        $stmt = $this->pdo->prepare('UPDATE products SET
+            name = ?, category_id = ?, description = ?, weight = ?, unit_id = ?,
+            retail_price = ?, wholesale_price = ?, image = ?, status = ?
+            WHERE id = ?');
+        $stmt->execute([
+            $data['name'], $data['category_id'], $data['description'], $data['weight'], $data['unit_id'],
+            $data['retail_price'], $data['wholesale_price'], $data['image'], $data['status'], $id,
         ]);
     }
-    
-    /**
-     * Remove um produto (soft delete)
-     */
-    public function delete($id)
+
+    public function setStatus(int $id, string $status): void
     {
-        $sql = "UPDATE products SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$id]);
+        $this->pdo->prepare('UPDATE products SET status = ? WHERE id = ?')->execute([$status, $id]);
     }
-    
-    /**
-     * Busca produtos por categoria
-     */
-    public function getByCategory($categoryId)
+
+    public function delete(int $id): void
     {
-        $sql = "SELECT 
-                    p.*,
-                    c.description as category_name,
-                    u.description as unit_name
-                FROM products p
-                LEFT JOIN categories c ON p.category_id = c.id
-                LEFT JOIN measurement_units u ON p.unit_id = u.id
-                WHERE p.category_id = ? AND p.status = 'active'
-                ORDER BY p.name";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$categoryId]);
-        return $stmt->fetchAll();
+        $this->pdo->prepare('DELETE FROM products WHERE id = ?')->execute([$id]);
     }
-    
-    /**
-     * Busca produtos por termo de pesquisa
-     */
-    public function search($term)
+
+    public function imageInUse(string $image): bool
     {
-        $sql = "SELECT 
-                    p.*,
-                    c.description as category_name,
-                    u.description as unit_name
-                FROM products p
-                LEFT JOIN categories c ON p.category_id = c.id
-                LEFT JOIN measurement_units u ON p.unit_id = u.id
-                WHERE (p.name LIKE ? OR p.description LIKE ? OR c.description LIKE ?) 
-                AND p.status = 'active'
-                ORDER BY p.name";
-        
-        $searchTerm = "%{$term}%";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$searchTerm, $searchTerm, $searchTerm]);
-        return $stmt->fetchAll();
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM products WHERE image = ?');
+        $stmt->execute([$image]);
+        return (int) $stmt->fetchColumn() > 0;
     }
-    
-    /**
-     * Obtém todas as categorias ativas
-     */
-    public function getCategories()
+
+    public function units(): array
     {
-        $sql = "SELECT * FROM categories WHERE status = 'active' ORDER BY description";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
-    
-    /**
-     * Obtém todas as unidades de medida ativas
-     */
-    public function getMeasurementUnits()
-    {
-        $sql = "SELECT * FROM measurement_units WHERE status = 'active' ORDER BY description";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
-    
-    /**
-     * Gera um UUID simples
-     */
-    protected function generateUuid()
-    {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            // 32 bits for "time_low"
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-            // 16 bits for "time_mid"
-            mt_rand(0, 0xffff),
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 4
-            mt_rand(0, 0x0fff) | 0x4000,
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand(0, 0x3fff) | 0x8000,
-            // 48 bits for "node"
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
+        return $this->pdo->query('SELECT id, description FROM measurement_units ORDER BY id')->fetchAll();
     }
 }

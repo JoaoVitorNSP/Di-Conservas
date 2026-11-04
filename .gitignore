@@ -1,3 +1,8 @@
+# Configuração local, com senhas
 .env*
+!.env.example
+
 *.ps1
 *.sh
+*.log
+*.tmp
