@@ -1,23 +1,22 @@
-# Arquivo para ignorar no Docker
+# Dependências e logs
 node_modules/
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Logs
 *.log
 
-# Arquivos de sistema
+# Sistema e editores
 .DS_Store
 Thumbs.db
-
-# Arquivos de IDE
 .vscode/
 .idea/
+.copilot/
+.git/
 
-# Arquivos temporários
+# Temporários
 *.tmp
 *.temp
 
-# Arquivos do Git
-.git/
+# Dados privados nunca entram na imagem
+data/credentials.php
+data/login-attempts.json
+data/products.lock
+data/backups/

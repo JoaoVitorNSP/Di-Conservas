@@ -1,32 +1,30 @@
-# Use uma imagem oficial do PHP com Apache
+# Imagem oficial do PHP com Apache
 FROM php:8.2-apache
 
-# Ativa módulos necessários do Apache
+# GD (com JPEG e WEBP) para processar as fotos de produto; EXIF para corrigir a rotação
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libjpeg62-turbo-dev libpng-dev libwebp-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
+    && docker-php-ext-install -j"$(nproc)" gd exif \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN a2enmod rewrite expires deflate headers
 
-# Define o diretório de trabalho
 WORKDIR /var/www/html
 
-# Copia arquivos de configuração do Apache
 COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
-
-# Copia todos os arquivos da aplicação
 COPY . .
 
-# Cria diretório assets e define permissões
-RUN mkdir -p assets && \
-    chmod 755 assets && \
-    touch products.json && \
-    chmod 666 products.json && \
-    chown -R www-data:www-data /var/www/html
+# O servidor só escreve no catálogo, nas fotos e na pasta de dados
+RUN mkdir -p data assets/produtos \
+    && chown -R www-data:www-data data assets/produtos products.json
 
-# Configura PHP para upload de arquivos
-RUN echo "upload_max_filesize = 10M" >> /usr/local/etc/php/conf.d/uploads.ini && \
-    echo "post_max_size = 10M" >> /usr/local/etc/php/conf.d/uploads.ini && \
-    echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN { \
+    echo "upload_max_filesize = 10M"; \
+    echo "post_max_size = 12M"; \
+    echo "expose_php = Off"; \
+} > /usr/local/etc/php/conf.d/di-conservas.ini
 
-# Expõe a porta 80 do Apache
 EXPOSE 80
 
-# Comando para iniciar o Apache
 CMD ["apache2-foreground"]

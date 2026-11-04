@@ -1,617 +1,307 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Di Conservas</title>
-    <link rel="icon" type="image/png" href="https://thumb-cdn.soluall.net/prod/adv_ads/ad300box/5e6b9e93-194c-4c83-af4e-2618ac1e06ca/60198ac6-b0fc-46dd-a9f5-1c16ac1e03ae.png" >
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" >
-    <style>
-        body {
-            font-family: 'Palatino Linotype', 'Palatino', serif;
-            /* Fonte Palatino para o corpo */
-            background-color: #F5F5F5;
-            /* Fundo principal Off-white */
-            color: #000000;
-            /* Texto principal Preto */
-        }
-
-        h1,
-        h2,
-        h3,
-        h4 {
-            font-family: 'Palatino Linotype', 'Palatino', serif;
-            /* Fonte Palatino para títulos */
-        }
-
-        .product-card {
-            background-color: #ffffff;
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            /* Sombreamento suave */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #2A9D8F;
-            /* Borda verde para cards de produto */
-        }
-
-        .product-card:hover {
-            transform: translateY(-8px);
-            /* Aumentado o movimento */
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 0 20px 25px rgba(0, 0, 0, 0.1);
-            /* Sombra mais intensa no hover */
-        }
-
-        /* Barra de rolagem customizada para melhor estética */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-            /* Para scroll horizontal */
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        /* Estilo para modal customizado */
-        .modal {
-            display: none;
-            /* Escondido por padrão */
-            position: fixed;
-            /* Fica no lugar */
-            z-index: 1000;
-            /* Fica em cima */
-            left: 0;
-            top: 0;
-            width: 100%;
-            /* Largura total */
-            height: 100%;
-            /* Altura total */
-            overflow: auto;
-            /* Habilita rolagem se necessário */
-            background-color: rgba(0, 0, 0, 0.4);
-            /* Preto com opacidade */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 600px;
-            /* Aumentado para melhor visualização dos detalhes */
-            text-align: left;
-            position: relative;
-            /* Para posicionar o botão de fechar */
-        }
-
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        /* Estilo para o botão Voltar ao Topo */
-        #backToTopBtn {
-            display: none;
-            /* Escondido por padrão */
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 99;
-            background-color: #E63946;
-            /* Vermelho do esquema de cores */
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            line-height: 50px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s, opacity 0.3s;
-        }
-
-        #backToTopBtn:hover {
-            background-color: #c9303c;
-            /* Vermelho mais escuro no hover */
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Di Conservas | Conservas e pimentas no Ceasa Curitiba</title>
+    <meta name="description" content="Catálogo da Di Conservas: conservas e pimentas no Ceasa Curitiba, boxes 2166 e 2167, com preços de varejo e atacado. Monte seu pedido e envie pelo WhatsApp.">
+    <meta name="theme-color" content="#f7c92b">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="Di Conservas | Sabores que transformam">
+    <meta property="og:description" content="Veja produtos e preços de varejo e atacado, monte seu pedido e envie pelo WhatsApp.">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap">
+    <!-- Ao alterar o CSS ou o JS, aumente o ?v= : o .htaccess manda o navegador guardar esses arquivos por 1 mês. -->
+    <link rel="stylesheet" href="assets/css/site.css?v=2">
 </head>
 
-<body class="flex flex-col min-h-screen">
-    <!-- Cabeçalho -->
-    <header class="bg-[#99cd85] text-black p-6 shadow-lg rounded-b-xl fixed top-0 left-0 right-0 z-50">
-        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
-            <div class="flex items-center mb-4 md:mb-0 w-full md:w-auto justify-center md:justify-start">
-                <!-- Logo da Empresa - Centralizada -->
-                <div
-                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-4 shadow-md overflow-hidden">
-                    <img src="https://thumb-cdn.soluall.net/prod/adv_ads/ad300box/5e6b9e93-194c-4c83-af4e-2618ac1e06ca/60198ac6-b0fc-46dd-a9f5-1c16ac1e03ae.png"
-                        alt="Logo da Di Conservas" class="w-full h-full object-cover">
-                </div>
-                <!-- Nome da Empresa -->
-                <h1 class="text-3xl font-bold text-black">Di Conservas</h1>
-            </div>
-            <nav class="flex space-x-6 text-lg items-center mt-4 md:mt-0">
-                <a href="#produtos" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
-                    <i class="fas fa-store mr-2"></i>Produtos
-                </a>
-                <a href="#contato" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center">
-                    <i class="fas fa-envelope mr-2"></i>Contato
-                </a>
-                <!-- Ícone de Busca -->
-                <a href="#" class="text-black hover:text-[#FFD60A] transition duration-300 flex items-center"
-                    onclick="document.getElementById('productSearch').focus(); return false;">
-                    <i class="fas fa-search"></i>
-                </a>
+<body>
+    <a class="skip-link" href="#produtos">Pular para os produtos</a>
+
+    <!-- Ícones usados na página -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+        <symbol id="i-whatsapp" viewBox="0 0 24 24"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35zM12.05 21.5h-.01a9.45 9.45 0 0 1-4.82-1.32l-.35-.2-3.58.93.96-3.49-.23-.36a9.43 9.43 0 0 1-1.45-5.03c0-5.22 4.25-9.47 9.48-9.47a9.41 9.41 0 0 1 6.7 2.78 9.41 9.41 0 0 1 2.77 6.7c0 5.22-4.25 9.46-9.47 9.46zm8.06-17.53A11.33 11.33 0 0 0 12.05.63C5.77.63.66 5.74.66 12.02c0 2 .52 3.96 1.52 5.69L.56 23.63l6.05-1.59a11.37 11.37 0 0 0 5.44 1.38h.01c6.28 0 11.39-5.11 11.39-11.39a11.32 11.32 0 0 0-3.34-8.06z"/></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 6.5h18v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11zm0 0 9 7 9-7"/></symbol>
+        <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 21.5s7-6.2 7-11.5a7 7 0 1 0-14 0c0 5.3 7 11.5 7 11.5zm0-9a2.500 2.500 0 1 0 0-5 2.500 2.500 0 0 0 0 5z"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zm0-14v5l3.500 2"/></symbol>
+        <symbol id="i-instagram" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7.500 3h9A4.500 4.500 0 0 1 21 7.500v9a4.500 4.500 0 0 1-4.500 4.500h-9A4.500 4.500 0 0 1 3 16.500v-9A4.500 4.500 0 0 1 7.500 3zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-9.200v.01"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m20 20-4.300-4.300M18 10.500a7.500 7.500 0 1 1-15 0 7.500 7.500 0 0 1 15 0z"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+        <symbol id="i-filter" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 7h16M7.500 12h9M10.500 17h3"/></symbol>
+        <symbol id="i-cart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2.200l2.300 11.200a1.500 1.500 0 0 0 1.500 1.200h8.300a1.500 1.500 0 0 0 1.500-1.200L20.500 8H6M9.500 20.500h.01M17 20.500h.01"/></symbol>
+        <symbol id="i-jar" viewBox="0 0 64 64"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" d="M19 8h26a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2zm1 9h24v3c0 2.500 6 4 6 10v22a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V30c0-6 6-7.500 6-10v-3zM14 34h36M14 47h36"/></symbol>
+    </svg>
+
+    <header class="site-header">
+        <div class="wrap site-header__row">
+            <a class="brand" href="#inicio" aria-label="Di Conservas, início">
+                <img src="assets/logo.png" alt="" width="44" height="44">
+                <span>Di Conservas</span>
+            </a>
+            <nav class="site-nav" aria-label="Principal">
+                <a href="#produtos">Produtos</a>
+                <a href="#como-comprar">Como comprar</a>
+                <a href="#contato">Contato</a>
             </nav>
+            <button class="header-btn header-btn--cart" id="openCart" type="button" aria-label="Abrir carrinho">
+                <svg class="icon" aria-hidden="true"><use href="#i-cart"/></svg>
+                <span class="header-btn__label">Carrinho</span>
+                <span class="cart-count" id="cartCount" hidden>0</span>
+            </button>
+            <a class="header-btn header-btn--whats js-whats" href="https://wa.me/5541996122750" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+                <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+                <span class="header-btn__label">WhatsApp</span>
+            </a>
         </div>
     </header>
 
-    <!-- Seção Hero/Banner -->
-    <section id="hero-banner"
-        class="relative bg-cover bg-center h-90 md:h-96 flex items-center justify-center text-white text-center shadow-lg pt-24"
-        style="background-image: url('https://images.unsplash.com/photo-1444858291040-58f756a3bdd6?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmF6ZW5kYXxlbnwwfHwwfHx8MA%3D%3D');">
-        <!-- Overlay com gradiente verde escuro transparente -->
-        <div class="absolute inset-0 bg-gradient-to-t from-transparent to-transparent via-[#2A9D8F] opacity-60"></div>
-        <div class="relative z-10 p-4">
-            <h2 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg text-[#FFD60A]">Sabores Que Transformam</h2>
-            <p class="text-lg md:text-xl max-w-2xl mx-auto drop-shadow-md text-white">Explore nossa seleção artesanal de
-                conservas e pimentas, feitas com paixão e os melhores ingredientes.</p>
-            <a href="#produtos"
-                class="inline-block mt-8 bg-[#E63946] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#c9303c] transition duration-300 shadow-lg">Conheça
-                nossos produtos!</a>
-        </div>
-    </section>
-
-    <!-- Área de Conteúdo Principal (Catálogo) -->
-    <main
-        class="mx-auto p-6 flex-grow w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12 flex flex-col lg:flex-row gap-6">
-
-        <!-- Barra Lateral de Filtros -->
-        <aside class="lg:w-1/4 bg-white p-6 rounded-xl shadow-xl flex-shrink-0">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6">Filtrar Produtos</h3>
-
-            <!-- Filtro de Texto -->
-            <div class="mb-6">
-                <label for="productSearch" class="block text-gray-700 text-sm font-medium mb-2">Pesquisar por
-                    Nome/Descrição:</label>
-                <input type="text" id="productSearch" placeholder="Ex: Malagueta, Tomate"
-                    class="p-3 border border-gray-300 rounded-lg w-full focus:ring-[#E63946] focus:border-[#E63946] shadow-sm text-gray-800">
-            </div>
-
-            <!-- Filtros de Categoria -->
-            <div>
-                <label class="block text-gray-700 text-sm font-medium mb-2">Categorias:</label>
-                <div id="categoryFilterButtons" class="flex flex-col space-y-2">
-                    <!-- Botões de categoria serão renderizados aqui pelo JavaScript -->
+    <main id="inicio">
+        <section class="hero">
+            <div class="wrap hero__grid">
+                <div class="hero__copy">
+                    <p class="eyebrow">Conservas e pimentas · Ceasa Curitiba</p>
+                    <h1>Sabores que transformam.</h1>
+                    <p class="hero__lead">Veja produtos e preços de varejo e atacado, monte seu carrinho e envie o pedido pelo WhatsApp.</p>
+                    <div class="hero__actions">
+                        <a class="btn btn--dark" href="#produtos">Ver produtos e preços</a>
+                        <a class="btn btn--line js-whats" href="https://wa.me/5541996122750" target="_blank" rel="noopener">
+                            <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+                            Falar no WhatsApp
+                        </a>
+                    </div>
+                    <p class="hero__hours">Boxes 2166 e 2167 · Segunda a sábado, das 4h30 às 10h30</p>
+                </div>
+                <div class="hero__jars" aria-hidden="true">
+                    <img src="assets/produtos/pimenta-caseira-picante.webp" alt="" width="800" height="800" fetchpriority="high">
+                    <img src="assets/produtos/espetinho-misto.webp" alt="" width="800" height="800">
+                    <img src="assets/produtos/mini-jilo.webp" alt="" width="800" height="800">
                 </div>
             </div>
-        </aside>
+        </section>
+        <div class="gingham" aria-hidden="true"></div>
 
-        <!-- Seção de Produtos (Conteúdo Principal do Catálogo) -->
-        <section id="produtos" class="lg:w-3/4 bg-white p-8 rounded-xl shadow-xl">
-            <h2 class="text-4xl font-bold text-center text-gray-800 mb-8">Nossos Produtos</h2>
+        <section class="catalog" id="produtos" aria-labelledby="catalog-title">
+            <div class="wrap">
+                <h2 id="catalog-title">Nossos produtos</h2>
 
-            <!-- Grade de Produtos -->
-            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Produtos serão carregados dinamicamente aqui pelo JavaScript -->
+                <div class="catalog__layout">
+                    <!-- Categorias: coluna fixa no computador -->
+                    <aside class="side" aria-label="Categorias">
+                        <h3 class="side__title">Categorias</h3>
+                        <div class="cat-list" data-categories role="group" aria-label="Filtrar por categoria"></div>
+                    </aside>
+
+                    <div class="results" id="results">
+                        <!-- Busca e botão de filtro: ficam presos ao rolar no celular -->
+                        <div class="toolbar">
+                            <div class="search">
+                                <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                                <label class="sr-only" for="productSearch">Buscar produto</label>
+                                <input type="search" id="productSearch" placeholder="Buscar produto…" autocomplete="off" enterkeyhint="search">
+                            </div>
+                            <button class="filter-btn" id="openFilters" type="button" aria-haspopup="dialog">
+                                <svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>
+                                <span>Categorias</span>
+                                <span class="filter-btn__dot" id="filterDot" hidden></span>
+                            </button>
+                        </div>
+
+                        <div class="summary">
+                            <p class="summary__count">
+                                <span id="resultCount" role="status" aria-live="polite"></span>
+                                <button class="active-filter" id="activeFilter" type="button" hidden></button>
+                            </p>
+                            <label class="sort">
+                                <span>Ordenar:</span>
+                                <select id="sortSelect">
+                                    <option value="default">Destaques</option>
+                                    <option value="name">Nome (A–Z)</option>
+                                    <option value="price-asc">Menor preço</option>
+                                    <option value="price-desc">Maior preço</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="grid" id="productGrid">
+                            <div class="card card--skeleton" aria-hidden="true"></div>
+                            <div class="card card--skeleton" aria-hidden="true"></div>
+                            <div class="card card--skeleton" aria-hidden="true"></div>
+                            <div class="card card--skeleton" aria-hidden="true"></div>
+                        </div>
+
+                        <div class="catalog__more">
+                            <button class="btn btn--line" id="loadMore" type="button" hidden>Ver mais produtos</button>
+                        </div>
+
+                        <noscript>
+                            <p class="notice">Para ver o catálogo, ative o JavaScript do navegador ou chame a gente no WhatsApp: (41) 99612-2750.</p>
+                        </noscript>
+                    </div>
+                </div>
             </div>
-            <!-- Controles de Paginação -->
-            <div id="paginationControls" class="flex justify-center items-center space-x-2 mt-8">
-                <!-- Botões de paginação serão renderizados aqui pelo JavaScript -->
+        </section>
+
+        <section class="how" id="como-comprar" aria-labelledby="how-title">
+            <div class="wrap how__grid">
+                <div>
+                    <h2 id="how-title">Como comprar</h2>
+                    <ol class="steps">
+                        <li><strong>Monte seu carrinho</strong> com os produtos e as quantidades que quiser.</li>
+                        <li><strong>Envie pelo WhatsApp:</strong> a mensagem abre pronta, com a lista e o total.</li>
+                        <li><strong>Combine com a gente</strong> o pagamento e a retirada. Nada é cobrado pelo site.</li>
+                    </ol>
+                </div>
+                <div class="prices-box">
+                    <h3>Varejo ou atacado?</h3>
+                    <dl>
+                        <div>
+                            <dt>Varejo</dt>
+                            <dd>Preço normal, para comprar a quantidade que quiser.</dd>
+                        </div>
+                        <div>
+                            <dt>Atacado</dt>
+                            <dd id="wholesaleRule">Preço menor, a partir de 6 unidades do mesmo produto.</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contato" aria-labelledby="contact-title">
+            <div class="wrap">
+                <h2 id="contact-title">Fale com a gente</h2>
+                <ul class="contact__list">
+                    <li>
+                        <a class="js-whats" href="https://wa.me/5541996122750" target="_blank" rel="noopener">
+                            <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+                            <span><strong>WhatsApp</strong>(41) 99612-2750</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.instagram.com/di_conservas" target="_blank" rel="noopener">
+                            <svg class="icon" aria-hidden="true"><use href="#i-instagram"/></svg>
+                            <span><strong>Instagram</strong>@di_conservas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mailto:conservasdi@gmail.com">
+                            <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>
+                            <span><strong>E-mail</strong>conservasdi@gmail.com</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://g.co/kgs/xqMpF4w" target="_blank" rel="noopener">
+                            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>
+                            <span><strong>Ceasa Curitiba, boxes 2166 e 2167</strong>Rod. BR-116, km 110, Tatuquara</span>
+                        </a>
+                    </li>
+                    <li class="contact__info">
+                        <div>
+                            <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+                            <span><strong>Horário</strong>Segunda a sábado, das 4h30 às 10h30</span>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </section>
     </main>
 
-    <!-- Seção de Contato -->
-    <section id="contato"
-        class="my-10 bg-[#facb4b] text-gray-800 p-8 rounded-xl shadow-lg text-center mx-auto w-full max-w-screen-xl lg:max-w-screen-2xl px-4 md:px-8 lg:px-12">
-        <h2 class="text-4xl font-bold text-black mb-6">Fale Conosco</h2>
-        <p class="text-lg mb-8">Entre em contato conosco para fazer seu pedido ou tirar dúvidas.</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
-            <!-- Contato por Email -->
-            <a id="emailContact"
-                href="mailto:conservasdi@gmail.com"
-                class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
-                <i class="fas fa-envelope text-[#000000] text-5xl mb-3"></i>
-                <span class="text-xl font-semibold text-black">Email</span>
-                <span class="text-sm text-gray-800">conservasdi@gmail.com</span>
+    <footer class="site-footer">
+        <div class="wrap site-footer__row">
+            <span class="brand brand--small">
+                <img src="assets/logo.png" alt="" width="32" height="32" loading="lazy">
+                <span>Di Conservas</span>
+            </span>
+            <a class="site-footer__social" href="https://www.instagram.com/di_conservas" target="_blank" rel="noopener">
+                <svg class="icon" aria-hidden="true"><use href="#i-instagram"/></svg>
+                @di_conservas
             </a>
-
-            <!-- Contato por WhatsApp -->
-            <a href="https://wa.me/+5541996122750?text=Olá%20gostaria%20de%20mais%20informações" target="_blank" rel="noopener noreferrer"
-                class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
-                <i class="fab fa-whatsapp text-[#000000] text-5xl mb-3"></i>
-                <span class="text-xl font-semibold text-black">WhatsApp</span>
-                <span class="text-sm text-gray-800">+55 (41) 99612-2750</span>
-            </a>
-
-            <!-- Localização -->
-            <a href="https://g.co/kgs/xqMpF4w" target="_blank" rel="noopener noreferrer"
-                class="flex flex-col items-center p-6 bg-[#fcaf14] rounded-lg shadow-md transition duration-300 transform hover:scale-105">
-                <i class="fas fa-map-marker-alt text-[#000000] text-5xl mb-3"></i>
-                <span class="text-xl font-semibold text-black">Localização</span>
-                <span class="text-sm text-gray-800">Ver no Mapa</span>
-            </a>
-        </div>
-
-        <!-- <p class="mt-8 text-sm">Fazemos pedidos e tiramos dúvidas via Email e WhatsApp.</p> -->
-    </section>
-
-    <!-- Modal para Detalhes do Produto -->
-    <div id="productDetailsModal"
-        class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="modal-content bg-white rounded-lg p-6 shadow-xl w-full max-w-md">
-            <button class="close-button" onclick="closeProductDetailsModal()">&times;</button>
-            <img id="modalProductImage" src="" alt="Imagem do Produto"
-                class="w-full max-h-80 md:max-h-[70vh] object-contain rounded-lg mb-4">
-            <h4 id="modalProductName" class="text-2xl font-bold text-gray-800 mb-2"></h4>
-            <p id="modalProductDescription" class="text-gray-700 mb-3"></p>
-            <p id="modalProductWeight" class="text-gray-600 text-sm mb-1"></p>
-            <p id="modalProductRetailPrice" class="text-xl font-bold text-red-700 mb-1"></p> <!-- Preço de Varejo -->
-            <p id="modalProductWholesalePrice" class="text-lg text-gray-700 mb-4"></p> <!-- Preço de Atacado -->
-            <button onclick="closeProductDetailsModal()"
-                class="bg-[#E63946] text-white px-5 py-2 rounded-md hover:bg-[#c9303c] transition duration-300 w-full">Fechar</button>
-        </div>
-    </div>
-
-    <!-- Botão Voltar ao Topo -->
-    <button id="backToTopBtn" onclick="scrollToTop()">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <!-- Rodapé -->
-    <footer class="bg-[#99cd85] text-[#000000] p-8 mt-10 rounded-t-xl shadow-inner">
-        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between text-center md:text-left">
-            <div class="mb-4 md:mb-0">
-                <h3 class="text-2xl font-bold mb-2">Di Conservas</h3>
-                <p class="text-sm">&copy; 2024 Todos os direitos reservados.</p>
-            </div>
-            <div class="flex space-x-6">
-                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i
-                        class="fab fa-facebook"></i></a>
-                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i
-                        class="fab fa-instagram"></i></a>
-                <a href="#" class="text-[#000000] hover:text-white transition duration-300 text-2xl"><i
-                        class="fab fa-whatsapp"></i></a>
-            </div>
+            <p>&copy; <span id="year">2026</span> Di Conservas. Todos os direitos reservados.</p>
         </div>
     </footer>
 
-    <script>
-        // Carrega produtos dinamicamente do arquivo JSON
-        let products = [];
+    <p class="sr-only" id="cartStatus" role="status" aria-live="polite"></p>
 
-        const itemsPerPage = 15; // 3 colunas * 5 linhas
-        let currentPage = 1;
+    <!-- Detalhes do produto -->
+    <dialog class="sheet sheet--product" id="productDialog" aria-labelledby="dialogName">
+        <button class="sheet__close" data-close type="button" aria-label="Fechar">
+            <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+        <div class="sheet__media" id="dialogMedia"></div>
+        <div class="sheet__body">
+            <p class="eyebrow" id="dialogCategory"></p>
+            <h3 id="dialogName"></h3>
+            <p class="sheet__weight" id="dialogWeight"></p>
+            <p class="sheet__desc" id="dialogDesc"></p>
+            <div class="sheet__prices">
+                <div>
+                    <span>Varejo</span>
+                    <strong id="dialogRetail"></strong>
+                </div>
+                <div id="dialogWholesaleBox">
+                    <span id="dialogWholesaleLabel">Atacado</span>
+                    <strong id="dialogWholesale"></strong>
+                </div>
+            </div>
+            <div class="sheet__buy" id="dialogBuy"></div>
+            <button class="sheet__to-cart" id="dialogToCart" type="button" hidden>Ver carrinho</button>
+        </div>
+    </dialog>
 
-        let currentFilterText = '';
-        let currentFilterCategory = 'all'; // Categoria inicial para 'Todas as Categorias'
-        let categories = []; // Array para armazenar as categorias únicas
+    <!-- Categorias no celular -->
+    <dialog class="sheet sheet--filters" id="filterDialog" aria-labelledby="filterTitle">
+        <div class="sheet__head">
+            <h3 id="filterTitle">Categorias</h3>
+            <button class="sheet__close sheet__close--inline" data-close type="button" aria-label="Fechar">
+                <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+            </button>
+        </div>
+        <div class="cat-list cat-list--sheet" data-categories role="group" aria-label="Filtrar por categoria"></div>
+    </dialog>
 
-        let productGrid;
-        let productSearch;
-        let categoryFilterButtonsContainer;
-        let backToTopBtn;
-        let paginationControls;
+    <!-- Carrinho -->
+    <dialog class="sheet sheet--cart" id="cartDialog" aria-labelledby="cartTitle">
+        <div class="sheet__head">
+            <h3 id="cartTitle">Seu pedido</h3>
+            <button class="sheet__close sheet__close--inline" data-close type="button" aria-label="Fechar">
+                <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+            </button>
+        </div>
 
-        // --- Função para carregar produtos do JSON ---
-        async function loadProducts() {
-            try {
-                // Tenta carregar do arquivo JSON primeiro
-                let response = await fetch('products.json');
+        <div class="cart__scroll">
+            <div class="cart__empty" id="cartEmpty">
+                <svg class="icon" aria-hidden="true"><use href="#i-cart"/></svg>
+                <p>Seu carrinho está vazio.</p>
+                <button class="btn btn--line" data-close type="button">Ver produtos</button>
+            </div>
+            <ul class="cart__items" id="cartItems"></ul>
+            <div class="cart__fields" id="cartFields">
+                <label>
+                    <span>Seu nome <small>(opcional)</small></span>
+                    <input type="text" id="cartName" maxlength="80" autocomplete="name">
+                </label>
+                <label>
+                    <span>Observações <small>(opcional)</small></span>
+                    <textarea id="cartNotes" rows="2" maxlength="300"></textarea>
+                </label>
+                <button class="cart__clear" id="cartClear" type="button">Esvaziar carrinho</button>
+            </div>
+        </div>
 
-                // Se não conseguir, tenta a API PHP
-                if (!response.ok) {
-                    response = await fetch('products-api.php');
-                }
+        <div class="cart__foot" id="cartFoot">
+            <p class="cart__total"><span>Total estimado</span><strong id="cartTotal"></strong></p>
+            <a class="btn btn--whats btn--block" id="cartSend" target="_blank" rel="noopener">
+                <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+                Enviar pedido pelo WhatsApp
+            </a>
+            <p class="cart__note" id="cartNote">Nada é cobrado aqui: você confere a mensagem no WhatsApp e combina o restante com a gente.</p>
+        </div>
+    </dialog>
 
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar produtos');
-                }
-
-                products = await response.json();
-
-                // Após carregar os produtos, inicializa a interface
-                categories = getUniqueCategories();
-                renderCategoryFilterButtons();
-                displayProducts();
-            } catch (error) {
-                console.error('Erro ao carregar produtos:', error);
-                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Erro ao carregar produtos. Tente novamente mais tarde.</p>';
-            }
-        }
-
-        // --- Funções da Modal de Detalhes do Produto ---
-        function openProductDetailsModal(productId) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                document.getElementById('modalProductImage').src = product.image;
-                document.getElementById('modalProductName').innerText = product.name;
-                document.getElementById('modalProductDescription').innerText = product.description;
-                document.getElementById('modalProductWeight').innerText = `Peso: ${product.weight}`;
-                document.getElementById('modalProductRetailPrice').innerText = `Preço Varejo: R$ ${product.retailPrice.toFixed(2).replace('.', ',')}`;
-                // Adicionando a informação de quantidade mínima para atacado
-                document.getElementById('modalProductWholesalePrice').innerText = `Preço Atacado: R$ ${product.wholesalePrice.toFixed(2).replace('.', ',')} (a partir de 6 itens)`;
-                document.getElementById('productDetailsModal').classList.remove('hidden');
-            }
-        }
-
-        function closeProductDetailsModal() {
-            document.getElementById('productDetailsModal').classList.add('hidden');
-        }
-
-        // --- Função para extrair categorias únicas dos produtos ---
-        function getUniqueCategories() {
-            const unique = new Set();
-            products.forEach(p => unique.add(p.category));
-            return Array.from(unique);
-        }
-
-        // --- Função para renderizar os botões de categoria na barra lateral ---
-        function renderCategoryFilterButtons() {
-            categoryFilterButtonsContainer.innerHTML = ''; // Limpa os botões existentes
-
-            // Adiciona o botão 'Todas as Categorias'
-            const allButton = document.createElement('button');
-            allButton.className = 'filter-btn bg-green-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-[#FFD60A] hover:text-gray-900 transition duration-300 shadow-md text-left'; /* Amarelo no hover */
-            allButton.dataset.category = 'all';
-            allButton.textContent = 'Todas as Categorias';
-            allButton.addEventListener('click', handleCategoryFilterClick);
-            categoryFilterButtonsContainer.appendChild(allButton);
-
-            // Adiciona os botões para as categorias existentes
-            categories.filter(cat => cat !== 'all').forEach(category => {
-                const button = document.createElement('button');
-                // Todos os botões de categoria agora são verdes com hover amarelo
-                button.className = `filter-btn bg-green-500 hover:bg-[#FFD60A] hover:text-gray-900 text-white px-5 py-2 rounded-lg font-semibold transition duration-300 shadow-md text-left`; /* Amarelo no hover */
-                button.dataset.category = category;
-                button.textContent = category;
-                button.addEventListener('click', handleCategoryFilterClick);
-                categoryFilterButtonsContainer.appendChild(button);
-            });
-
-            // Garante que o botão ativo esteja com o estilo correto
-            updateCategoryButtonActiveState();
-        }
-
-        // --- Lógica para o clique nos botões de filtro de categoria ---
-        function handleCategoryFilterClick(event) {
-            currentFilterCategory = event.target.dataset.category;
-            currentPage = 1; // Reseta para a primeira página ao mudar o filtro de categoria
-            displayProducts();
-        }
-
-        // --- Atualiza o estado ativo dos botões de categoria ---
-        function updateCategoryButtonActiveState() {
-            document.querySelectorAll('#categoryFilterButtons .filter-btn').forEach(btn => {
-                // Remove todas as classes de estado ativo e hover
-                btn.classList.remove('bg-green-700', 'bg-green-800', 'bg-[#FFD60A]', 'text-gray-900');
-
-                // Re-adiciona a cor base original (verde)
-                btn.classList.add('bg-green-500', 'text-white');
-
-                // Adiciona a cor mais escura para o estado ativo
-                if (btn.dataset.category === currentFilterCategory) {
-                    btn.classList.remove('bg-green-500'); // Remove a cor base
-                    btn.classList.add('bg-green-700'); // Verde mais escuro para categoria ativa
-                }
-            });
-        }
-
-        // --- Lógica para o filtro de texto ---
-        function handleProductSearchInput(event) {
-            currentFilterText = event.target.value;
-            currentPage = 1; // Reseta para a primeira página ao mudar o filtro de texto
-            displayProducts();
-        }
-
-        // --- Função principal para exibir os produtos ---
-        function displayProducts() {
-            productGrid.innerHTML = ''; // Limpa os produtos existentes
-
-            // Primeiro, filtra todos os produtos com base nos critérios de busca e categoria
-            const filteredProducts = products.filter(product => {
-                const matchesText = currentFilterText === '' || product.name.toLowerCase().includes(currentFilterText.toLowerCase()) ||
-                    product.description.toLowerCase().includes(currentFilterText.toLowerCase());
-                const matchesCategory = currentFilterCategory === 'all' || product.category === currentFilterCategory;
-                return matchesText && matchesCategory;
-            });
-
-            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-
-            // Garante que currentPage não esteja fora dos limites após filtrar
-            if (currentPage > totalPages && totalPages > 0) {
-                currentPage = totalPages;
-            } else if (totalPages === 0) {
-                currentPage = 1; // Reseta para a página 1 se não houver produtos
-            }
-
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const productsToDisplay = filteredProducts.slice(startIndex, endIndex);
-
-            if (productsToDisplay.length === 0) {
-                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600 text-lg py-10">Nenhum produto encontrado com os filtros aplicados.</p>';
-            } else {
-                productsToDisplay.forEach(product => {
-                    const productCard = `
-                        <div class="product-card rounded-xl overflow-hidden shadow-lg p-6 flex flex-col items-center text-center border border-gray-200">
-                            <img data-src="${product.image}" alt="${product.name}" class="lazy-load w-full h-48 object-cover rounded-lg mb-4 transform hover:scale-105 transition-transform duration-300" src="https://placehold.co/400x300/e0e0e0/000000?text=Carregando...">
-                            <h3 class="text-xl font-bold text-black mb-2 flex-grow">${product.name} - ${product.weight}</h3> <!-- Título do produto com peso -->
-                                        <div class="mb-2">
-                                            <span class="block text-red-700 font-bold text-lg">Varejo: R$ ${product.retailPrice.toFixed(2).replace('.', ',')}</span>
-                                            <span class="block text-gray-700 text-base">Atacado: R$ ${product.wholesalePrice.toFixed(2).replace('.', ',')} <span class="text-xs">(min. 6)</span></span>
-                                        </div>
-                            <button onclick="openProductDetailsModal(${product.id})" class="bg-[#FFD60A] text-gray-900 px-4 py-2 rounded-full font-semibold hover:bg-yellow-400 transition duration-300 shadow-md w-full mt-2">Ver Detalhes</button> <!-- Botão pequeno amarelo -->
-                        </div>
-                    `;
-                    productGrid.insertAdjacentHTML('beforeend', productCard);
-                });
-                initializeLazyLoad();
-            }
-
-            renderPagination(totalPages);
-        }
-
-        // --- Função para renderizar os controles de paginação ---
-        function renderPagination(totalPages) {
-            paginationControls.innerHTML = ''; // Limpa os controles existentes
-
-            if (totalPages <= 1) {
-                return; // Não mostra paginação se houver apenas uma página ou nenhuma
-            }
-
-            // Botão Anterior
-            const prevButton = document.createElement('button');
-            prevButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${currentPage === 1 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#E63946] text-white hover:bg-[#c9303c]'}`;
-            prevButton.textContent = 'Anterior';
-            prevButton.disabled = currentPage === 1;
-            prevButton.addEventListener('click', () => goToPage(currentPage - 1));
-            paginationControls.appendChild(prevButton);
-
-            // Números das páginas
-            // Exibir um intervalo limitado de páginas para evitar poluição visual
-            let startPage = Math.max(1, currentPage - 2);
-            let endPage = Math.min(totalPages, currentPage + 2);
-
-            if (currentPage <= 3 && totalPages > 5) { // Se perto do início e mais de 5 páginas, mostra as 5 primeiras
-                startPage = 1;
-                endPage = 5;
-            } else if (currentPage >= totalPages - 2 && totalPages > 5) { // Se perto do fim e mais de 5 páginas, mostra as 5 últimas
-                startPage = totalPages - 4;
-                endPage = totalPages;
-            }
-
-
-            for (let i = startPage; i <= endPage; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${i === currentPage ? 'bg-[#2A9D8F] text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`;
-                pageButton.textContent = i;
-                pageButton.addEventListener('click', () => goToPage(i));
-                paginationControls.appendChild(pageButton);
-            }
-
-            // Botão Próximo
-            const nextButton = document.createElement('button');
-            nextButton.className = `px-4 py-2 rounded-md font-semibold transition duration-300 ${currentPage === totalPages ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#E63946] text-white hover:bg-[#c9303c]'}`;
-            nextButton.textContent = 'Próximo';
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.addEventListener('click', () => goToPage(currentPage + 1));
-            paginationControls.appendChild(nextButton);
-        }
-
-        // --- Função para mudar de página ---
-        function goToPage(pageNumber) {
-            currentPage = pageNumber;
-            displayProducts(); // Re-exibe os produtos para a nova página
-            // Rola para o topo da seção de produtos para que o usuário veja os novos itens
-            window.scrollTo({ top: document.getElementById('produtos').offsetTop - 100, behavior: 'smooth' });
-        }
-
-        // --- Lazy Load de Imagens ---
-        function initializeLazyLoad() {
-            const lazyImages = document.querySelectorAll('.lazy-load');
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy-load');
-                        observer.unobserve(img);
-                    }
-                });
-            }, {
-                rootMargin: '0px 0px 100px 0px' // Carrega imagens 100px antes de entrarem na viewport
-            });
-
-            lazyImages.forEach(img => {
-                observer.observe(img);
-            });
-        }
-
-        // --- Botão Voltar ao Topo ---
-        window.onscroll = function () {
-            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-                backToTopBtn.style.display = "block";
-            } else {
-                backToTopBtn.style.display = "none";
-            }
-        };
-
-        window.scrollToTop = function () {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        };
-
-        // Inicialização: carrega produtos e inicializa a interface
-        document.addEventListener('DOMContentLoaded', () => {
-            productGrid = document.getElementById('productGrid');
-            productSearch = document.getElementById('productSearch');
-            categoryFilterButtonsContainer = document.getElementById('categoryFilterButtons');
-            backToTopBtn = document.getElementById('backToTopBtn');
-            paginationControls = document.getElementById('paginationControls');
-
-            productSearch.addEventListener('input', handleProductSearchInput);
-
-            // Carrega produtos do JSON e inicializa a interface
-            loadProducts();
-        });
-
-        // Redireciona para outra aba ao clicar para enviar email
-
-        document.addEventListener('DOMContentLoaded', () => {
-
-        const emailContact = document.getElementById('emailContact');
-        if (emailContact) {
-            emailContact.addEventListener('click', function (e) {
-                e.preventDefault();
-                const mailto = 'mailto:conservasdi@gmail.com';
-                const win = window.open(mailto, '_blank');
-                if (win) {
-                    win.focus();
-                }
-            });
-        }
-    });
-    </script>
+    <script src="assets/js/site.js?v=2" defer></script>
 </body>
-
-
 </html>

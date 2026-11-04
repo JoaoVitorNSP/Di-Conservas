@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   app:
     build: .
@@ -6,22 +5,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./assets:/var/www/html/assets
+      # Só o que muda em uso fica fora do container, para sobreviver a uma nova versão
+      - ./assets/produtos:/var/www/html/assets/produtos
       - ./products.json:/var/www/html/products.json
-      - ./index.html:/var/www/html/index.html
-      - ./admin.php:/var/www/html/admin.php
-      - ./admin-dashboard.php:/var/www/html/admin-dashboard.php
-      - ./cadastro.html:/var/www/html/cadastro.html
-      - ./cadastro.php:/var/www/html/cadastro.php
-      - ./upload.php:/var/www/html/upload.php
-      - ./admin-login.php:/var/www/html/admin-login.php
-      - ./auth.php:/var/www/html/auth.php
-      - ./logout.php:/var/www/html/logout.php
-      - ./session-refresh.php:/var/www/html/session-refresh.php
-      - ./products-api.php:/var/www/html/products-api.php
-      - ./admin-products.php:/var/www/html/admin-products.php
-      - ./admin-product.php:/var/www/html/admin-product.php
-      - ./delete-product.php:/var/www/html/delete-product.php
-      - ./.htaccess:/var/www/html/.htaccess
-    environment:
-      - APACHE_DOCUMENT_ROOT=/var/www/html
+      - ./data:/var/www/html/data

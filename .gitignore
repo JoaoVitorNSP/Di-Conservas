@@ -1,0 +1,9 @@
+# Dados privados do painel
+data/credentials.php
+data/login-attempts.json
+data/products.lock
+data/backups/
+
+# Temporários
+*.tmp
+*.log
