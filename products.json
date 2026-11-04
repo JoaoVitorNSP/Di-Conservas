@@ -1,27 +1,5 @@
 [
     {
-        "id": 1,
-        "name": "Pimenta Caseira Temperada",
-        "category": "Pimentas",
-        "description": "Uma pimenta ardente e saborosa, perfeita para dar um toque especial aos seus pratos.",
-        "weight": "150g",
-        "retailPrice": 25.5,
-        "wholesalePrice": 20.4,
-        "image": "/assets/produtos/pimenta-caseira-temperada.webp",
-        "active": true
-    },
-    {
-        "id": 2,
-        "name": "Pimenta Caseira Picante",
-        "category": "Pimentas",
-        "description": "Uma pimenta caseira com um toque extra de picância, perfeita para quem gosta de mais sabor.",
-        "weight": "300g",
-        "retailPrice": 18.9,
-        "wholesalePrice": 15.12,
-        "image": "/assets/produtos/pimenta-caseira-picante.webp",
-        "active": true
-    },
-    {
         "id": 3,
         "name": "Mini Jiló",
         "category": "Legumes e verduras",
@@ -30,28 +8,6 @@
         "retailPrice": 16,
         "wholesalePrice": 15,
         "image": "/assets/produtos/mini-jilo.webp",
-        "active": true
-    },
-    {
-        "id": 4,
-        "name": "Repolho Azedo",
-        "category": "Legumes e verduras",
-        "description": "Repolho fermentado com especiarias, perfeito para acompanhar pratos diversos.",
-        "weight": "300g",
-        "retailPrice": 28,
-        "wholesalePrice": 22.4,
-        "image": "/assets/produtos/repolho-azedo.webp",
-        "active": true
-    },
-    {
-        "id": 5,
-        "name": "Espetinho Misto",
-        "category": "Mistos e picles",
-        "description": "Espetinhos de legumes variados, marinados em vinagre e especiarias.",
-        "weight": "300g",
-        "retailPrice": 22.5,
-        "wholesalePrice": 18,
-        "image": "/assets/produtos/espetinho-misto.webp",
         "active": true
     },
     {
@@ -345,7 +301,7 @@
         "name": "Couve-Flor",
         "category": "Legumes e verduras",
         "description": "",
-        "weight": "",
+        "weight": "300g",
         "retailPrice": 10,
         "wholesalePrice": 8.95,
         "image": "",
