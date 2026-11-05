@@ -22,6 +22,8 @@
     const productDialog = $('productDialog');
     const filterDialog = $('filterDialog');
     const cartDialog = $('cartDialog');
+    // Desligado no painel, o site mostra só a lista e os preços. O carrinho salvo no aparelho fica guardado.
+    const cartEnabled = document.body.dataset.cart !== 'off';
 
     // ---------- Estado ----------
     let products = [];
@@ -323,12 +325,14 @@
             prices.appendChild(wholesale);
         }
 
-        const buy = el('div', 'card__buy');
-        buy.dataset.id = String(product.id);
-        buy.dataset.slot = `card-${product.id}`;
-        renderBuy(buy, product);
-
-        body.append(name, el('p', 'card__weight', product.weight || ''), prices, buy);
+        body.append(name, el('p', 'card__weight', product.weight || ''), prices);
+        if (cartEnabled) {
+            const buy = el('div', 'card__buy');
+            buy.dataset.id = String(product.id);
+            buy.dataset.slot = `card-${product.id}`;
+            renderBuy(buy, product);
+            body.append(buy);
+        }
         card.append(media, body);
         return card;
     }
@@ -429,8 +433,10 @@
         $('dialogWholesaleBox').hidden = !hasWholesale(product);
         $('dialogWholesale').textContent = money(product.wholesalePrice);
         $('dialogWholesaleLabel').textContent = `Atacado (${WHOLESALE_MIN} ou mais)`;
-        $('dialogBuy').dataset.slot = 'dialog';
-        refreshCartViews();
+        if (cartEnabled) {
+            $('dialogBuy').dataset.slot = 'dialog';
+            refreshCartViews();
+        }
         productDialog.showModal();
         productDialog.scrollTop = 0;
     }
@@ -480,23 +486,25 @@
         $('openFilters').addEventListener('click', () => filterDialog.showModal());
         $('activeFilter').addEventListener('click', () => selectCategory('all'));
 
-        $('openCart').addEventListener('click', openCart);
-        $('dialogToCart').addEventListener('click', openCart);
-        $('cartName').addEventListener('input', updateSendLink);
-        $('cartNotes').addEventListener('input', updateSendLink);
-        $('cartClear').addEventListener('click', () => {
-            cart.clear();
-            orderSent = false;
-            saveCart();
-            $('cartNotes').value = '';
-            $('cartStatus').textContent = 'Carrinho esvaziado.';
-            refreshCartViews();
-            cartDialog.querySelector('[data-close]').focus();
-        });
-        $('cartSend').addEventListener('click', () => {
-            orderSent = true;
-            renderSentNote();
-        });
+        if (cartEnabled) {
+            $('openCart').addEventListener('click', openCart);
+            $('dialogToCart').addEventListener('click', openCart);
+            $('cartName').addEventListener('input', updateSendLink);
+            $('cartNotes').addEventListener('input', updateSendLink);
+            $('cartClear').addEventListener('click', () => {
+                cart.clear();
+                orderSent = false;
+                saveCart();
+                $('cartNotes').value = '';
+                $('cartStatus').textContent = 'Carrinho esvaziado.';
+                refreshCartViews();
+                cartDialog.querySelector('[data-close]').focus();
+            });
+            $('cartSend').addEventListener('click', () => {
+                orderSent = true;
+                renderSentNote();
+            });
+        }
 
         // Fecha pelo X ou tocando fora do painel.
         document.querySelectorAll('dialog').forEach((dialog) => {
@@ -512,7 +520,7 @@
         $('wholesaleRule').textContent = WHOLESALE_SCOPE === 'pedido'
             ? `Preço menor, a partir de ${WHOLESALE_MIN} unidades no pedido.`
             : `Preço menor, a partir de ${WHOLESALE_MIN} unidades do mesmo produto.`;
-        loadCart();
+        if (cartEnabled) loadCart();
         bindEvents();
 
         try {
@@ -526,11 +534,13 @@
                     order: i,
                 }))
                 .sort((a, b) => (Boolean(b.image) - Boolean(a.image)) || (a.order - b.order));
-            pruneCart();
-            saveCart();
+            if (cartEnabled) {
+                pruneCart();
+                saveCart();
+            }
             renderCategories();
             render();
-            refreshCartViews();
+            if (cartEnabled) refreshCartViews();
         } catch (error) {
             console.error(error);
             showLoadError();

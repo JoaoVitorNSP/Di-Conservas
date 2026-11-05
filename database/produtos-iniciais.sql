@@ -12,8 +12,8 @@ INSERT IGNORE INTO categories (description) VALUES
   ('Pimentas');
 
 INSERT INTO products (name, category_id, description, weight, unit_id, retail_price, wholesale_price, image, status) VALUES
-  ('Mini Jiló', (SELECT id FROM categories WHERE description = 'Legumes e verduras'), NULL, 300, (SELECT id FROM measurement_units WHERE description = 'g'), 16.00, 15.00, '/assets/produtos/mini-jilo.webp', 'active'),
-  ('Broto de Bambu', (SELECT id FROM categories WHERE description = 'Legumes e verduras'), 'Broto de bambu em conserva, crocante e saboroso, ideal para saladas e pratos asiáticos.', 300, (SELECT id FROM measurement_units WHERE description = 'g'), 16.00, 15.00, '/assets/produtos/broto-de-bambu.webp', 'active'),
+  ('Mini Jiló', (SELECT id FROM categories WHERE description = 'Legumes e verduras'), NULL, 300, (SELECT id FROM measurement_units WHERE description = 'g'), 16.00, 15.00, '', 'active'),
+  ('Broto de Bambu', (SELECT id FROM categories WHERE description = 'Legumes e verduras'), 'Broto de bambu em conserva, crocante e saboroso, ideal para saladas e pratos asiáticos.', 300, (SELECT id FROM measurement_units WHERE description = 'g'), 16.00, 15.00, '', 'active'),
   ('Pepino', (SELECT id FROM categories WHERE description = 'Pepinos'), NULL, 300, (SELECT id FROM measurement_units WHERE description = 'g'), 10.00, 8.95, '', 'active'),
   ('Pepino com Cebola', (SELECT id FROM categories WHERE description = 'Pepinos'), NULL, 300, (SELECT id FROM measurement_units WHERE description = 'g'), 10.00, 8.95, '', 'active'),
   ('Pepino Fatiado Agridoce', (SELECT id FROM categories WHERE description = 'Pepinos'), NULL, 300, (SELECT id FROM measurement_units WHERE description = 'g'), 10.00, 8.95, '', 'active'),

@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Di Conservas | Conservas e pimentas no Ceasa Curitiba</title>
-    <meta name="description" content="Catálogo da Di Conservas: conservas e pimentas no Ceasa Curitiba, boxes 2166 e 2167, com preços de varejo e atacado. Monte seu pedido e envie pelo WhatsApp.">
+    <meta name="description" content="Catálogo da Di Conservas: conservas e pimentas no Ceasa Curitiba, boxes 2166 e 2167, com preços de varejo e atacado.<?= $cartEnabled ? ' Monte seu pedido e envie pelo WhatsApp.' : '' ?>">
     <meta name="theme-color" content="#f7c92b">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="pt_BR">
     <meta property="og:title" content="Di Conservas | Sabores que transformam">
-    <meta property="og:description" content="Veja produtos e preços de varejo e atacado, monte seu pedido e envie pelo WhatsApp.">
+    <meta property="og:description" content="<?= $cartEnabled ? 'Veja produtos e preços de varejo e atacado, monte seu pedido e envie pelo WhatsApp.' : 'Veja produtos e preços de varejo e atacado.' ?>">
     <link rel="icon" type="image/png" href="/assets/logo.png">
     <link rel="apple-touch-icon" href="/assets/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap">
     <!-- Ao alterar o CSS ou o JS, aumente o ?v= : o .htaccess manda o navegador guardar esses arquivos por 1 mês. -->
-    <link rel="stylesheet" href="/assets/css/site.css?v=3">
+    <link rel="stylesheet" href="/assets/css/site.css?v=5">
 </head>
 
-<body>
+<body<?= $cartEnabled ? '' : ' data-cart="off"' ?>>
     <a class="skip-link" href="#produtos">Pular para os produtos</a>
 
     <!-- Ícones usados na página -->
@@ -47,11 +47,13 @@
                 <a href="#como-comprar">Como comprar</a>
                 <a href="#contato">Contato</a>
             </nav>
+            <?php if ($cartEnabled): ?>
             <button class="header-btn header-btn--cart" id="openCart" type="button" aria-label="Abrir carrinho">
                 <svg class="icon" aria-hidden="true"><use href="#i-cart"/></svg>
                 <span class="header-btn__label">Carrinho</span>
                 <span class="cart-count" id="cartCount" hidden>0</span>
             </button>
+            <?php endif; ?>
             <a class="header-btn header-btn--whats js-whats" href="https://wa.me/5541996122750" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
                 <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
                 <span class="header-btn__label">WhatsApp</span>
@@ -65,7 +67,7 @@
                 <div class="hero__copy">
                     <p class="eyebrow">Conservas e pimentas · Ceasa Curitiba</p>
                     <h1>Sabores que transformam.</h1>
-                    <p class="hero__lead">Veja produtos e preços de varejo e atacado, monte seu carrinho e envie o pedido pelo WhatsApp.</p>
+                    <p class="hero__lead"><?= $cartEnabled ? 'Veja produtos e preços de varejo e atacado, monte seu carrinho e envie o pedido pelo WhatsApp.' : 'Veja nossos produtos e os preços de varejo e atacado.' ?></p>
                     <div class="hero__actions">
                         <a class="btn btn--dark" href="#produtos">Ver produtos e preços</a>
                         <a class="btn btn--line js-whats" href="https://wa.me/5541996122750" target="_blank" rel="noopener">
@@ -76,9 +78,9 @@
                     <p class="hero__hours">Boxes 2166 e 2167 · Segunda a sábado, das 4h30 às 10h30</p>
                 </div>
                 <div class="hero__jars" aria-hidden="true">
-                    <img src="/assets/produtos/pimenta-caseira-picante.webp" alt="" width="800" height="800" fetchpriority="high">
-                    <img src="/assets/produtos/espetinho-misto.webp" alt="" width="800" height="800">
-                    <img src="/assets/produtos/mini-jilo.webp" alt="" width="800" height="800">
+                    <img src="/assets/hero/cebola-com-biquinho.webp" alt="" width="536" height="713" fetchpriority="high">
+                    <img src="/assets/hero/pepino.webp" alt="" width="536" height="710">
+                    <img src="/assets/hero/picles.webp" alt="" width="522" height="694">
                 </div>
             </div>
         </section>
@@ -150,9 +152,15 @@
                 <div>
                     <h2 id="how-title">Como comprar</h2>
                     <ol class="steps">
+                        <?php if ($cartEnabled): ?>
                         <li><strong>Monte seu carrinho</strong> com os produtos e as quantidades que quiser.</li>
                         <li><strong>Envie pelo WhatsApp:</strong> a mensagem abre pronta, com a lista e o total.</li>
                         <li><strong>Combine com a gente</strong> o pagamento e a retirada. Nada é cobrado pelo site.</li>
+                        <?php else: ?>
+                        <li><strong>Veja os produtos</strong> e os preços aqui no site.</li>
+                        <li><strong>Venha até a loja:</strong> boxes 2166 e 2167 do Ceasa Curitiba, de segunda a sábado, das 4h30 às 10h30.</li>
+                        <li><strong>Ficou com dúvida?</strong> Fale com a gente pelos contatos abaixo.</li>
+                        <?php endif; ?>
                     </ol>
                 </div>
                 <div class="prices-box">
@@ -247,8 +255,10 @@
                     <strong id="dialogWholesale"></strong>
                 </div>
             </div>
+            <?php if ($cartEnabled): ?>
             <div class="sheet__buy" id="dialogBuy"></div>
             <button class="sheet__to-cart" id="dialogToCart" type="button" hidden>Ver carrinho</button>
+            <?php endif; ?>
         </div>
     </dialog>
 
@@ -263,6 +273,7 @@
         <div class="cat-list cat-list--sheet" data-categories role="group" aria-label="Filtrar por categoria"></div>
     </dialog>
 
+    <?php if ($cartEnabled): ?>
     <!-- Carrinho -->
     <dialog class="sheet sheet--cart" id="cartDialog" aria-labelledby="cartTitle">
         <div class="sheet__head">
@@ -301,7 +312,8 @@
             <p class="cart__note" id="cartNote">Nada é cobrado aqui: você confere a mensagem no WhatsApp e combina o restante com a gente.</p>
         </div>
     </dialog>
+    <?php endif; ?>
 
-    <script src="/assets/js/site.js?v=3" defer></script>
+    <script src="/assets/js/site.js?v=4" defer></script>
 </body>
 </html>

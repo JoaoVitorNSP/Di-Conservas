@@ -5,6 +5,7 @@ namespace App\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Services\ImageUploadError;
 use App\Services\ProductImage;
 
@@ -14,8 +15,15 @@ class ProductController extends BaseController
 
     public function home(): void
     {
-        // A página não abre o banco: os produtos chegam por /api/products.
-        $this->view('products.index');
+        // Os produtos chegam por /api/products; daqui só sai se o carrinho está ligado.
+        // Se o banco falhar, a página abre mesmo assim e o catálogo mostra o próprio aviso.
+        $cartEnabled = true;
+        try {
+            $cartEnabled = (new Setting())->cartEnabled();
+        } catch (\PDOException $error) {
+            error_log((string) $error);
+        }
+        $this->view('products.index', ['cartEnabled' => $cartEnabled]);
     }
 
     public function api(): void
@@ -53,6 +61,7 @@ class ProductController extends BaseController
         $products = (new Product())->all();
         $this->view('admin.products.index', [
             'title' => 'Produtos',
+            'wide' => true,
             'products' => $products,
             'categories' => array_values(array_unique(array_column((new Category())->allWithCounts(), 'description'))),
         ]);
@@ -100,9 +109,35 @@ class ProductController extends BaseController
             $this->notFound();
         }
         $status = $product['status'] === 'active' ? 'inactive' : 'active';
-        $products->setStatus($id, $status);
-        flash($status === 'active' ? "“{$product['name']}” voltou a aparecer no site." : "“{$product['name']}” não aparece mais no site.");
-        $this->redirect('/admin/products');
+        $revealed = $products->setStatus([$id], $status);
+        $message = $status === 'active' ? "“{$product['name']}” voltou a aparecer no site." : "“{$product['name']}” não aparece mais no site.";
+        $this->finish($message . $this->revealedNote($revealed), '/admin/products', ['status' => $status, 'changed' => [$id]]);
+    }
+
+    // Ação em massa: ocultar ou mostrar os produtos selecionados.
+    public function status(): void
+    {
+        $this->requireAdmin();
+        $this->requireValidCsrf();
+        $ids = $this->postedIds();
+        $status = $_POST['status'] ?? '';
+        if (!$ids || !in_array($status, ['active', 'inactive'], true)) {
+            $this->finish('Selecione ao menos um produto.', '/admin/products', [], 'error', 422);
+        }
+        $revealed = (new Product())->setStatus($ids, $status);
+        $total = count($ids);
+        $what = $total === 1 ? '1 produto' : "{$total} produtos";
+        $message = $status === 'active' ? "{$what} no site." : "{$what} fora do site.";
+        $this->finish($message . $this->revealedNote($revealed), '/admin/products', ['status' => $status, 'changed' => $ids]);
+    }
+
+    private function revealedNote(array $categories): string
+    {
+        if (!$categories) {
+            return '';
+        }
+        $names = '“' . implode('”, “', $categories) . '”';
+        return count($categories) === 1 ? " A categoria {$names} também voltou a aparecer." : " As categorias {$names} também voltaram a aparecer.";
     }
 
     public function destroy(int $id): void
@@ -161,9 +196,10 @@ class ProductController extends BaseController
 
         try {
             if ($product) {
-                $products->update((int) $product['id'], $data);
+                $productId = (int) $product['id'];
+                $products->update($productId, $data);
             } else {
-                $products->create($data);
+                $productId = $products->create($data);
             }
         } catch (\Throwable $error) {
             ProductImage::delete($newImage);
@@ -174,7 +210,8 @@ class ProductController extends BaseController
             $this->deleteImageIfUnused($products, $oldImage);
         }
 
-        flash("“{$data['name']}” foi salvo.");
+        $revealed = $data['status'] === 'active' ? $products->revealCategories([$productId]) : [];
+        flash("“{$data['name']}” foi salvo." . $this->revealedNote($revealed));
         $this->redirect(($_POST['next'] ?? '') === 'another' ? '/admin/products/create' : '/admin/products');
     }
 

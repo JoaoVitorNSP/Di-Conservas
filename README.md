@@ -1,6 +1,6 @@
 # Di Conservas
 
-Catálogo web da loja, com carrinho que envia o pedido pelo WhatsApp (sem pagamento online), e um painel para gerenciar produtos, categorias e usuários.
+Catálogo web da loja, com carrinho que envia o pedido pelo WhatsApp (sem pagamento online), e um painel para gerenciar produtos, categorias e usuários. O carrinho pode ser desligado em **Configurações**, no painel; o site passa a mostrar só os produtos e os preços.
 
 Feito em PHP 8.1 ou mais novo, MySQL e, no site, HTML, CSS e JavaScript sem frameworks. Não precisa de Composer.
 
@@ -33,7 +33,7 @@ Com Docker: crie um `.env` com `DB_PASS` e `SETUP_TOKEN`, rode `docker compose u
 
 A pasta `public/assets/produtos` precisa permitir escrita pelo PHP. Em outro servidor Apache, o ideal é apontar a raiz do site direto para `public/`.
 
-Ao atualizar um site já no ar, **não sobrescreva** `.env` nem `public/assets/produtos/`: os dados de produtos ficam no banco, e as fotos, nessa pasta.
+Ao atualizar um site já no ar, **não sobrescreva** `.env` nem `public/assets/produtos/`: os dados de produtos ficam no banco, e as fotos, nessa pasta. Depois, rode `php scripts/instalar-banco.php` para o banco receber o que for novo; ele não apaga nem duplica dados.
 
 ## Esqueci a senha
 

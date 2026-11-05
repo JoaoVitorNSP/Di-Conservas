@@ -111,6 +111,30 @@ abstract class BaseController
         }
     }
 
+    // Ações sem recarregar a página pedem JSON; sem JavaScript, o formulário segue o caminho normal.
+    protected function finish(string $message, string $back, array $data = [], string $type = 'ok', int $status = 200): never
+    {
+        if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+            http_response_code($status);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['message' => $message, 'type' => $type] + $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            exit;
+        }
+        flash($message, $type);
+        $this->redirect($back);
+    }
+
+    // Lista de ids enviada por ações em massa; descarta o que não for número válido.
+    protected function postedIds(): array
+    {
+        $raw = $_POST['ids'] ?? [];
+        if (!is_array($raw)) {
+            return [];
+        }
+        $ids = array_map(fn ($value) => filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]), $raw);
+        return array_values(array_unique(array_filter($ids)));
+    }
+
     // Bloqueia envios de formulário que não partiram do próprio painel.
     protected function requireValidCsrf(): void
     {

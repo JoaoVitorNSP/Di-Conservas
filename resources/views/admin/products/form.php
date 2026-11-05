@@ -35,9 +35,8 @@ $action = $product ? '/admin/products/' . (int) $product['id'] : '/admin/product
                 <div class="photo-box" id="photoBox">
                     <?php if ($image !== ''): ?>
                         <img id="photoCurrent" src="<?= e($image) ?>" alt="Foto atual" width="400" height="400">
-                    <?php else: ?>
-                        <span id="photoCurrent" class="photo-box__empty">Sem foto</span>
                     <?php endif; ?>
+                    <span id="photoEmpty" class="photo-box__empty"<?= $image !== '' ? ' hidden' : '' ?>>Sem foto</span>
                     <canvas id="photoCanvas" width="1200" height="1200" hidden></canvas>
                 </div>
                 <label class="range" id="photoZoomBox" hidden>
@@ -51,12 +50,9 @@ $action = $product ? '/admin/products/' . (int) $product['id'] : '/admin/product
                 </label>
                 <?= $fieldError('image') ?>
                 <p class="error small" id="photoError" hidden></p>
-                <?php if ($product && $image !== ''): ?>
-                    <label class="check">
-                        <input type="checkbox" name="remove_image" value="1">
-                        <span>Remover a foto atual</span>
-                    </label>
-                <?php endif; ?>
+                <input type="hidden" name="remove_image" id="photoRemoveFlag" value="">
+                <button type="button" class="btn btn--block btn--danger" id="photoRemove"<?= $image === '' ? ' hidden' : '' ?>>Remover foto</button>
+                <p class="muted small" id="photoRemoved" hidden>A foto será removida quando você salvar.</p>
             </div>
 
             <div class="form__fields">

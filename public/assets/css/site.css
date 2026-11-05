@@ -251,6 +251,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .card__wholesale { display: block; color: var(--muted); font-size: 0.8125rem; line-height: 1.35; margin-top: 2px; }
 .card__wholesale b { color: var(--ink); font-weight: 600; }
 .card__buy { position: relative; z-index: 1; }
+[data-cart="off"] .card__prices { margin-bottom: 0; }
 
 /* Adicionar e quantidade */
 .add-btn {

@@ -76,6 +76,44 @@ class CategoryController extends BaseController
         $this->redirect('/admin/categories');
     }
 
+    // Ocultar ou mostrar uma ou várias categorias. Só oculta as que não têm produto visível.
+    public function status(): void
+    {
+        $this->requireAdmin();
+        $this->requireValidCsrf();
+        $ids = $this->postedIds();
+        $status = $_POST['status'] ?? '';
+        if (!$ids || !in_array($status, ['active', 'inactive'], true)) {
+            $this->finish('Selecione ao menos uma categoria.', '/admin/categories', [], 'error', 422);
+        }
+
+        $categories = new Category();
+        if ($status === 'active') {
+            $categories->setStatus($ids, 'active');
+            $what = count($ids) === 1 ? '1 categoria voltou a ficar ativa' : count($ids) . ' categorias voltaram a ficar ativas';
+            $this->finish("{$what}. Os produtos continuam como estavam.", '/admin/categories', ['status' => 'active', 'changed' => $ids, 'blocked' => []]);
+        }
+
+        $blocked = [];
+        foreach ($categories->visibleProducts($ids) as $row) {
+            $id = (int) $row['category_id'];
+            $blocked[$id] ??= ['id' => $id, 'name' => $row['category_name'], 'products' => []];
+            $blocked[$id]['products'][] = $row['name'];
+        }
+        $free = array_values(array_diff($ids, array_keys($blocked)));
+        $categories->setStatus($free, 'inactive');
+
+        $parts = [];
+        if ($free) {
+            $parts[] = count($free) === 1 ? '1 categoria ocultada.' : count($free) . ' categorias ocultadas.';
+        }
+        foreach ($blocked as $item) {
+            $total = count($item['products']);
+            $parts[] = "“{$item['name']}” não foi ocultada: ainda tem {$total} " . ($total === 1 ? 'produto visível' : 'produtos visíveis') . '.';
+        }
+        $this->finish(implode(' ', $parts), '/admin/categories', ['status' => 'inactive', 'changed' => $free, 'blocked' => array_values($blocked)], $free ? 'ok' : 'error');
+    }
+
     private function nameProblem(string $name): ?string
     {
         return $name === '' || mb_strlen($name) > 60 ? 'Informe o nome da categoria (até 60 caracteres).' : null;

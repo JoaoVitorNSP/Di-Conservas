@@ -37,6 +37,10 @@ function run_sql_file(PDO $pdo, string $path): void
 }
 
 run_sql_file($pdo, ROOT_PATH . '/database/schema.sql');
+// Bancos criados antes de as categorias poderem ser ocultadas.
+if (!$pdo->query("SHOW COLUMNS FROM categories LIKE 'status'")->fetch()) {
+    $pdo->exec("ALTER TABLE categories ADD COLUMN status ENUM('active','inactive') NOT NULL DEFAULT 'active' AFTER description");
+}
 echo "Tabelas prontas." . PHP_EOL;
 
 $total = (int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn();

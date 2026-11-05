@@ -53,9 +53,34 @@ class Product extends BaseModel
         ]);
     }
 
-    public function setStatus(int $id, string $status): void
+    // Retorna o nome das categorias ocultas que voltaram a aparecer por causa da mudança.
+    public function setStatus(array $ids, string $status): array
     {
-        $this->pdo->prepare('UPDATE products SET status = ? WHERE id = ?')->execute([$status, $id]);
+        if (!$ids) {
+            return [];
+        }
+        $marks = implode(',', array_fill(0, count($ids), '?'));
+        $this->pdo->prepare("UPDATE products SET status = ? WHERE id IN ({$marks})")->execute([$status, ...$ids]);
+        return $status === 'active' ? $this->revealCategories($ids) : [];
+    }
+
+    // Categoria oculta nunca tem produto visível: mostrar o produto também mostra a categoria dele.
+    public function revealCategories(array $ids): array
+    {
+        $marks = implode(',', array_fill(0, count($ids), '?'));
+        $stmt = $this->pdo->prepare("SELECT DISTINCT c.id, c.description
+            FROM categories c
+            JOIN products p ON p.category_id = c.id
+            WHERE c.status = 'inactive' AND p.id IN ({$marks})");
+        $stmt->execute($ids);
+        $hidden = $stmt->fetchAll();
+        if (!$hidden) {
+            return [];
+        }
+        $marks = implode(',', array_fill(0, count($hidden), '?'));
+        $this->pdo->prepare("UPDATE categories SET status = 'active' WHERE id IN ({$marks})")
+            ->execute(array_column($hidden, 'id'));
+        return array_column($hidden, 'description');
     }
 
     public function delete(int $id): void
